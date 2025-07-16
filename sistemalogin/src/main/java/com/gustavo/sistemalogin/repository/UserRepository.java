@@ -1,6 +1,6 @@
-package repository;
+package com.gustavo.sistemalogin.repository;
 
-import model.User;
+import com.gustavo.sistemalogin.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package model;
+package com.gustavo.sistemalogin.model;
 
 import jakarta.persistence.*;
 
