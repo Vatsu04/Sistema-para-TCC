@@ -3,6 +3,7 @@ package com.gustavo.sistemalogin.controller;
 import com.gustavo.sistemalogin.dto.LoginDTO;
 import com.gustavo.sistemalogin.model.User;
 import com.gustavo.sistemalogin.repository.UserRepository;
+import com.gustavo.sistemalogin.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
