@@ -1,9 +1,12 @@
 # Sistema-para-TCC
-Sistema de cadastro e login desenvolvido em Java utilizando Spring Boot, com autenticação segura, recuperação de senha via e-mail e API REST. Projeto voltado para estudos de segurança e boas práticas em aplicações web.
 
-# Requisitos do Sistema de Cadastro e Login
+Sistema de cadastro, login e controle de estoque desenvolvido em Java utilizando Spring Boot, com autenticação segura, recuperação de senha via e-mail e API REST. Projeto voltado para estudos de segurança, boas práticas em aplicações web, e gestão de estoque com controle de permissões por perfil de usuário.
 
-## Requisitos Funcionais (RF)
+---
+
+## Requisitos do Sistema de Cadastro, Login e Controle de Estoque
+
+### Requisitos Funcionais (RF)
 
 - **RF01 - Cadastro de Usuário:**  
   O sistema deve permitir o cadastro de novos usuários, solicitando nome, e-mail e senha.
@@ -38,9 +41,39 @@ Sistema de cadastro e login desenvolvido em Java utilizando Spring Boot, com aut
 - **RF11 - Troca de Senha via E-mail:**  
   O sistema deve permitir que o usuário altere sua senha por meio de um link enviado ao seu e-mail, garantindo segurança no processo.
 
+- **RF12 - Cadastro de Produto:**  
+  O sistema deve permitir que usuários administradores cadastrem novos produtos, informando nome, descrição, quantidade, unidade, valor e categoria.
+
+- **RF13 - Edição de Produto:**  
+  O sistema deve permitir que usuários administradores editem informações dos produtos cadastrados.
+
+- **RF14 - Remoção de Produto:**  
+  O sistema deve permitir que usuários administradores removam produtos do estoque.
+
+- **RF15 - Consulta de Estoque:**  
+  O sistema deve permitir que todos os usuários consultem a lista de produtos em estoque, com opções de filtro e busca.
+
+- **RF16 - Entrada de Estoque:**  
+  O sistema deve permitir que usuários adicionem entradas de estoque, registrando quantidade, data e responsável.
+
+- **RF17 - Saída de Estoque:**  
+  O sistema deve permitir que usuários registrem saídas de produtos do estoque, informando quantidade, data e responsável.
+
+- **RF18 - Histórico de Movimentação:**  
+  O sistema deve registrar toda movimentação de estoque (entradas e saídas), permitindo consulta por período, produto e usuário.
+
+- **RF19 - Perfis de Usuário:**  
+  O sistema deve permitir dois tipos de usuários: Administrador (com acesso total) e Assistente (acesso restrito).
+
+- **RF20 - Permissões:**  
+  O sistema deve garantir que apenas administradores possam cadastrar, editar ou remover produtos; assistentes só podem consultar e registrar movimentações.
+
+- **RF21 - Relatórios:**  
+  O sistema deve permitir a geração de relatórios de estoque, movimentações e produtos mais/menos movimentados.
+
 ---
 
-## Requisitos Não Funcionais (RNF)
+### Requisitos Não Funcionais (RNF)
 
 - **RNF01 - Segurança de Dados:**  
   O sistema deve garantir a segurança dos dados dos usuários, utilizando HTTPS e boas práticas de desenvolvimento seguro.
@@ -65,6 +98,70 @@ Sistema de cadastro e login desenvolvido em Java utilizando Spring Boot, com aut
 
 - **RNF08 - Auditoria:**  
   Toda tentativa de login deve ser registrada, incluindo sucessos e falhas, para fins de auditoria.
+
+- **RNF09 - Controle de Acesso:**  
+  O sistema deve implementar controle de acesso baseado em papéis (RBAC), garantindo que permissões sejam respeitadas em todos os endpoints.
+
+- **RNF10 - Proteção contra SQL Injection:**  
+  O sistema deve utilizar ORM (ex: JPA/Hibernate) e nunca concatenar consultas SQL manualmente.
+
+- **RNF11 - Proteção contra XSS:**  
+  O sistema deve sanitizar todas as entradas de usuário e escapar dados exibidos no front-end.
+
+- **RNF12 - Proteção contra CSRF:**  
+  O sistema deve implementar proteção contra CSRF nos formulários e endpoints sensíveis.
+
+- **RNF13 - Registro de Auditoria:**  
+  Toda ação de cadastro, edição, remoção e movimentação de estoque deve ser registrada em logs de auditoria, incluindo usuário, data e detalhes da ação.
+
+- **RNF14 - Senhas Fortes:**  
+  O sistema deve exigir que senhas de usuários atendam a critérios mínimos de complexidade.
+
+- **RNF15 - Bloqueio após Tentativas de Login:**  
+  O sistema deve bloquear temporariamente o acesso de usuários após múltiplas tentativas falhas de login, prevenindo ataques de força bruta.
+
+- **RNF16 - Backup de Dados:**  
+  O sistema deve permitir backup periódico do banco de dados para evitar perda de informações.
+
+- **RNF17 - Validação de Entrada:**  
+  Todas as entradas de dados devem ser validadas tanto no front-end quanto no back-end.
+
+---
+
+## Vulnerabilidades comuns e como mitigar no sistema
+
+- **SQL Injection:**  
+  Use JPA/Hibernate, nunca construa queries SQL manualmente com concatenação de strings.
+
+- **XSS (Cross-Site Scripting):**  
+  Escape e sanitize todas as saídas e entradas de dados que vão para o front-end.
+
+- **CSRF (Cross-Site Request Forgery):**  
+  Use tokens CSRF nas requisições, especialmente em POST, PUT, DELETE.
+
+- **Brute Force:**  
+  Limite tentativas de login e implemente bloqueio temporário.
+
+- **Exposição de Dados Sensíveis:**  
+  Nunca retorne informações sensíveis em respostas da API. Use DTOs com dados mínimos necessários.
+
+- **Gestão de Sessão:**  
+  Use JWT seguro, configure expiração e revogação adequada.
+
+---
+
+## Perfis de Usuário
+
+- **Administrador**
+  - Cadastra, edita, remove produtos.
+  - Visualiza e gera relatórios.
+  - Gerencia usuários assistentes.
+  - Consulta e registra movimentações.
+
+- **Assistente**
+  - Consulta estoque.
+  - Registra movimentações de entrada/saída.
+  - Visualiza histórico.
 
 ---
 
@@ -113,4 +210,45 @@ Sistema de cadastro e login desenvolvido em Java utilizando Spring Boot, com aut
 
 **Dica:** Para testes em desenvolvimento, use serviços como [Mailtrap](https://mailtrap.io/) ou [Ethereal Email](https://ethereal.email/) para simular o envio de e-mails sem precisar de um e-mail real.
 
-Se precisar de exemplos completos de código ou configuração do envio de e-mail, posso ajudar!
+---
+
+## Estrutura Recomendada do Projeto
+
+```
+Sistema-para-TCC/
+  ├── src/             # Código fonte do back-end (Spring Boot)
+  ├── pom.xml
+  ├── frontend/        # Código fonte do front-end (React, Angular ou Vue)
+      ├── package.json
+      ├── src/
+      └── ...
+  └── README.md
+```
+
+---
+
+## Documentação dos Endpoints
+
+> Verifique a pasta `/docs` ou utilize ferramentas como Swagger/OpenAPI para consultar endpoints e exemplos de uso.
+
+---
+
+## Como rodar o projeto
+
+**Back-end:**
+```bash
+mvn spring-boot:run
+```
+
+**Front-end (exemplo com React):**
+```bash
+cd frontend
+npm install
+npm start
+```
+
+---
+
+## Licença
+
+Este projeto é destinado exclusivamente para fins acadêmicos e estudos.
