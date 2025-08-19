@@ -34,7 +34,7 @@ public class PasswordResetToken {
         this.expirationDate = expirationDate;
         this.used = false;
     }
-    
+
     public Long getId() {
         return id;
     }
