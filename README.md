@@ -128,6 +128,67 @@ Sistema de cadastro, login e controle de estoque desenvolvido em Java utilizando
 
 ---
 
+## Estrutura do Banco de Dados
+
+O sistema utiliza um banco relacional (MariaDB/MySQL) para armazenar informações de usuários, permissões (roles), tokens revogados e controle de acesso. Abaixo estão as principais tabelas e seus respectivos campos:
+
+### Tabelas principais
+
+#### `usuarios`
+Armazena dados dos usuários cadastrados.
+
+| Campo   | Tipo           | Descrição              |
+|---------|----------------|------------------------|
+| id      | bigint (PK)    | Identificador único    |
+| nome    | varchar(255)   | Nome do usuário        |
+| email   | varchar(255)   | E-mail (único)         |
+| senha   | varchar(255)   | Senha criptografada    |
+| role    | varchar(50)    | Perfil do usuário      |
+
+- Índice único no campo `email` para garantir que não haja duplicidade de e-mails.
+
+#### `roles`
+Tabela de perfis/permissões do sistema.
+
+| Campo   | Tipo           | Descrição              |
+|---------|----------------|------------------------|
+| id      | int (PK)       | Identificador da role  |
+| nome    | varchar(100)   | Nome do perfil (ex: ADMIN, ASSISTENTE) |
+
+- Índice único no campo `nome`.
+
+#### `usuarios_roles`
+Relaciona usuários aos seus perfis/roles.
+
+| Campo       | Tipo         | Descrição                     |
+|-------------|--------------|-------------------------------|
+| usuario_id  | bigint (PK)  | Referência ao usuário         |
+| role_id     | int (PK)     | Referência ao perfil/role     |
+
+- Chave primária composta (`usuario_id`, `role_id`).
+
+#### `revoked_tokens`
+Tabela para armazenar tokens JWT revogados (logout, expiração manual).
+
+| Campo          | Tipo          | Descrição                   |
+|----------------|---------------|-----------------------------|
+| id             | bigint (PK)   | Identificador único         |
+| token          | text          | Token JWT revogado          |
+| data_expiracao | datetime      | Data de expiração do token  |
+
+- Índice no campo `token` para busca rápida.
+
+---
+
+### Considerações
+
+- **Integridade referencial:** As tabelas de relacionamento garantem que um usuário pode ter múltiplos perfis e que as permissões são gerenciadas de forma flexível.
+- **Segurança:** Senhas devem ser armazenadas criptografadas. Tokens revogados ajudam a evitar reuso indevido após logout ou troca de senha.
+- **Expansão:** A estrutura permite fácil adição de novos tipos de perfis e controle granular de acesso.
+
+> Para ver o script completo de criação das tabelas, acesse [`sistemalogin.sql`](https://github.com/Vatsu04/Sistema-para-TCC/blob/d556f797709ddba6291aae7f7f6c4369c1c28754/sistemalogin.sql).
+
+
 ## Vulnerabilidades comuns e como mitigar no sistema
 
 - **SQL Injection:**  
