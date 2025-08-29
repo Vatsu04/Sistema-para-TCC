@@ -1,4 +1,4 @@
-package com.gustavo.sistemalogin.security;
+package com.gustavo.sistemalogin.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
