@@ -23,10 +23,10 @@ CREATE TABLE `roles` (
 
 CREATE TABLE `usuarios` (
   `id` bigint(20) NOT NULL,
-  `nome` varchar(50) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `senha` varchar(50) NOT NULL,
-  `role` varchar(50) NOT NULL
+  `nome` varchar(56) NOT NULL,
+  `email` varchar(56) NOT NULL,
+  `senha` varchar(56) NOT NULL,
+  `role` varchar(56) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
