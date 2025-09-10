@@ -2,7 +2,7 @@ package com.gustavo.sistemalogin.model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "audit_logs")
@@ -17,7 +17,7 @@ public class AuditLog {
 
     private String acao;
 
-    private LocalDateTime data;
+    private LocalDate data;
 
     private String detalhes;
 
