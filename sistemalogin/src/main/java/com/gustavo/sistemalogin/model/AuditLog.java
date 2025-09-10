@@ -3,6 +3,7 @@ package com.gustavo.sistemalogin.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "audit_logs")
@@ -21,16 +22,15 @@ public class AuditLog {
 
     private String detalhes;
 
-    // Construtor vazio
-    public AuditLog() {}
 
     // Construtor completo
-    public AuditLog(User usuario, String acao, LocalDateTime data, String detalhes) {
+    public AuditLog(User usuario, String acao, LocalDate data, String detalhes) {
         this.usuario = usuario;
         this.acao = acao;
         this.data = data;
         this.detalhes = detalhes;
     }
+
 
     // Getters e Setters
     public Long getId() { return id; }
