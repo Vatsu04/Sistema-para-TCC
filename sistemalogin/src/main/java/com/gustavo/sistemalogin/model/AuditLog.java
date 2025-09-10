@@ -42,8 +42,8 @@ public class AuditLog {
     public String getAcao() { return acao; }
     public void setAcao(String acao) { this.acao = acao; }
 
-    public LocalDateTime getData() { return data; }
-    public void setData(LocalDateTime data) { this.data = data; }
+    public LocalDate getData() { return data; }
+    public void setData(LocalDate data) { this.data = data; }
 
     public String getDetalhes() { return detalhes; }
     public void setDetalhes(String detalhes) { this.detalhes = detalhes; }
