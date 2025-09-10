@@ -27,6 +27,12 @@ public class Pessoa {
 
     private String telefone;
 
+    private String cpf;
+
+    private String rg;
+
+    private string data_de_nascimento;
+
     // --- Relacionamentos ---
 
     // Muitas pessoas (contatos) podem pertencer a um usuário.
