@@ -22,9 +22,12 @@ public class Negocio {
     @Column(nullable = false)
     private String titulo;
 
-    // Usar BigDecimal para valores monetários é a melhor prática para evitar problemas de arredondamento.
-    @Column(precision = 10, scale = 2)
-    private BigDecimal valor;
+    @Column
+    private int pipeline_stage;
+
+
+    @Column
+    private int id_ornizacao;
 
     // Ex: "Contato Inicial", "Proposta Enviada", "Negociação", "Ganha", "Perdida"
     @Column(nullable = false)
