@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -31,7 +31,7 @@ public class Pessoa {
 
     private String rg;
 
-    private string data_de_nascimento;
+    private LocalDate data_de_nascimento;
 
     // --- Relacionamentos ---
 
