@@ -8,7 +8,6 @@ import java.util.List;
 public class FunilCreateDTO {
 
     private String nome;
-    private String email;
     private User user;
     private List<Negocio> negocios;
 
@@ -20,13 +19,6 @@ public class FunilCreateDTO {
         this.nome = nome;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public User getUser() {
         return user;
