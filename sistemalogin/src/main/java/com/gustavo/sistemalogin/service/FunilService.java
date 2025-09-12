@@ -1,7 +1,7 @@
 package com.gustavo.sistemalogin.service;
 
 import com.gustavo.sistemalogin.dto.FunilCreateDTO;
-import com.gustavo.sistemalogin.dto.FunilDTO;
+import com.gustavo.sistemalogin.dto.FunilCreateDTO;
 import com.gustavo.sistemalogin.dto.FunilResponseDTO;
 import com.gustavo.sistemalogin.dto.FunilUpdateDTO;
 import com.gustavo.sistemalogin.model.Funil;
