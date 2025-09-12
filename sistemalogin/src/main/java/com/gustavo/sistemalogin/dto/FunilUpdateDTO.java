@@ -5,8 +5,7 @@ import com.gustavo.sistemalogin.model.User;
 
 import java.util.List;
 
-public class FunilCreateDTO {
-
+public class FunilUpdateDTO {
     private String nome;
     private String email;
     private User user;
