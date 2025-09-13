@@ -11,9 +11,19 @@ import jakarta.persistence.*;
         @Column(unique = true)
         private String email;
         private String senha;
+        private int PerfilUsuario;
+        private boolean ativo;
 
         public String getSenha() {
             return senha;
+        }
+
+        public int getPerfilUsuario() {
+            return PerfilUsuario;
+        }
+
+        public void setPerfilUsuario(int perfilUsuario) {
+            PerfilUsuario = perfilUsuario;
         }
 
         public void setSenha(String senha) {
@@ -42,6 +52,14 @@ import jakarta.persistence.*;
 
         public void setId(Long id) {
             this.id = id;
+        }
+
+        public boolean isAtivo() {
+            return ativo;
+        }
+
+        public void setAtivo(boolean ativo) {
+            this.ativo = ativo;
         }
     }
 

@@ -16,7 +16,7 @@ public class UserService {
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public User cadastrarUsuario(UserDTO userDTO) {
-        // Verifica se o e-mail já existe
+
         if(userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
             throw new RuntimeException("E-mail já cadastrado!");
         }

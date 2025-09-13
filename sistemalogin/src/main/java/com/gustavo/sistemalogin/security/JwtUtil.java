@@ -8,7 +8,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-@Component // Indica que essa classe pode ser injetada como um componente Spring
+/**
+ * Utilitário para geração e validação de JWT usando Nimbus JOSE + JWT.
+ */
+@Component
 public class JwtUtil {
 
     // Valor do segredo para assinar o token (vem do application.properties/yaml)
@@ -25,28 +28,59 @@ public class JwtUtil {
      */
     public String generateToken(String email) {
         try {
-            // Cria um objeto responsável por assinar o token usando o segredo
             JWSSigner signer = new MACSigner(secret.getBytes());
-            // Define as informações (claims) do token
             JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                    .subject(email) // e-mail do usuário vai no subject
-                    .issueTime(new Date()) // data de emissão
-                    .expirationTime(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // expiração
+                    .subject(email)
+                    .issueTime(new Date())
+                    .expirationTime(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                     .build();
 
-            // Cria o token JWT assinado com header e claims
             SignedJWT signedJWT = new SignedJWT(
                     new JWSHeader(JWSAlgorithm.HS256),
                     claimsSet
             );
 
-            // Assina o token
             signedJWT.sign(signer);
 
-            // Retorna o token no formato compactado (string)
             return signedJWT.serialize();
         } catch (Exception e) {
             throw new RuntimeException("Erro ao gerar JWT", e);
+        }
+    }
+
+    /**
+     * Valida o token JWT (verifica assinatura e expiração).
+     * @param token JWT recebido
+     * @return true se válido, false se inválido/expirado
+     */
+    public boolean validateToken(String token) {
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            JWSVerifier verifier = new MACVerifier(secret.getBytes());
+
+            return signedJWT.verify(verifier) && !isTokenExpired(signedJWT);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Extrai o email (subject) do token JWT.
+     * @param token JWT recebido
+     * @return email do usuário, ou null se token inválido
+     */
+    public String extractUsername(String token) {
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            JWSVerifier verifier = new MACVerifier(secret.getBytes());
+
+            if (signedJWT.verify(verifier)) {
+                return signedJWT.getJWTClaimsSet().getSubject();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -57,20 +91,15 @@ public class JwtUtil {
      */
     public String validateTokenAndGetEmail(String token) {
         try {
-            // Faz o parse do token recebido
             SignedJWT signedJWT = SignedJWT.parse(token);
-            // Cria um verificador usando o segredo
             JWSVerifier verifier = new MACVerifier(secret.getBytes());
 
-            // Verifica se a assinatura é válida e se o token não expirou
             if (signedJWT.verify(verifier) && !isTokenExpired(signedJWT)) {
-                // Retorna o email (subject) do token
                 return signedJWT.getJWTClaimsSet().getSubject();
             } else {
                 return null;
             }
         } catch (Exception e) {
-            // Qualquer erro retorna null (token inválido ou mal formatado)
             return null;
         }
     }

@@ -1,0 +1,12 @@
+src/
+  components/
+    LoginForm.js
+    RegisterForm.js
+    PasswordResetForm.js
+    Profile.js
+  pages/
+    LoginPage.js
+    RegisterPage.js
+    PasswordResetPage.js
+    ProfilePage.js
+  App.js
