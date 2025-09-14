@@ -44,14 +44,6 @@ O sistema utiliza um banco de dados relacional (MySQL/MariaDB) para armazenar as
 
 ### Tabelas Principais
 
-#### **roles**
-Armazena os perfis de usuário disponíveis no sistema.
-
-| Campo      | Tipo         | Descrição                       |
-|------------|--------------|---------------------------------|
-| Id         | BIGINT (PK)  | Identificador único do perfil   |
-| Descricao  | VARCHAR(255) | Nome do perfil (ex: 'ADMIN', 'USER') |
-
 #### **users**
 Armazena os dados dos usuários cadastrados.
 
@@ -61,48 +53,121 @@ Armazena os dados dos usuários cadastrados.
 | Nome            | VARCHAR(100)  | Nome do usuário                                         |
 | Email           | VARCHAR(100)  | E-mail de login (único)                                 |
 | Senha           | VARCHAR(255)  | Senha criptografada                                     |
-| Ativo           | INT           | Status da conta (1=ativo, 0=inativo)                   |
+| Ativo           | INT           | Status da conta (1=ativo, 0=inativo)                    |
 | PerfilUsuario   | BIGINT (FK)   | Referência ao Id da tabela roles                        |
 | SenhaProvisoria | INT           | Flag (1=sim, 0=não)                                     |
 
-#### **funis**
-Armazena os funis de venda criados pelos usuários.
 
-| Campo   | Tipo         | Descrição                              |
-|---------|--------------|----------------------------------------|
-| id      | BIGINT (PK)  | Identificador único do funil           |
-| nome    | VARCHAR(255) | Nome do funil (ex: "Vendas 2025")      |
-| user_id | BIGINT (FK)  | Referência ao Id da tabela users       |
+#### **roles**
+Define os perfis de usuário do sistema.
+
+| Campo     | Tipo          | Descrição                                  |
+|-----------|---------------|---------------------------------------------|
+| Id        | BIGINT (PK)   | Identificador único do perfil               |
+| Descricao | VARCHAR(255)  | Descrição do perfil (ex: ADMINISTRADOR)     |
+
+
+#### **user**
+Armazena informações de autenticação e perfil dos usuários.
+
+| Campo           | Tipo           | Descrição                                           |
+|-----------------|----------------|-----------------------------------------------------|
+| id              | BIGINT (PK)    | Identificador único do usuário                      |
+| perfil_usuario  | INT            | Perfil do usuário (relacionamento com roles)        |
+| ativo           | BIT(1)         | Status da conta (1=ativo, 0=inativo)                |
+| email           | VARCHAR(255)   | E-mail do usuário                                   |
+| nome            | VARCHAR(255)   | Nome do usuário                                     |
+| senha           | VARCHAR(255)   | Senha criptografada                                 |
+
+
+#### **organizacoes**
+Armazena os dados das organizações cadastradas.
+
+| Campo     | Tipo           | Descrição                                                   |
+|-----------|----------------|-------------------------------------------------------------|
+| id        | BIGINT (PK)    | Identificador único da organização                          |
+| nome      | VARCHAR(255)   | Nome da organização                                         |
+| cnpj      | VARCHAR(20)    | CNPJ da organização (único)                                 |
+| telefone  | VARCHAR(20)    | Telefone para contato                                       |
+| email     | VARCHAR(100)   | E-mail para contato                                         |
+| endereco  | VARCHAR(255)   | Endereço da organização                                     |
+| user_id   | BIGINT (FK)    | Referência ao Id do usuário que cadastrou a organização     |
+
 
 #### **pessoas**
-Armazena os contatos (pessoas) cadastrados pelos usuários.
+Armazena os dados das pessoas físicas cadastradas.
 
-| Campo                   | Tipo         | Descrição                           |
-|-------------------------|----------------------------------------------------|
-| id                      | BIGINT (PK)  | Identificador único da pessoa       |
-| nome                    | VARCHAR(255) | Nome do contato                     |
-| email                   | VARCHAR(255) | Email do contato (único por usuário)|
-| telefone                | VARCHAR(255) | Telefone                            |
-| CPF                     | VARCHAR(255) | Número do CPF                       |
-| RG                      | VARCHAR(255) | Número do RG                        |
-| data_de_nascimento      | VARCHAR(255) | Data de Nascimento                  |
-| user_id                 | BIGINT (FK)  | Referência ao Id da tabela users    |
+| Campo              | Tipo           | Descrição                                                |
+|--------------------|----------------|----------------------------------------------------------|
+| id                 | BIGINT (PK)    | Identificador único da pessoa                            |
+| nome               | VARCHAR(255)   | Nome completo da pessoa                                  |
+| cpf                | VARCHAR(255)   | CPF da pessoa                                            |
+| rg                 | VARCHAR(255)   | RG da pessoa                                             |
+| data_de_nascimento | DATE           | Data de nascimento                                       |
+| email              | VARCHAR(255)   | E-mail da pessoa (único)                                 |
+| telefone           | VARCHAR(255)   | Telefone para contato                                    |
+| user_id            | BIGINT (FK)    | Referência ao Id do usuário responsável                  |
+| negocio_id         | BIGINT (FK)    | Referência ao Id do negócio relacionado                  |
+
+
+#### **funis**
+Armazena os funis de vendas do sistema.
+
+| Campo    | Tipo           | Descrição                                         |
+|----------|----------------|---------------------------------------------------|
+| id       | BIGINT (PK)    | Identificador único do funil                      |
+| nome     | VARCHAR(255)   | Nome do funil                                     |
+| user_id  | BIGINT (FK)    | Referência ao Id do usuário que criou o funil     |
+
+
+#### **etapa**
+Armazena as etapas pertencentes a um funil de vendas.
+
+| Campo     | Tipo           | Descrição                                         |
+|-----------|----------------|---------------------------------------------------|
+| Id        | BIGINT (PK)    | Identificador único da etapa                      |
+| Nome      | VARCHAR(255)   | Nome da etapa                                     |
+| Funil_id  | BIGINT (FK)    | Referência ao Id do funil                         |
 
 
 #### **negocios**
-Armazena os negócios (oportunidades) e os relaciona a um funil e a uma pessoa.
+Armazena os negócios/operações do CRM.
 
-| Campo                    | Tipo         | Descrição                                                                  |
-|--------------------------|--------------|----------------------------------------------------------------------------|
-| id                       | BIGINT (PK)  | Identificador único do negócio                                             |
-| titulo                   | VARCHAR(255) | Título do negócio (ex: "Projeto Site XPTO")                                |
-| etapa_id                 | VARCHAR(255) | Etapa atual no funil (ex: "Proposta")                                      |
-| Valor                    | DECIMAL      | ...Valor, data de fechamento, etc.                                         |
-| data_de_fechamento       | VARCHAR(255) | Data de Fechamento do Negócio (se tiver)                                   |
-| pipeline_stage           | INT          | Estado da pipeline atual                                                   |
-| funil_id                 | BIGINT (FK)  | Referência ao id da tabela funis                                           |
-| pessoa_id                | BIGINT (FK)  | Referência ao id da tabela pessoas (Pessoa de contato referente ao negócio |
-| organizacao_id           | BIGINT (FK)  | Referência ao id da tabela pessoas (Pessoa de contato referente ao negócio |
+| Campo              | Tipo            | Descrição                                                |
+|--------------------|-----------------|----------------------------------------------------------|
+| id                 | BIGINT (PK)     | Identificador único do negócio                           |
+| titulo             | VARCHAR(255)    | Título do negócio                                        |
+| pipeline_stage     | INT             | Etapa atual no funil                                     |
+| id_organizacao     | INT             | Referência à organização (deprecado, usar id_ornizacao)  |
+| funil_id           | BIGINT (FK)     | Referência ao Id do funil                                |
+| pessoa_id          | BIGINT (FK)     | Referência ao Id da pessoa                               |
+| id_ornizacao       | INT             | Referência à organização (possível erro de digitação)    |
+| data_de_fechamento | VARCHAR(255)    | Data prevista para fechamento                            |
+| valor              | DECIMAL(10,2)   | Valor do negócio                                         |
+
+
+#### **audit_logs**
+Armazena o histórico de ações realizadas por usuários.
+
+| Campo      | Tipo          | Descrição                                              |
+|------------|---------------|--------------------------------------------------------|
+| id         | BIGINT (PK)   | Identificador único do registro de auditoria           |
+| acao       | VARCHAR(255)  | Ação realizada (ex: criação, edição, exclusão)         |
+| data       | DATE          | Data da ação                                           |
+| detalhes   | VARCHAR(255)  | Detalhes adicionais sobre a ação                       |
+| usuario_id | BIGINT (FK)   | Referência ao Id do usuário responsável pela ação      |
+
+
+#### **password_reset_tokens**
+Armazena os tokens de redefinição de senha.
+
+| Campo           | Tipo           | Descrição                                               |
+|-----------------|----------------|---------------------------------------------------------|
+| id              | BIGINT (PK)    | Identificador único do token                            |
+| token           | VARCHAR(255)   | Token de redefinição de senha (único)                   |
+| expiration_date | DATETIME       | Data e hora de expiração do token                       |
+| used            | TINYINT(1)     | Indica se o token já foi utilizado (1=sim, 0=não)       |
+| user_id         | BIGINT (FK)    | Referência ao Id do usuário                             |
 ---
 
 ## Como rodar o projeto
