@@ -77,26 +77,32 @@ Armazena os funis de venda criados pelos usuários.
 #### **pessoas**
 Armazena os contatos (pessoas) cadastrados pelos usuários.
 
-| Campo    | Tipo         | Descrição                                     |
-|----------|--------------|-----------------------------------------------|
-| id       | BIGINT (PK)  | Identificador único da pessoa                 |
-| nome     | VARCHAR(255) | Nome do contato                               |
-| email    | VARCHAR(255) | Email do contato (único por usuário)          |
-| ...      | ...          | ...Telefone, CPF, etc.                        |
-| user_id  | BIGINT (FK)  | Referência ao Id da tabela users              |
+| Campo                   | Tipo         | Descrição                           |
+|-------------------------|----------------------------------------------------|
+| id                      | BIGINT (PK)  | Identificador único da pessoa       |
+| nome                    | VARCHAR(255) | Nome do contato                     |
+| email                   | VARCHAR(255) | Email do contato (único por usuário)|
+| telefone                | VARCHAR(255) | Telefone                            |
+| CPF                     | VARCHAR(255) | Número do CPF                       |
+| RG                      | VARCHAR(255) | Número do RG                        |
+| data_de_nascimento      | VARCHAR(255) | Data de Nascimento                  |
+| user_id                 | BIGINT (FK)  | Referência ao Id da tabela users    |
+
 
 #### **negocios**
 Armazena os negócios (oportunidades) e os relaciona a um funil e a uma pessoa.
 
-| Campo     | Tipo         | Descrição                                      |
-|-----------|--------------|-----------------------------------------------|
-| id        | BIGINT (PK)  | Identificador único do negócio                |
-| titulo    | VARCHAR(255) | Título do negócio (ex: "Projeto Site XPTO")   |
-| etapa     | VARCHAR(255) | Etapa atual no funil (ex: "Proposta")         |
-| ...       | ...          | ...Valor, data de fechamento, etc.            |
-| funil_id  | BIGINT (FK)  | Referência ao id da tabela funis              |
-| pessoa_id | BIGINT (FK)  | Referência ao id da tabela pessoas            |
-
+| Campo                    | Tipo         | Descrição                                                                  |
+|--------------------------|--------------|----------------------------------------------------------------------------|
+| id                       | BIGINT (PK)  | Identificador único do negócio                                             |
+| titulo                   | VARCHAR(255) | Título do negócio (ex: "Projeto Site XPTO")                                |
+| etapa_id                 | VARCHAR(255) | Etapa atual no funil (ex: "Proposta")                                      |
+| Valor                    | DECIMAL      | ...Valor, data de fechamento, etc.                                         |
+| data_de_fechamento       | VARCHAR(255) | Data de Fechamento do Negócio (se tiver)                                   |
+| pipeline_stage           | INT          | Estado da pipeline atual                                                   |
+| funil_id                 | BIGINT (FK)  | Referência ao id da tabela funis                                           |
+| pessoa_id                | BIGINT (FK)  | Referência ao id da tabela pessoas (Pessoa de contato referente ao negócio |
+| organizacao_id           | BIGINT (FK)  | Referência ao id da tabela pessoas (Pessoa de contato referente ao negócio |
 ---
 
 ## Como rodar o projeto
