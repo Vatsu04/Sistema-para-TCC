@@ -1,8 +1,15 @@
 package com.gustavo.sistemalogin.model;
 
 import jakarta.persistence.*;
-    @Table(name= "users")
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+    @Data // Gera automaticamente getters, setters, toString, equals, hashCode
+    @NoArgsConstructor // Gera o construtor vazio, essencial para o JPA
+    @AllArgsConstructor // Gera um construtor com todos os campos
     @Entity
+    @Table(name = "users")
     public class User {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
