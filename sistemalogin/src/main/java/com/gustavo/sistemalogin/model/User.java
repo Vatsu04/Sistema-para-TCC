@@ -1,7 +1,7 @@
 package com.gustavo.sistemalogin.model;
 
 import jakarta.persistence.*;
-
+    @Table(name= "users")
     @Entity
     public class User {
         @Id
