@@ -21,7 +21,7 @@ public class SecurityConfig {
                 // 1. Desabilita a proteção CSRF (ESSENCIAL para APIs REST)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // 2. Permite acesso público a todas as rotas que começam com /api/auth/
+                        // 2. Permite acesso público a TODAS as rotas que começam com /api/auth/
                         .requestMatchers("/api/auth/**").permitAll()
                         // 3. Exige autenticação para qualquer outra requisição
                         .anyRequest().authenticated()
