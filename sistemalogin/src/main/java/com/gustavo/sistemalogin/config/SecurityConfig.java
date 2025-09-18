@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy; // IMPORTANTE: Adicione este import
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -17,12 +18,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // --- ADICIONANDO LOG PARA DEBUG ---
-        System.out.println("--- CONFIGURANDO O SECURITYFILTERCHAIN COM CSRF DESABILITADO E ROTAS /api/auth/** LIBERADAS ---");
-
         http
-                // Desabilita a proteção CSRF, que é a causa do erro 403
+                // Desabilita a proteção CSRF, pois a API é stateless
                 .csrf(AbstractHttpConfigurer::disable)
+
+                // --- NOVA CONFIGURAÇÃO ADICIONADA AQUI ---
+                // Define a política de criação de sessão como STATELESS
+                // Isso diz ao Spring para não criar sessões (sem cookie JSESSIONID)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 .authorizeHttpRequests(auth -> auth
                         // Permite acesso público a todas as rotas de autenticação
                         .requestMatchers("/api/auth/**").permitAll()
@@ -36,9 +40,9 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
-
