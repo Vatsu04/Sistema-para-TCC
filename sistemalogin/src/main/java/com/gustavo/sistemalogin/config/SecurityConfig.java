@@ -17,13 +17,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // --- ADICIONANDO LOG PARA DEBUG ---
+        System.out.println("--- CONFIGURANDO O SECURITYFILTERCHAIN COM CSRF DESABILITADO E ROTAS /api/auth/** LIBERADAS ---");
+
         http
-                // 1. Desabilita a proteção CSRF (ESSENCIAL para APIs REST)
+                // Desabilita a proteção CSRF, que é a causa do erro 403
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // 2. Permite acesso público a TODAS as rotas que começam com /api/auth/
+                        // Permite acesso público a todas as rotas de autenticação
                         .requestMatchers("/api/auth/**").permitAll()
-                        // 3. Exige autenticação para qualquer outra requisição
+                        // Exige autenticação para qualquer outra rota
                         .anyRequest().authenticated()
                 );
         return http.build();
@@ -32,8 +35,7 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
+    } 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
