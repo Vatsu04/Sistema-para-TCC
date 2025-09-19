@@ -1,8 +1,10 @@
 package com.gustavo.sistemalogin.config;
 
 import com.gustavo.sistemalogin.security.JwtRequestFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,21 +22,26 @@ public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
 
+    @Autowired
+    private SecurityFilter securityFilter;
+
+
     public SecurityConfig(JwtRequestFilter jwtRequestFilter) {
         this.jwtRequestFilter = jwtRequestFilter;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        System.out.println("--- DIAGNÓSTICO: A SEGURANÇA ESTÁ COMPLETAMENTE DESABILITADA ---");
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        // Permite TODAS as requisições sem autenticação
-                        .anyRequest().permitAll()
-                );
-        return http.build();
+        return http.csrf(csrf -> csrf.disable())
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(req -> {
+                    req.requestMatchers(HttpMethod.POST, "/login").permitAll();
+                    req.anyRequest().authenticated();
+                })
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
