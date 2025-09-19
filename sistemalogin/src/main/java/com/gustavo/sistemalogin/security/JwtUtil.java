@@ -50,7 +50,8 @@ public class JwtUtil {
 
     /**
      * Valida o token JWT (verifica assinatura e expiração).
-     * @param token JWT recebido
+     *
+     * @param token       JWT recebido
      * @return true se válido, false se inválido/expirado
      */
     public boolean validateToken(String token) {
