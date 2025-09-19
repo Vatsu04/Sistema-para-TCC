@@ -20,23 +20,19 @@ public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
 
-    // Injetamos o nosso filtro JWT personalizado
     public SecurityConfig(JwtRequestFilter jwtRequestFilter) {
         this.jwtRequestFilter = jwtRequestFilter;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        System.out.println("--- DIAGNÓSTICO: A SEGURANÇA ESTÁ COMPLETAMENTE DESABILITADA ---");
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                // Adicionamos explicitamente o nosso filtro para ser executado antes da autenticação padrão
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
+                        // Permite TODAS as requisições sem autenticação
+                        .anyRequest().permitAll()
+                );
         return http.build();
     }
 
