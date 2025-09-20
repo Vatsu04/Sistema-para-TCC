@@ -3,7 +3,7 @@ package com.gustavo.sistemalogin.controller;
 import com.gustavo.sistemalogin.dto.LoginDTO;
 import com.gustavo.sistemalogin.model.User;
 import com.gustavo.sistemalogin.repository.UserRepository;
-import com.gustavo.sistemalogin.security.JwtUtil;
+import com.gustavo.sistemalogin.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder; // <-- IMPORT CORRETO
@@ -19,7 +19,7 @@ public class UserController {
     private UserRepository userRepository;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private TokenService tokenService;
 
     @Autowired
     private PasswordEncoder passwordEncoder; // <-- AJUSTE 2: Usando a interface
@@ -33,7 +33,7 @@ public class UserController {
         }
 
         User user = userOpt.get();
-        String token = jwtUtil.generateToken(user.getEmail());
+        String token = tokenService.generateToken(user.getEmail());
 
         return ResponseEntity.ok().body("{\"token\":\"" + token + "\"}");
     }

@@ -15,17 +15,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
- * Filtro que intercepta todas as requisições para validar o token JWT.
- * Ele é executado uma vez por requisição.
+ * Filtro de segurança que intercepta todas as requisições para validar o token JWT.
  */
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
+    private final TokenService tokenService;
     private final UserService userService;
 
-    public JwtRequestFilter(JwtUtil jwtUtil, UserService userService) {
-        this.jwtUtil = jwtUtil;
+    // Injeção de dependências via construtor (melhor prática)
+    public JwtRequestFilter(TokenService tokenService, UserService userService) {
+        this.tokenService = tokenService;
         this.userService = userService;
     }
 
@@ -33,40 +33,48 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // 1. Extrai o cabeçalho "Authorization" da requisição.
-        final String authorizationHeader = request.getHeader("Authorization");
+        // 1. Tenta recuperar o token do cabeçalho da requisição
+        var tokenJWT = recuperarToken(request);
 
-        String username = null;
-        String jwt = null;
+        // 2. Se um token foi encontrado...
+        if (tokenJWT != null) {
+            // 3. Extrai o "subject" (email do utilizador) do token
+            var subject = tokenService.getSubject(tokenJWT);
 
-        // 2. Verifica se o cabeçalho existe e se começa com "Bearer ".
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            // Extrai apenas o token, removendo o prefixo "Bearer ".
-            jwt = authorizationHeader.substring(7);
-            // Extrai o email (username) de dentro do token.
-            username = jwtUtil.extractUsername(jwt);
-        }
+            // 4. Se o email foi extraído e ainda não há uma autenticação ativa para esta requisição...
+            if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                // 5. Carrega os detalhes do utilizador da base de dados usando o email
+                UserDetails userDetails = this.userService.loadUserByUsername(subject);
 
-        // 3. Se o email foi extraído e ainda não há autenticação no contexto de segurança atual.
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Carrega os detalhes do usuário a partir do banco de dados.
-            UserDetails userDetails = this.userService.loadUserByUsername(username);
+                // 6. Valida o token (assinatura, expiração, e se corresponde ao utilizador)
+                if (tokenService.validateToken(tokenJWT, userDetails)) {
+                    // 7. Se o token for válido, cria um objeto de autenticação para o Spring Security
+                    var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-            // 4. Se o token for válido para este usuário.
-            if (jwtUtil.validateToken(jwt)) {
-                // Cria o objeto de autenticação.
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                // 5. Coloca a autenticação no contexto de segurança do Spring.
-                // A partir deste ponto, o usuário está autenticado para esta requisição.
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    // 8. Define o utilizador como autenticado no contexto de segurança.
+                    // A partir daqui, o Spring sabe que a requisição é válida.
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
         }
 
-        // 6. Continua a cadeia de filtros.
+        // 9. Continua o fluxo da requisição, passando para o próximo filtro ou para o controller
         filterChain.doFilter(request, response);
     }
+
+    /**
+     * Extrai o token JWT do cabeçalho "Authorization".
+     * @param request A requisição HTTP.
+     * @return O token JWT como uma String, ou null se não for encontrado.
+     */
+    private String recuperarToken(HttpServletRequest request) {
+        var authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            // Remove o prefixo "Bearer " para obter apenas o token
+            return authorizationHeader.substring(7);
+        }
+        return null;
+    }
 }
+

@@ -1,10 +1,8 @@
 package com.gustavo.sistemalogin.config;
 
 import com.gustavo.sistemalogin.security.JwtRequestFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,26 +20,32 @@ public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
 
-    @Autowired
-    private SecurityFilter securityFilter;
-
-
     public SecurityConfig(JwtRequestFilter jwtRequestFilter) {
         this.jwtRequestFilter = jwtRequestFilter;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(csrf -> csrf.disable())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(req -> {
-                    req.requestMatchers(HttpMethod.POST, "/login").permitAll();
-                    req.anyRequest().authenticated();
-                })
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+        http
+                // 1. Desabilita o CSRF (Cross-Site Request Forgery)
+                .csrf(AbstractHttpConfigurer::disable)
 
+                // 2. Define a política de sessão como STATELESS (sem estado)
+                // Essencial para APIs JWT, para não criar cookies de sessão (JSESSIONID)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // 3. Configura as regras de autorização para os endpoints HTTP
+                .authorizeHttpRequests(auth -> auth
+                        // Permite acesso público e sem autenticação a todas as rotas que começam com /api/auth/
+                        .requestMatchers("/api/auth/**").permitAll()
+                        // Exige que qualquer outra requisição seja autenticada
+                        .anyRequest().authenticated()
+                )
+                // 4. Adiciona o nosso filtro de JWT para ser executado antes do filtro padrão de autenticação
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
