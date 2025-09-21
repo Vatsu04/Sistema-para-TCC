@@ -28,7 +28,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // 1. Desabilita o CSRF (Cross-Site Request Forgery)
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf.disable())
 
                 // 2. Define a política de sessão como STATELESS (sem estado)
                 // Essencial para APIs JWT, para não criar cookies de sessão (JSESSIONID)
