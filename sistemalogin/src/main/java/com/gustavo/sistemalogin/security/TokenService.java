@@ -53,6 +53,7 @@ public class TokenService {
             JWSVerifier verifier = new MACVerifier(secret.getBytes());
 
             if (signedJWT.verify(verifier)) {
+                System.out.println("Subject extracted: " + token);
                 return signedJWT.getJWTClaimsSet().getSubject();
             } else {
                 throw new RuntimeException("Assinatura do token JWT é inválida!");
@@ -103,7 +104,6 @@ public class TokenService {
             String username = getSubject(token);
             SignedJWT signedJWT = SignedJWT.parse(token);
             JWSVerifier verifier = new MACVerifier(secret.getBytes());
-
             return username.equals(userDetails.getUsername())
                     && !isTokenExpired(signedJWT)
                     && signedJWT.verify(verifier);
