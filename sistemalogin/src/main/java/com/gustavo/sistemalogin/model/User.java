@@ -79,8 +79,7 @@ public class User {
     @Column(name = "ativo")
     private Boolean active;
 
-    @ManyToOne
-    @JoinColumn(name = "perfil_usuario")
+
     private int perfil;
 
 

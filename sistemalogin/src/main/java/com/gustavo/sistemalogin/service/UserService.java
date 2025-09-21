@@ -30,8 +30,7 @@ public class UserService implements UserServiceRepository {
 
         PerfilUsuario perfilEnum = userCreateDTO.getPerfil();
 
-        // 2. Busca a entidade 'Role' no banco de dados usando o nome do enum.
-        // O método .name() do enum retorna a string ("ADMINISTRADOR" ou "ASSISTENTE").
+        // Esta linha FALHA porque perfilEnum é null
         Role userRole = roleRepository.findByNome(perfilEnum.name())
                 .orElseThrow(() -> new RuntimeException("Erro: Perfil não encontrado no banco de dados."));
 
@@ -43,10 +42,11 @@ public class UserService implements UserServiceRepository {
         newUser.setActive(userCreateDTO.getAtivo());
 
         // 4. Associa a entidade 'Role' encontrada ao novo usuário.
-        newUser.setPerfil(userRole.getId()); // Supondo que o campo na entidade User se chame 'perfil' e seja do tipo 'Role'
+        newUser.setPerfil(userRole.getId());
 
-        // 5. Salva o novo usuário no banco de dados.
+
         return userRepository.save(newUser);
+
     }
 
     @Override
