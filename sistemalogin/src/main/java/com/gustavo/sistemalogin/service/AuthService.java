@@ -64,7 +64,7 @@ public class AuthService {
         newUser.setSenha(passwordEncoder.encode(userData.getSenha()));
         newUser.setActive(true);
         // Definir um perfil padrão, por exemplo
-        newUser.setPerfilUsuario(1);
+        newUser.setPerfil(1);
         return userRepository.save(newUser);
     }
 
