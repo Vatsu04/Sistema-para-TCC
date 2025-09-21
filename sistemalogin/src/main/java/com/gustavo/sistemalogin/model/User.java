@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
     @Data // Gera automaticamente getters, setters, toString, equals, hashCode
     @NoArgsConstructor // Gera o construtor vazio, essencial para o JPA
     @AllArgsConstructor // Gera um construtor com todos os campos
@@ -14,23 +15,32 @@ import lombok.NoArgsConstructor;
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
+
         private String nome;
-        @Column(unique = true)
         private String email;
         private String senha;
-        private Integer PerfilUsuario;
-        private boolean ativo;
+
+        // VERIFIQUE ESTE NOME! Pode ser 'active' em vez de 'ativo'
+        @Column(name = "ativo") // A anotação @Column diz qual a coluna no banco
+        private Boolean active; // Este é o nome que o JSON precisa usar
+
+        // VERIFIQUE ESTA PARTE! O nome pode ser diferente ou pode ser um objeto
+        @ManyToOne // Indica a relação Muitos-para-Um (muitos usuários para um perfil)
+        @JoinColumn(name = "perfil_usuario") // Coluna que faz a junção
+        private Integer perfil; // Se for um objeto, o JSON espera um objeto ou apenas o ID no campo 'perfil'
 
         public String getSenha() {
             return senha;
         }
 
-        public int getPerfilUsuario() {
-            return PerfilUsuario;
+
+
+        public Integer getPerfilUsuario() {
+            return perfil;
         }
 
         public void setPerfilUsuario(int perfilUsuario) {
-            PerfilUsuario = perfilUsuario;
+            perfil = perfilUsuario;
         }
 
         public void setSenha(String senha) {
@@ -61,12 +71,12 @@ import lombok.NoArgsConstructor;
             this.id = id;
         }
 
-        public boolean isAtivo() {
-            return ativo;
+        public boolean isActive() {
+            return active;
         }
 
-        public void setAtivo(boolean ativo) {
-            this.ativo = ativo;
+        public void setActive(boolean ativo) {
+            this.active = ativo;
         }
     }
 

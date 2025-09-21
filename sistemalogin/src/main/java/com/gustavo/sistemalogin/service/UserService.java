@@ -1,7 +1,10 @@
 package com.gustavo.sistemalogin.service;
 
-import com.gustavo.sistemalogin.dto.UserDTO;
+import com.gustavo.sistemalogin.dto.UserCreateDTO;
+import com.gustavo.sistemalogin.model.Role;
 import com.gustavo.sistemalogin.model.User;
+import com.gustavo.sistemalogin.model.enums.PerfilUsuario;
+import com.gustavo.sistemalogin.repository.RoleRepository;
 import com.gustavo.sistemalogin.repository.UserRepository;
 import com.gustavo.sistemalogin.repository.UserServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Collections;
 
 @Service
@@ -19,23 +21,32 @@ public class UserService implements UserServiceRepository {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public User cadastrarUsuario(UserDTO userDTO) {
+    public User createUser(UserCreateDTO userCreateDTO) {
 
-        if(userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
-            throw new RuntimeException("E-mail já cadastrado!");
-        }
+        PerfilUsuario perfilEnum = userCreateDTO.getPerfil();
 
-        // Cria novo usuário
-        User user = new User();
-        user.setNome(userDTO.getNome());
-        user.setEmail(userDTO.getEmail());
-        // Hash da senha
-        user.setSenha(passwordEncoder.encode(userDTO.getSenha()));
+        // 2. Busca a entidade 'Role' no banco de dados usando o nome do enum.
+        // O método .name() do enum retorna a string ("ADMINISTRADOR" ou "ASSISTENTE").
+        Role userRole = roleRepository.findByNome(perfilEnum.name())
+                .orElseThrow(() -> new RuntimeException("Erro: Perfil não encontrado no banco de dados."));
 
-        // Salva no banco
-        return userRepository.save(user);
+        // 3. Cria a nova entidade User
+        User newUser = new User();
+        newUser.setNome(userCreateDTO.getNome());
+        newUser.setEmail(userCreateDTO.getEmail());
+        newUser.setSenha(passwordEncoder.encode(userCreateDTO.getSenha())); // Lembre-se de codificar a senha
+        newUser.setActive(userCreateDTO.getAtivo());
+
+        // 4. Associa a entidade 'Role' encontrada ao novo usuário.
+        newUser.setPerfil(userRole.getId()); // Supondo que o campo na entidade User se chame 'perfil' e seja do tipo 'Role'
+
+        // 5. Salva o novo usuário no banco de dados.
+        return userRepository.save(newUser);
     }
 
     @Override

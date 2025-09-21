@@ -1,6 +1,6 @@
 package com.gustavo.sistemalogin.service;
 
-import com.gustavo.sistemalogin.dto.UserDTO;
+import com.gustavo.sistemalogin.dto.UserCreateDTO;
 import com.gustavo.sistemalogin.model.User;
 import com.gustavo.sistemalogin.repository.UserRepository;
 import com.gustavo.sistemalogin.security.TokenService;
@@ -54,7 +54,7 @@ public class AuthService {
     /**
      * Registro de novo usuário
      */
-    public User register(UserDTO userData) {
+    public User register(UserCreateDTO userData) {
         if (userRepository.findByEmail(userData.getEmail()).isPresent()) {
             throw new IllegalArgumentException("E-mail já cadastrado!");
         }
@@ -62,7 +62,7 @@ public class AuthService {
         newUser.setNome(userData.getNome());
         newUser.setEmail(userData.getEmail());
         newUser.setSenha(passwordEncoder.encode(userData.getSenha()));
-        newUser.setAtivo(true);
+        newUser.setActive(true);
         // Definir um perfil padrão, por exemplo
         newUser.setPerfilUsuario(1);
         return userRepository.save(newUser);

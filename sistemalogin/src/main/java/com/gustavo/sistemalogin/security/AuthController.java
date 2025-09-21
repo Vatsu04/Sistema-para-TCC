@@ -1,10 +1,9 @@
 package com.gustavo.sistemalogin.security;
 
 import com.gustavo.sistemalogin.dto.LoginDTO;
-import com.gustavo.sistemalogin.dto.UserDTO;
+import com.gustavo.sistemalogin.dto.UserCreateDTO;
 import com.gustavo.sistemalogin.model.User;
 import com.gustavo.sistemalogin.repository.UserRepository;
-import com.gustavo.sistemalogin.security.TokenService;
 import com.gustavo.sistemalogin.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,8 +28,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody UserDTO userDTO) {
-        userService.cadastrarUsuario(userDTO);
+    public ResponseEntity<String> registerUser(@RequestBody UserCreateDTO userCreateDTO) {
+        userService.createUser(userCreateDTO);
         return ResponseEntity.ok("Usuário registrado com sucesso!");
     }
 
