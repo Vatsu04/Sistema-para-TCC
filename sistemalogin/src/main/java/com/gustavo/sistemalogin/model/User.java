@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
         @Column(unique = true)
         private String email;
         private String senha;
-        private int PerfilUsuario;
+        private Integer PerfilUsuario;
         private boolean ativo;
 
         public String getSenha() {
