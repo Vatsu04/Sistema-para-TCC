@@ -1,7 +1,6 @@
 package com.gustavo.sistemalogin.service;
 
 import com.gustavo.sistemalogin.dto.FunilCreateDTO;
-import com.gustavo.sistemalogin.dto.FunilCreateDTO;
 import com.gustavo.sistemalogin.dto.FunilResponseDTO;
 import com.gustavo.sistemalogin.dto.FunilUpdateDTO;
 import com.gustavo.sistemalogin.model.Funil;
@@ -77,5 +76,25 @@ public class FunilService {
             throw new SecurityException("Acesso negado.");
         }
         funilRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<FunilResponseDTO> listarFunisDoUsuario(String username) {
+        return funilRepository.findByUserEmail(username).stream()
+                .map(FunilResponseDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public FunilResponseDTO buscarFunilPorId(Long id, String username) {
+        Funil funil = funilRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Funil não encontrado com o ID: " + id));
+
+        // Validação de segurança: garante que o utilizador só pode aceder aos seus próprios funis.
+        if (!funil.getUser().getEmail().equals(username)) {
+            throw new SecurityException("Acesso negado: Este funil não pertence ao utilizador.");
+        }
+
+        return new FunilResponseDTO(funil);
     }
 }

@@ -1,42 +1,55 @@
 package com.gustavo.sistemalogin.dto;
 
 import com.gustavo.sistemalogin.model.Negocio;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
+/**
+ * DTO para enviar os dados de um Negócio como resposta da API.
+ * Ele "achata" a estrutura, enviando apenas os dados necessários.
+ */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class NegocioResponseDTO {
 
     private Long id;
     private String titulo;
-    private int pipeline_stage;
-    private int id_ornizacao;
     private String etapa;
-
-    // Dados "achatados" das entidades relacionadas
-    private Long pessoaId;
-    private String pessoaNome;
+    private BigDecimal valor;
     private Long funilId;
     private String funilNome;
+    private Long pessoaId;
+    private String pessoaNome;
 
+    /**
+     * Construtor que converte uma entidade Negocio para este DTO.
+     * É aqui que a "magia" da conversão acontece.
+     * @param negocio A entidade vinda do banco de dados.
+     */
     public NegocioResponseDTO(Negocio negocio) {
         this.id = negocio.getId();
         this.titulo = negocio.getTitulo();
-        this.pipeline_stage = negocio.getPipeline_stage();
-        this.id_ornizacao = negocio.getId_ornizacao();
         this.etapa = negocio.getEtapa();
+        this.valor = negocio.getValor();
 
-        if (negocio.getPessoa() != null) {
-            this.pessoaId = negocio.getPessoa().getId();
-            this.pessoaNome = negocio.getPessoa().getNome();
-        }
-
+        // Verifica se o funil não é nulo para evitar NullPointerException
         if (negocio.getFunil() != null) {
             this.funilId = negocio.getFunil().getId();
             this.funilNome = negocio.getFunil().getNome();
         }
+
+        // Verifica se a pessoa não é nula
+        if (negocio.getPessoa() != null) {
+            this.pessoaId = negocio.getPessoa().getId();
+            this.pessoaNome = negocio.getPessoa().getNome();
+        }
+    }
+
+    public NegocioResponseDTO() {
+    }
+
+    public NegocioResponseDTO(Object o) {
     }
 }
+

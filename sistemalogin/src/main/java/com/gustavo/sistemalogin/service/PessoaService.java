@@ -23,6 +23,11 @@ public class PessoaService {
     @Autowired
     private UserRepository userRepository;
 
+
+    public PessoaService(PessoaRepository pessoaRepository, UserRepository userRepository) {
+        this.pessoaRepository = pessoaRepository;
+        this.userRepository = userRepository;
+    }
     /**
      * Cria uma nova Pessoa (contato) associada ao usuário autenticado.
      * @param pessoaDTO DTO com os dados da nova pessoa.
@@ -119,6 +124,25 @@ public class PessoaService {
             throw new SecurityException("Acesso negado: você não pode deletar esta pessoa.");
         }
         pessoaRepository.deleteById(id);
+    }
+    @Transactional(readOnly = true)
+    public List<PessoaResponseDTO> listarPessoasDoUsuario(String username) {
+        return pessoaRepository.findByUserEmail(username).stream()
+                .map(PessoaResponseDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public PessoaResponseDTO buscarPessoaPorId(Long id, String username) {
+        Pessoa pessoa = pessoaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada com o ID: " + id));
+
+        // Validação de segurança: garante que o utilizador só pode aceder aos seus próprios contatos
+        if (!pessoa.getUser().getEmail().equals(username)) {
+            throw new SecurityException("Acesso negado: Este contato não pertence ao utilizador.");
+        }
+
+        return new PessoaResponseDTO(pessoa);
     }
 }
 

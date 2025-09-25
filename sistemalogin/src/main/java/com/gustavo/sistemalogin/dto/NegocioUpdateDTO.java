@@ -2,6 +2,7 @@ package com.gustavo.sistemalogin.dto;
 
 import com.gustavo.sistemalogin.model.Funil;
 import com.gustavo.sistemalogin.model.Pessoa;
+import java.math.BigDecimal;
 
 public class NegocioUpdateDTO {
     private String titulo;
@@ -10,6 +11,11 @@ public class NegocioUpdateDTO {
     private String etapa;
     private Funil funil;
     private Pessoa pessoa;
+    private BigDecimal valor;
+
+    public BigDecimal getValor() {return valor;}
+
+    public void setValor(BigDecimal valor) {this.valor = valor;}
 
     public String getTitulo() {
         return titulo;

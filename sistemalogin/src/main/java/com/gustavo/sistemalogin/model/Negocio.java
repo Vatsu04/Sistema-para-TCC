@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
 
 import java.math.BigDecimal;
 
@@ -24,6 +25,10 @@ public class Negocio {
 
     @Column
     private int pipeline_stage;
+
+    @Column
+    private BigDecimal valor;
+
 
 
     @Column

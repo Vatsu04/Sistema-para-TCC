@@ -2,6 +2,7 @@ package com.gustavo.sistemalogin.service;
 
 import com.gustavo.sistemalogin.dto.NegocioCreateDTO;
 import com.gustavo.sistemalogin.dto.NegocioResponseDTO;
+import com.gustavo.sistemalogin.dto.NegocioUpdateDTO;
 import com.gustavo.sistemalogin.model.Funil;
 import com.gustavo.sistemalogin.model.Negocio;
 import com.gustavo.sistemalogin.model.Pessoa;
@@ -26,6 +27,13 @@ public class NegocioService {
 
     @Autowired
     private PessoaRepository pessoaRepository;
+
+
+    public NegocioService(NegocioRepository negocioRepository, FunilRepository funilRepository, PessoaRepository pessoaRepository) {
+        this.negocioRepository = negocioRepository;
+        this.funilRepository = funilRepository;
+        this.pessoaRepository = pessoaRepository;
+    }
 
     @Transactional
     public NegocioResponseDTO criarNegocio(NegocioCreateDTO negocioDTO, String userEmail) {
@@ -80,6 +88,56 @@ public class NegocioService {
         return negocioRepository.findByFunilId(funilId).stream()
                 .map(NegocioResponseDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<NegocioResponseDTO> listarNegociosDoUsuario(String username) {
+        return negocioRepository.findByFunilUserEmail(username).stream()
+                .map(NegocioResponseDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public NegocioResponseDTO buscarNegocioPorId(Long id, String username) {
+        Negocio negocio = negocioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Negócio não encontrado"));
+        if (!negocio.getFunil().getUser().getEmail().equals(username)) {
+            throw new SecurityException("Acesso negado.");
+        }
+        return new NegocioResponseDTO(negocio);
+    }
+
+    @Transactional
+    public NegocioResponseDTO atualizarNegocio(Long id, NegocioUpdateDTO updateDTO, String username) {
+        Negocio negocio = negocioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Negócio não encontrado"));
+        if (!negocio.getFunil().getUser().getEmail().equals(username)) {
+            throw new SecurityException("Acesso negado.");
+        }
+
+        // Atualiza os campos se eles não forem nulos no DTO
+        if (updateDTO.getTitulo() != null) {
+            negocio.setTitulo(updateDTO.getTitulo());
+        }
+        if (updateDTO.getEtapa() != null) {
+            negocio.setEtapa(updateDTO.getEtapa());
+        }
+        if (updateDTO.getValor() != null) {
+            negocio.setValor(updateDTO.getValor());
+        }
+
+        Negocio negocioAtualizado = negocioRepository.save(negocio);
+        return new NegocioResponseDTO(negocioAtualizado);
+    }
+
+    @Transactional
+    public void deletarNegocio(Long id, String username) {
+        Negocio negocio = negocioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Negócio não encontrado"));
+        if (!negocio.getFunil().getUser().getEmail().equals(username)) {
+            throw new SecurityException("Acesso negado.");
+        }
+        negocioRepository.delete(negocio);
     }
 
     // Você pode adicionar os métodos de atualizar e deletar aqui, seguindo a mesma lógica de validação.
