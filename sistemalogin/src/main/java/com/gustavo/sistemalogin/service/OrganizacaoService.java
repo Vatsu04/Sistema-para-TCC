@@ -36,6 +36,7 @@ public class OrganizacaoService {
         organizacao.setEndereco(dto.getEndereco());
         organizacao.setUser(user);
 
+
         Organizacao savedOrganizacao = organizacaoRepository.save(organizacao);
         return new OrganizacaoResponseDTO(savedOrganizacao);
     }

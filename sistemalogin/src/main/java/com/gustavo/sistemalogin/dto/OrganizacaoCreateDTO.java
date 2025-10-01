@@ -1,9 +1,10 @@
 package com.gustavo.sistemalogin.dto;
 
+import com.gustavo.sistemalogin.model.BaseEntity;
 import com.gustavo.sistemalogin.model.Organizacao;
 
 
-public class OrganizacaoCreateDTO {
+public class OrganizacaoCreateDTO extends BaseEntity {
 
     private String cnpj;
 

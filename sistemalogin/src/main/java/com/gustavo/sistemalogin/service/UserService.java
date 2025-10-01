@@ -42,7 +42,7 @@ public class UserService implements UserServiceRepository {
         newUser.setActive(userCreateDTO.getAtivo());
 
         // 4. Associa a entidade 'Role' encontrada ao novo usuário.
-        newUser.setPerfil(userRole.getId());
+        newUser.setPerfil(Math.toIntExact(userRole.getId()));
 
 
         return userRepository.save(newUser);
