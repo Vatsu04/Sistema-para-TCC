@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Data
-public class NegocioResponseDTO extends BaseEntity {
+public class NegocioResponseDTO {
+    private Long id;
     private String titulo;
     private String etapa;
     private BigDecimal valor;
@@ -18,7 +19,7 @@ public class NegocioResponseDTO extends BaseEntity {
     private String pessoaNome;
 
     public NegocioResponseDTO(Negocio negocio) {
-        this.setId(negocio.getId());
+        this.id = negocio.getId();
         this.titulo = negocio.getTitulo();
         this.etapa = negocio.getEtapa();
         this.valor = negocio.getValor();

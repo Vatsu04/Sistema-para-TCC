@@ -1,9 +1,8 @@
 package com.gustavo.sistemalogin.dto;
 
-import com.gustavo.sistemalogin.model.BaseEntity;
 import com.gustavo.sistemalogin.model.enums.PerfilUsuario;
 
-public class UserUpdateDTO extends BaseEntity {
+public class UserUpdateDTO {
 
     private String senha;
     private Boolean ativo;
