@@ -9,5 +9,5 @@ import java.util.List;
 public interface FunilRepository extends JpaRepository<Funil, Long> {
     List<Funil> findByUserId(Long userId);
 
-    Collection<Object> findByUserEmail(String userEmail);
+    List<Funil> findByUserEmail(String userEmail);
 }

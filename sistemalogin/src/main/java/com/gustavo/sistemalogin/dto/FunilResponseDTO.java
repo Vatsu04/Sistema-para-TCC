@@ -4,6 +4,7 @@ import com.gustavo.sistemalogin.model.Funil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,13 +13,15 @@ import java.util.stream.Collectors;
  * DTO para enviar os dados de um Funil como resposta da API.
  * Este DTO não expõe as entidades completas, garantindo a segurança.
  */
+@NoArgsConstructor
 @Data
-@NoArgsConstructor // Lombok: cria um construtor sem argumentos
 public class FunilResponseDTO {
 
     private Long id;
     private String nome;
     private List<NegocioResponseDTO> negocios;
+
+
 
     /**
      * Construtor que converte uma entidade Funil para este DTO.
@@ -41,7 +44,5 @@ public class FunilResponseDTO {
         }
     }
 
-    public FunilResponseDTO(Object o) {
-    }
 }
 

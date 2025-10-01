@@ -1,12 +1,13 @@
 package com.gustavo.sistemalogin.dto;
 
-import com.gustavo.sistemalogin.model.BaseEntity;
+
 import com.gustavo.sistemalogin.model.Negocio;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 
+import java.math.BigDecimal;
+@NoArgsConstructor
 @Data
 public class NegocioResponseDTO {
     private Long id;
@@ -37,10 +38,6 @@ public class NegocioResponseDTO {
         }
     }
 
-    public NegocioResponseDTO() {
-    }
 
-    public NegocioResponseDTO(Object o) {
-    }
 }
 

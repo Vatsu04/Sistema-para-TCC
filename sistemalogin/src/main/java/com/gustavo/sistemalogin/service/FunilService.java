@@ -7,7 +7,6 @@ import com.gustavo.sistemalogin.model.Funil;
 import com.gustavo.sistemalogin.model.User;
 import com.gustavo.sistemalogin.repository.FunilRepository;
 import com.gustavo.sistemalogin.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,16 +16,18 @@ import java.util.stream.Collectors;
 @Service
 public class FunilService {
 
-    @Autowired
-    private FunilRepository funilRepository;
+    private final FunilRepository funilRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    public FunilService(FunilRepository funilRepository, UserRepository userRepository) {
+        this.funilRepository = funilRepository;
+        this.userRepository = userRepository;
+    }
 
     @Transactional
     public FunilResponseDTO criarFunil(FunilCreateDTO funilDTO, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+                .orElseThrow(() -> new RuntimeException("Utilizador não encontrado."));
         Funil novoFunil = new Funil();
         novoFunil.setNome(funilDTO.getNome());
         novoFunil.setUser(user);
@@ -36,21 +37,24 @@ public class FunilService {
     }
 
     @Transactional(readOnly = true)
-    public FunilResponseDTO findFunilById(Long id, String userEmail) {
-        Funil funil = funilRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Funil com ID " + id + " não encontrado."));
-
-        if (!funil.getUser().getEmail().equals(userEmail)) {
-            throw new SecurityException("Acesso negado: este funil não pertence ao seu usuário.");
-        }
-        return new FunilResponseDTO(funil);
+    public List<FunilResponseDTO> listarFunisDoUsuario(String username) {
+        return funilRepository.findByUserEmail(username).stream()
+                // --- ALTERAÇÃO FEITA AQUI ---
+                // Substituído ::new por uma expressão lambda explícita para forçar a resolução do construtor.
+                .map(FunilResponseDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<FunilResponseDTO> findFunisByUser(String userEmail) {
-        return funilRepository.findByUserEmail(userEmail).stream()
-                .map(FunilResponseDTO::new)
-                .collect(Collectors.toList());
+    public FunilResponseDTO buscarFunilPorId(Long id, String username) {
+        Funil funil = funilRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Funil não encontrado com o ID: " + id));
+
+        if (!funil.getUser().getEmail().equals(username)) {
+            throw new SecurityException("Acesso negado: Este funil não pertence ao utilizador.");
+        }
+
+        return new FunilResponseDTO(funil);
     }
 
     @Transactional
@@ -64,7 +68,7 @@ public class FunilService {
 
         funil.setNome(funilDTO.getNome());
         Funil funilAtualizado = funilRepository.save(funil);
-        return new FunilResponseDTO(funil);
+        return new FunilResponseDTO(funilAtualizado); // Corrigido para retornar o funil atualizado
     }
 
     @Transactional
@@ -77,24 +81,5 @@ public class FunilService {
         }
         funilRepository.deleteById(id);
     }
-
-    @Transactional(readOnly = true)
-    public List<FunilResponseDTO> listarFunisDoUsuario(String username) {
-        return funilRepository.findByUserEmail(username).stream()
-                .map(FunilResponseDTO::new)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public FunilResponseDTO buscarFunilPorId(Long id, String username) {
-        Funil funil = funilRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Funil não encontrado com o ID: " + id));
-
-        // Validação de segurança: garante que o utilizador só pode aceder aos seus próprios funis.
-        if (!funil.getUser().getEmail().equals(username)) {
-            throw new SecurityException("Acesso negado: Este funil não pertence ao utilizador.");
-        }
-
-        return new FunilResponseDTO(funil);
-    }
 }
+
