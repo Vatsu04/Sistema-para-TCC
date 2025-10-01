@@ -37,4 +37,36 @@ public class Funil {
     // 'cascade = CascadeType.ALL' significa que se um funil for apagado, todos os negócios dentro dele também serão.
     @OneToMany(mappedBy = "funil", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Negocio> negocios;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public List<Negocio> getNegocios() {
+        return negocios;
+    }
+
+    public void setNegocios(List<Negocio> negocios) {
+        this.negocios = negocios;
+    }
 }

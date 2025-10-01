@@ -30,6 +30,69 @@ public class Negocio {
     private BigDecimal valor;
 
 
+    public BigDecimal getValor() {
+        return valor;
+    }
+
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
+    }
+
+    public int getId_ornizacao() {
+        return id_ornizacao;
+    }
+
+    public void setId_ornizacao(int id_ornizacao) {
+        this.id_ornizacao = id_ornizacao;
+    }
+
+    public int getPipeline_stage() {
+        return pipeline_stage;
+    }
+
+    public void setPipeline_stage(int pipeline_stage) {
+        this.pipeline_stage = pipeline_stage;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEtapa() {
+        return etapa;
+    }
+
+    public void setEtapa(String etapa) {
+        this.etapa = etapa;
+    }
+
+    public Funil getFunil() {
+        return funil;
+    }
+
+    public void setFunil(Funil funil) {
+        this.funil = funil;
+    }
+
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
+
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
+    }
 
     @Column
     private int id_ornizacao;

@@ -20,7 +20,30 @@ public class Etapa {
     @Column(nullable = false)
     private String nome;
 
-    // --- Relacionamentos ---
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Funil getFunil() {
+        return funil;
+    }
+
+    public void setFunil(Funil funil) {
+        this.funil = funil;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+// --- Relacionamentos ---
 
     // Muitas etapas pertencem a um único funil.
     @ManyToOne(fetch = FetchType.LAZY)
