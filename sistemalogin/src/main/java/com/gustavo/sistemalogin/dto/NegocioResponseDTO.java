@@ -7,10 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-/**
- * DTO para enviar os dados de um Negócio como resposta da API.
- * Ele "achata" a estrutura, enviando apenas os dados necessários.
- */
 @Data
 public class NegocioResponseDTO extends BaseEntity {
     private String titulo;
@@ -21,11 +17,6 @@ public class NegocioResponseDTO extends BaseEntity {
     private Long pessoaId;
     private String pessoaNome;
 
-    /**
-     * Construtor que converte uma entidade Negocio para este DTO.
-     * É aqui que a "magia" da conversão acontece.
-     * @param negocio A entidade vinda do banco de dados.
-     */
     public NegocioResponseDTO(Negocio negocio) {
         this.setId(negocio.getId());
         this.titulo = negocio.getTitulo();
