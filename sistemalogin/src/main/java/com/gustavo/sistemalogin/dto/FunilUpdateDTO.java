@@ -1,22 +1,16 @@
 package com.gustavo.sistemalogin.dto;
 
+import com.gustavo.sistemalogin.model.BaseEntity;
 import com.gustavo.sistemalogin.model.Negocio;
 import com.gustavo.sistemalogin.model.User;
 
 import java.util.List;
 
-public class FunilUpdateDTO {
-    private String nome;
+public class FunilUpdateDTO extends BaseEntity {
+
     private User user;
     private List<Negocio> negocios;
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 
 
     public User getUser() {

@@ -1,23 +1,22 @@
 package com.gustavo.sistemalogin.dto;
 
+import com.gustavo.sistemalogin.model.BaseEntity;
 import com.gustavo.sistemalogin.model.Organizacao;
 import lombok.Data;
 
 @Data
-public class OrganizacaoResponseDTO {
-    private Long id;
-    private String nome;
+public class OrganizacaoResponseDTO extends BaseEntity {
+
     private String cnpj;
-    private String telefone;
-    private String email;
+
     private String endereco;
 
     public OrganizacaoResponseDTO(Organizacao organizacao) {
-        this.id = organizacao.getId();
-        this.nome = organizacao.getNome();
+        this.setId(organizacao.getId());
+        this.setNome(organizacao.getNome());
         this.cnpj = organizacao.getCnpj();
-        this.telefone = organizacao.getTelefone();
-        this.email = organizacao.getEmail();
+        this.setTelefone(organizacao.getTelefone());
+        this.setEmail(organizacao.getEmail());
         this.endereco = organizacao.getEndereco();
     }
 }

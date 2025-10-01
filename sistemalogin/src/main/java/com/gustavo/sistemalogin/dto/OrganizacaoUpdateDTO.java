@@ -1,22 +1,15 @@
 package com.gustavo.sistemalogin.dto;
 
+import com.gustavo.sistemalogin.model.BaseEntity;
 import com.gustavo.sistemalogin.model.Organizacao;
 
 
-public class OrganizacaoUpdateDTO {
-    private String nome;
+public class OrganizacaoUpdateDTO extends BaseEntity {
+
     private String cnpj;
-    private String telefone;
-    private String email;
+
+
     private String endereco;
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 
     public String getCnpj() {
         return cnpj;
@@ -26,21 +19,6 @@ public class OrganizacaoUpdateDTO {
         this.cnpj = cnpj;
     }
 
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getEndereco() {
         return endereco;

@@ -1,5 +1,6 @@
 package com.gustavo.sistemalogin.dto;
 
+import com.gustavo.sistemalogin.model.BaseEntity;
 import com.gustavo.sistemalogin.model.Negocio;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,9 +12,7 @@ import java.math.BigDecimal;
  * Ele "achata" a estrutura, enviando apenas os dados necessários.
  */
 @Data
-public class NegocioResponseDTO {
-
-    private Long id;
+public class NegocioResponseDTO extends BaseEntity {
     private String titulo;
     private String etapa;
     private BigDecimal valor;
@@ -28,7 +27,7 @@ public class NegocioResponseDTO {
      * @param negocio A entidade vinda do banco de dados.
      */
     public NegocioResponseDTO(Negocio negocio) {
-        this.id = negocio.getId();
+        this.setId(negocio.getId());
         this.titulo = negocio.getTitulo();
         this.etapa = negocio.getEtapa();
         this.valor = negocio.getValor();

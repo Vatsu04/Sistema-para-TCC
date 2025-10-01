@@ -1,5 +1,6 @@
 package com.gustavo.sistemalogin.dto;
 
+import com.gustavo.sistemalogin.model.BaseEntity;
 import com.gustavo.sistemalogin.model.Etapa;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,10 +11,8 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor // O Lombok gera o construtor sem argumentos
-public class EtapaResponseDTO {
+public class EtapaResponseDTO extends BaseEntity {
 
-    private Long id;
-    private String nome;
     private Long funilId; // Apenas o ID do funil, para evitar enviar o objeto inteiro
 
     /**
@@ -23,8 +22,8 @@ public class EtapaResponseDTO {
      * @param etapa A entidade Etapa a ser convertida.
      */
     public EtapaResponseDTO(Etapa etapa) {
-        this.id = etapa.getId();
-        this.nome = etapa.getNome();
+        this.setId(etapa.getId());
+        this.setNome(etapa.getNome());
         this.funilId = etapa.getFunil().getId();
     }
 }

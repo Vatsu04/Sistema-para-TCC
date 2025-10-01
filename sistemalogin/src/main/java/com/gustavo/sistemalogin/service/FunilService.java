@@ -64,7 +64,7 @@ public class FunilService {
 
         funil.setNome(funilDTO.getNome());
         Funil funilAtualizado = funilRepository.save(funil);
-        return new FunilResponseDTO(funilAtualizado);
+        return new FunilResponseDTO(funil);
     }
 
     @Transactional

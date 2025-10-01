@@ -10,11 +10,8 @@ import lombok.Setter;
 @Getter
 @Entity
 @Table(name = "roles") // ou "perfis"
-public class Role {
+public class Role extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
 
     @Column(name = "nome", nullable = false, unique = true) // Coluna com os nomes "ADMINISTRADOR", "ASSISTENTE"
     private String nome;

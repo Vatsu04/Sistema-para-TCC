@@ -13,15 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Funil {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    private String nome;
-
+public class Funil extends BaseEntity {
 
 
     // --- Relacionamentos ---
@@ -38,21 +30,7 @@ public class Funil {
     @OneToMany(mappedBy = "funil", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Negocio> negocios;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 
     public User getUser() {
         return user;
