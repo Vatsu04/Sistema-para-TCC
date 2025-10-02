@@ -1,16 +1,16 @@
 package com.gustavo.sistemalogin.dto;
-
-import com.gustavo.sistemalogin.model.BaseEntity;
 import com.gustavo.sistemalogin.model.Funil;
-import jakarta.persistence.Column;
 
-public class EtapaCreateDTO extends BaseEntity {
 
+public class EtapaCreateDTO  {
+
+    private String nome;
     private Funil funil;
-    public EtapaCreateDTO(Long id, String nome) {
-        this.setId(id);
-        this.setNome(nome);
-    }
+
+
+    public String getNome() {return nome;}
+
+    public void setNome(String nome) {this.nome = nome;}
 
     public Funil getFunil() {
         return funil;
