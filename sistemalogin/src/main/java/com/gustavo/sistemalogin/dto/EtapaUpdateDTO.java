@@ -5,8 +5,6 @@ import com.gustavo.sistemalogin.model.Funil;
 
 public class EtapaUpdateDTO {
 
-
-
     private String nome;
     private Funil funil;
 
