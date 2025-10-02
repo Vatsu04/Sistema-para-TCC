@@ -20,6 +20,12 @@ public class EtapaService {
     @Autowired
     private FunilRepository funilRepository;
 
+    // Injeção de dependências via construtor (melhor prática)
+    public EtapaService(EtapaRepository etapaRepository, FunilRepository funilRepository) {
+        this.etapaRepository = etapaRepository;
+        this.funilRepository = funilRepository;
+    }
+
     @Transactional
     public EtapaResponseDTO criarEtapa(EtapaCreateDTO dto, String userEmail) {
         Funil funil = funilRepository.findById(dto.getFunilId(dto.getFunil()))
