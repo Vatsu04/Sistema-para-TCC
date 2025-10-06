@@ -20,29 +20,28 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // Injeção de dependências via construtor (boa prática)
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Cria um novo utilizador com um perfil padrão.
+     */
     public User createUser(UserCreateDTO userCreateDTO) {
-        // Validação de segurança: verifica se o e-mail já existe
-        if (userRepository.findByEmail(userCreateDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Este e-mail já está em uso.");
+        if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
+            throw new IllegalArgumentException("E-mail já cadastrado!");
         }
 
         User newUser = new User();
         newUser.setNome(userCreateDTO.getNome());
         newUser.setEmail(userCreateDTO.getEmail());
-        newUser.setSenha(passwordEncoder.encode(userCreateDTO.getSenha())); // Sempre codificar a senha!
+        newUser.setSenha(passwordEncoder.encode(userCreateDTO.getSenha()));
+        newUser.setAtivo(true); // Define o utilizador como ativo por defeito
 
-        // --- LÓGICA DE SEGURANÇA E CORREÇÃO DO ERRO ---
-        // 1. O servidor define o usuário como ativo por padrão.
-        newUser.setAtivo(true);
-        // 2. O servidor atribui um perfil padrão. O cliente nunca deve decidir isso.
+        // --- LÓGICA CORRIGIDA ---
+        // Atribui o perfil padrão (ASSISTENTE) diretamente no servidor.
         newUser.setPerfil(PerfilUsuario.ASSISTENTE);
-        // ------------------------------------------------
 
         return userRepository.save(newUser);
     }
