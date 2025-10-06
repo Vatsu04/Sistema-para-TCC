@@ -1,23 +1,18 @@
 package com.gustavo.sistemalogin.model.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum PerfilUsuario {
-    ADMINISTRADOR(1, "Perfil de Administrador do Sistema"),
-    ASSISTENTE(2, "Perfil de Assistente com acesso limitado");
+    ADMINISTRADOR(1, "ROLE_ADMINISTRADOR"),
+    ASSISTENTE(2, "ROLE_ASSISTENTE");
 
-    private int cod;
-    private String descricao;
+    private final int cod;
+    private final String descricao;
 
-    private PerfilUsuario(int cod, String descricao) {
+    PerfilUsuario(int cod, String descricao) {
         this.cod = cod;
         this.descricao = descricao;
-    }
-
-    public int getCod() {
-        return cod;
-    }
-
-    public String getDescricao() {
-        return descricao;
     }
 
     public static PerfilUsuario toEnum(Integer cod) {
@@ -29,6 +24,6 @@ public enum PerfilUsuario {
                 return x;
             }
         }
-        throw new IllegalArgumentException("Id inválido: " + cod);
+        throw new IllegalArgumentException("Código de perfil inválido: " + cod);
     }
 }

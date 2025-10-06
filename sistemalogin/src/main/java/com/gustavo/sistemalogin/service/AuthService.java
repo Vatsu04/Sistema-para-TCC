@@ -2,6 +2,7 @@ package com.gustavo.sistemalogin.service;
 
 import com.gustavo.sistemalogin.dto.UserCreateDTO;
 import com.gustavo.sistemalogin.model.User;
+import com.gustavo.sistemalogin.model.enums.PerfilUsuario;
 import com.gustavo.sistemalogin.repository.UserRepository;
 import com.gustavo.sistemalogin.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,9 +63,8 @@ public class AuthService {
         newUser.setNome(userData.getNome());
         newUser.setEmail(userData.getEmail());
         newUser.setSenha(passwordEncoder.encode(userData.getSenha()));
-        newUser.setActive(true);
-        // Definir um perfil padrão, por exemplo
-        newUser.setPerfil(1);
+        newUser.setAtivo(true);
+        newUser.setPerfil(userData.getPerfil());
         return userRepository.save(newUser);
     }
 

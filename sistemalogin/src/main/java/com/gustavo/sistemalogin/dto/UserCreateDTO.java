@@ -1,54 +1,19 @@
 package com.gustavo.sistemalogin.dto;
 
-import com.gustavo.sistemalogin.model.enums.PerfilUsuario;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
+@Data
 public class UserCreateDTO {
 
+    @NotBlank(message = "O nome não pode ser vazio.")
     private String nome;
+
+    @Email(message = "O email deve ser válido.")
+    @NotBlank(message = "O email não pode ser vazio.")
     private String email;
+
+    @NotBlank(message = "A senha não pode ser vazia.")
     private String senha;
-    private Boolean ativo;
-
-    private PerfilUsuario perfil;
-
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public Boolean getAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
-    }
-
-    public PerfilUsuario getPerfil() {
-        return perfil;
-    }
-
-    public void setPerfil(PerfilUsuario perfil) {
-        this.perfil = perfil;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
 }

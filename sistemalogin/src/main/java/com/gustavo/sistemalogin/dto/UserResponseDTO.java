@@ -15,7 +15,7 @@ public class UserResponseDTO {
     private String nome;
     private String email;
     private boolean ativo;
-    private String perfil; // Enviamos a descrição do perfil, que é mais útil para o front-end
+    private PerfilUsuario perfil; // Enviamos a descrição do perfil, que é mais útil para o front-end
 
     /**
      * Construtor que converte uma entidade User para este DTO.
@@ -28,7 +28,7 @@ public class UserResponseDTO {
         this.ativo = user.isAtivo();
         // --- LÓGICA CORRIGIDA AQUI ---
         // 1. Obtém o código numérico do perfil do objeto User.
-        Integer perfilCod = user.getPerfil();
+        PerfilUsuario perfilCod = user.getPerfil();
 
         // 2. Converte o código para o objeto Enum correspondente.
         PerfilUsuario perfilEnum = PerfilUsuario.toEnum(perfilCod);
@@ -36,9 +36,9 @@ public class UserResponseDTO {
         // 3. Obtém a descrição do Enum e atribui ao campo do DTO.
         //    (Verifica se não é nulo para segurança extra).
         if (perfilEnum != null) {
-            this.perfil = perfilEnum.getDescricao();
+            user.setPerfil(PerfilUsuario.toEnum(perfilCod));
         } else {
-            this.perfil = "PERFIL INVÁLIDO";
+            System.out.println("PERFIL INVÁLIDO");
         }
     }
 }
