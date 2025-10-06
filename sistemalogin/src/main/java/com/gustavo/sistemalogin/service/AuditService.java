@@ -6,6 +6,7 @@ import com.gustavo.sistemalogin.repository.AuditLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class AuditService {
      * Registra uma ação de auditoria
      */
     public void registerAudit(User usuario, String acao, String detalhes) {
-        AuditLog audit = new AuditLog(usuario, acao, LocalDateTime.now(), detalhes);
+        AuditLog audit = new AuditLog(usuario, acao, LocalDate.now(), detalhes);
         auditLogRepository.save(audit);
     }
 

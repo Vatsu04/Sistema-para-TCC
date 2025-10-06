@@ -1,34 +1,65 @@
 package com.gustavo.sistemalogin.service;
 
-import com.gustavo.sistemalogin.dto.UserDTO;
+import com.gustavo.sistemalogin.dto.UserCreateDTO;
 import com.gustavo.sistemalogin.model.User;
+import com.gustavo.sistemalogin.model.enums.PerfilUsuario;
 import com.gustavo.sistemalogin.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
-    public User cadastrarUsuario(UserDTO userDTO) {
-        // Verifica se o e-mail já existe
-        if(userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
-            throw new RuntimeException("E-mail já cadastrado!");
+    /**
+     * Cria um novo utilizador com um perfil padrão.
+     */
+    public User createUser(UserCreateDTO userCreateDTO) {
+        if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
+            throw new IllegalArgumentException("E-mail já cadastrado!");
         }
 
-        // Cria novo usuário
-        User user = new User();
-        user.setNome(userDTO.getNome());
-        user.setEmail(userDTO.getEmail());
-        // Hash da senha
-        user.setSenha(passwordEncoder.encode(userDTO.getSenha()));
+        User newUser = new User();
+        newUser.setNome(userCreateDTO.getNome());
+        newUser.setEmail(userCreateDTO.getEmail());
+        newUser.setSenha(passwordEncoder.encode(userCreateDTO.getSenha()));
+        newUser.setAtivo(true); // Define o utilizador como ativo por defeito
 
-        // Salva no banco
-        return userRepository.save(user);
+        // --- LÓGICA CORRIGIDA ---
+        // Atribui o perfil padrão (ASSISTENTE) diretamente no servidor.
+        newUser.setPerfil(PerfilUsuario.ASSISTENTE);
+
+        return userRepository.save(newUser);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Utilizador não encontrado com o email: " + username));
+
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        if (user.getPerfil() != null) {
+            authorities.add(new SimpleGrantedAuthority(user.getPerfil().getDescricao()));
+        }
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getSenha(),
+                authorities
+        );
     }
 }
