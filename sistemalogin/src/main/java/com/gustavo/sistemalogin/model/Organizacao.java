@@ -21,6 +21,16 @@ public class Organizacao extends BaseEntity {
     @Column
     private String endereco;
 
+    @Column
+    private String telefone;
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
 
     public String getCnpj() {
         return cnpj;
@@ -53,4 +63,6 @@ public class Organizacao extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore // Evita que os dados do usuário venham junto com a organização
     private User user;
+
+
 }
