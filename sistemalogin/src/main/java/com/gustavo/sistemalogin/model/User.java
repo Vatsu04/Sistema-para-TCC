@@ -1,65 +1,44 @@
 package com.gustavo.sistemalogin.model;
 
+import com.gustavo.sistemalogin.model.enums.PerfilUsuario;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    @Entity
-    public class User {
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
-        private String nome;
-        @Column(unique = true)
-        private String email;
-        private String senha;
-        private int PerfilUsuario;
-        private boolean ativo;
+@Entity
+@Table(name = "users")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
 
-        public String getSenha() {
-            return senha;
-        }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-        public int getPerfilUsuario() {
-            return PerfilUsuario;
-        }
+    @Column(nullable = false)
+    private String nome;
 
-        public void setPerfilUsuario(int perfilUsuario) {
-            PerfilUsuario = perfilUsuario;
-        }
+    @Column(unique = true, nullable = false)
+    private String email;
 
-        public void setSenha(String senha) {
-            this.senha = senha;
-        }
+    @Column(nullable = false)
+    private String senha;
 
-        public String getEmail() {
-            return email;
-        }
+    @Column(nullable = false)
+    private boolean ativo;
 
-        public void setEmail(String email) {
-            this.email = email;
-        }
+    @Column(name = "perfil")
+    private Integer perfil;
 
-        public String getNome() {
-            return nome;
-        }
-
-        public void setNome(String nome) {
-            this.nome = nome;
-        }
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        public boolean isAtivo() {
-            return ativo;
-        }
-
-        public void setAtivo(boolean ativo) {
-            this.ativo = ativo;
-        }
+    public PerfilUsuario getPerfil() {
+        return PerfilUsuario.toEnum(this.perfil);
     }
 
+    public void setPerfil(PerfilUsuario perfil) {
+        if (perfil != null) {
+            this.perfil = perfil.getCod();
+        }
+    }
+}
