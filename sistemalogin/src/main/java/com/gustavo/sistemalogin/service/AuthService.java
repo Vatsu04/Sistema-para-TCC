@@ -64,7 +64,6 @@ public class AuthService {
         newUser.setEmail(userData.getEmail());
         newUser.setSenha(passwordEncoder.encode(userData.getSenha()));
         newUser.setAtivo(true);
-        newUser.setPerfil(userData.getPerfil());
         return userRepository.save(newUser);
     }
 
