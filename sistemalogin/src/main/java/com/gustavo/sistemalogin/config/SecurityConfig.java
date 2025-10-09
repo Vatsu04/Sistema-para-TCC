@@ -38,6 +38,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Permite acesso público e sem autenticação a todas as rotas que começam com /api/auth/
                         .requestMatchers("/api/auth/**").permitAll()
+
+                        .requestMatchers("/api/pessoas/**").authenticated()
+                        .requestMatchers("/api/funis/**").authenticated()
+                        .requestMatchers("/api/negocios/**").authenticated()
                         // Exige que qualquer outra requisição seja autenticada
                         .anyRequest().authenticated()
                 )
