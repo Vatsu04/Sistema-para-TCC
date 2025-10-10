@@ -7,12 +7,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 @EnableWebSecurity
@@ -27,26 +25,28 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Desabilita o CSRF (Cross-Site Request Forgery)
                 .csrf(csrf -> csrf.disable())
-
-                // 2. Define a política de sessão como STATELESS (sem estado)
-                // Essencial para APIs JWT, para não criar cookies de sessão (JSESSIONID)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                // 3. Configura as regras de autorização para os endpoints HTTP
                 .authorizeHttpRequests(auth -> auth
-                        // Permite acesso público e sem autenticação a todas as rotas que começam com /api/auth/
+                        // Permite acesso público a todas as rotas de autenticação
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        .requestMatchers("/api/pessoas/**").authenticated()
+                        // --- REGRAS REFINADAS AQUI ---
+                        // Para Pessoas, permite qualquer método (GET, POST, etc.) se autenticado
+                        .requestMatchers(HttpMethod.GET, "/api/pessoas", "/api/pessoas/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/pessoas").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/pessoas/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/pessoas/**").authenticated()
+
+                        // Para Funis, permite qualquer método se autenticado
                         .requestMatchers("/api/funis/**").authenticated()
+
+                        // Adicione regras para negócios aqui...
                         .requestMatchers("/api/negocios/**").authenticated()
 
                         // Exige que qualquer outra requisição seja autenticada
                         .anyRequest().authenticated()
                 )
-                // 4. Adiciona o nosso filtro de JWT para ser executado antes do filtro padrão de autenticação
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

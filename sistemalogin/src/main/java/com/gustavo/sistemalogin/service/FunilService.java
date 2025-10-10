@@ -29,7 +29,11 @@ public class FunilService {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("Utilizador não encontrado."));
         Funil novoFunil = new Funil();
+
+        // --- LÓGICA CORRIGIDA ---
         novoFunil.setNome(funilDTO.getNome());
+        novoFunil.setEmail(funilDTO.getEmail()); // Adicionado
+        novoFunil.setTelefone(funilDTO.getTelefone()); // Adicionado
         novoFunil.setUser(user);
 
         Funil funilSalvo = funilRepository.save(novoFunil);
@@ -66,9 +70,13 @@ public class FunilService {
             throw new SecurityException("Acesso negado.");
         }
 
+        // --- LÓGICA CORRIGIDA ---
         funil.setNome(funilDTO.getNome());
+        funil.setEmail(funilDTO.getEmail()); // Adicionado
+        funil.setTelefone(funilDTO.getTelefone()); // Adicionado
+
         Funil funilAtualizado = funilRepository.save(funil);
-        return new FunilResponseDTO(funilAtualizado); // Corrigido para retornar o funil atualizado
+        return new FunilResponseDTO(funilAtualizado);
     }
 
     @Transactional
