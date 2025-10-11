@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.HashMap;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -30,7 +31,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody UserCreateDTO userCreateDTO) {
+    public ResponseEntity<String> registerUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
         userService.createUser(userCreateDTO);
         return ResponseEntity.ok("Usuário registrado com sucesso!");
     }
