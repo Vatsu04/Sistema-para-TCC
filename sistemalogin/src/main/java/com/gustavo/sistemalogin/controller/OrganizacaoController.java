@@ -19,7 +19,7 @@ public class OrganizacaoController {
     private OrganizacaoService organizacaoService;
 
     @PostMapping
-    public ResponseEntity<OrganizacaoResponseDTO> criarOrganizacao(OrganizacaoCreateDTO dto, Authentication authentication) {
+    public ResponseEntity<OrganizacaoResponseDTO> criarOrganizacao(@RequestBody OrganizacaoCreateDTO dto, Authentication authentication) {
         String userEmail = authentication.getName();
         OrganizacaoResponseDTO response = organizacaoService.criarOrganizacao(dto, userEmail);
         return ResponseEntity.ok(response);

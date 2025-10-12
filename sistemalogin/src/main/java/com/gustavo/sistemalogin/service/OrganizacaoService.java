@@ -34,11 +34,13 @@ public class OrganizacaoService {
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         Organizacao organizacao = new Organizacao();
+
         organizacao.setNome(dto.getNome());
         organizacao.setCnpj(dto.getCnpj());
         organizacao.setTelefone(dto.getTelefone());
         organizacao.setEmail(dto.getEmail());
         organizacao.setEndereco(dto.getEndereco());
+
         organizacao.setUser(user);
 
 

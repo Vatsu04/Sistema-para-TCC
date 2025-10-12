@@ -5,6 +5,9 @@ package com.gustavo.sistemalogin.dto;
 
 public class OrganizacaoUpdateDTO {
 
+    private String cnpj;
+
+    private String endereco;
 
     private String nome;
 
@@ -36,10 +39,6 @@ public class OrganizacaoUpdateDTO {
         this.email = email;
     }
 
-    private String cnpj;
-
-    private String endereco;
-
     public String getCnpj() {
         return cnpj;
     }
@@ -47,7 +46,6 @@ public class OrganizacaoUpdateDTO {
     public void setCnpj(String cnpj) {
         this.cnpj = cnpj;
     }
-
 
     public String getEndereco() {
         return endereco;

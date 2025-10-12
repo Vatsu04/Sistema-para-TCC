@@ -1,18 +1,19 @@
 package com.gustavo.sistemalogin.dto;
 
-import com.gustavo.sistemalogin.model.BaseEntity;
-import com.gustavo.sistemalogin.model.Organizacao;
-
+import jakarta.validation.constraints.NotBlank;
 
 public class OrganizacaoCreateDTO  {
 
     private String cnpj;
 
+    @NotBlank(message = "O nome não pode ser vazio.")
     private String nome;
 
     private String telefone;
 
     private String email;
+
+    private String endereco;
 
     public String getTelefone() {
         return telefone;
@@ -37,8 +38,6 @@ public class OrganizacaoCreateDTO  {
     public void setNome(String nome) {
         this.nome = nome;
     }
-
-    private String endereco;
 
     public String getCnpj() {
         return cnpj;
