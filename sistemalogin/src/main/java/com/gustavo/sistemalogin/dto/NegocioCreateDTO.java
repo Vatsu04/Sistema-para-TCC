@@ -1,61 +1,47 @@
 package com.gustavo.sistemalogin.dto;
 
-import com.gustavo.sistemalogin.model.Funil;
-import com.gustavo.sistemalogin.model.Pessoa;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class NegocioCreateDTO {
+
+    @NotBlank(message = "O título é obrigatório.")
     private String titulo;
-    private int pipeline_stage;
-    private int id_organizacao;
+
+    @NotBlank(message = "A etapa do negócio é obrigatória.")
     private String etapa;
-    private Funil funil;
-    private Pessoa pessoa;
 
-    public String getTitulo() {
-        return titulo;
-    }
+    @NotNull(message = "O valor é obrigatório.")
+    @Positive(message = "O valor deve ser positivo.")
+    private BigDecimal valor;
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
+    private LocalDate data_de_fechamento;
 
-    public int getPipeline_stage() {
-        return pipeline_stage;
-    }
+    @NotNull(message = "O ID do funil é obrigatório.")
+    private Long funilId;
 
-    public void setPipeline_stage(int pipeline_stage) {
-        this.pipeline_stage = pipeline_stage;
-    }
+    @NotNull(message = "O ID da pessoa (contato) é obrigatório.")
+    private Long pessoaId;
 
-    public int getId_organizacao() {
-        return id_organizacao;
-    }
+    @NotNull(message = "O ID da organização é obrigatório.")
+    private Long organizacaoId;
 
-    public void setId_organizacao(int id_organizacao) {
-        this.id_organizacao = id_organizacao;
-    }
-
-    public String getEtapa() {
-        return etapa;
-    }
-
-    public void setEtapa(String etapa) {
-        this.etapa = etapa;
-    }
-
-    public Funil getFunil() {
-        return funil;
-    }
-
-    public void setFunil(Funil funil) {
-        this.funil = funil;
-    }
-
-    public Pessoa getPessoa() {
-        return pessoa;
-    }
-
-    public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
-    }
+    // Getters e Setters
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
+    public String getEtapa() { return etapa; }
+    public void setEtapa(String etapa) { this.etapa = etapa; }
+    public BigDecimal getValor() { return valor; }
+    public void setValor(BigDecimal valor) { this.valor = valor; }
+    public LocalDate getData_de_fechamento() { return data_de_fechamento; }
+    public void setData_de_fechamento(LocalDate data_de_fechamento) { this.data_de_fechamento = data_de_fechamento; }
+    public Long getFunilId() { return funilId; }
+    public void setFunilId(Long funilId) { this.funilId = funilId; }
+    public Long getPessoaId() { return pessoaId; }
+    public void setPessoaId(Long pessoaId) { this.pessoaId = pessoaId; }
+    public Long getOrganizacaoId() { return organizacaoId; }
+    public void setOrganizacaoId(Long organizacaoId) { this.organizacaoId = organizacaoId; }
 }
