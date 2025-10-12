@@ -23,6 +23,11 @@ public class OrganizacaoService {
     @Autowired
     private UserRepository userRepository;
 
+    public OrganizacaoService(OrganizacaoRepository organizacaoRepository, UserRepository userRepository) {
+        this.organizacaoRepository = organizacaoRepository;
+        this.userRepository = userRepository;
+    }
+
     @Transactional
     public OrganizacaoResponseDTO criarOrganizacao(OrganizacaoCreateDTO dto, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
