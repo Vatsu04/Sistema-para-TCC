@@ -57,7 +57,7 @@ public class NegocioService {
         novoNegocio.setTitulo(dto.getTitulo());
         novoNegocio.setValor(dto.getValor());
         novoNegocio.setEtapa(dto.getEtapa());
-        novoNegocio.setDataDeAbertura(LocalDate.now()); 
+        novoNegocio.setDataDeAbertura(LocalDate.now());
         novoNegocio.setData_de_fechamento(dto.getData_de_fechamento());
         novoNegocio.setFunil(funil);
         novoNegocio.setPessoa(pessoa);

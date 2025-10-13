@@ -43,8 +43,6 @@ public class FunilService {
     @Transactional(readOnly = true)
     public List<FunilResponseDTO> listarFunisDoUsuario(String username) {
         return funilRepository.findByUserEmail(username).stream()
-                // --- ALTERAÇÃO FEITA AQUI ---
-                // Substituído ::new por uma expressão lambda explícita para forçar a resolução do construtor.
                 .map(FunilResponseDTO::new)
                 .collect(Collectors.toList());
     }
@@ -70,10 +68,10 @@ public class FunilService {
             throw new SecurityException("Acesso negado.");
         }
 
-        // --- LÓGICA CORRIGIDA ---
+
         funil.setNome(funilDTO.getNome());
-        funil.setEmail(funilDTO.getEmail()); // Adicionado
-        funil.setTelefone(funilDTO.getTelefone()); // Adicionado
+        funil.setEmail(funilDTO.getEmail());
+        funil.setTelefone(funilDTO.getTelefone());
 
         Funil funilAtualizado = funilRepository.save(funil);
         return new FunilResponseDTO(funilAtualizado);
