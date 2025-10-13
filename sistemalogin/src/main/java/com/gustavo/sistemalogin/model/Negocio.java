@@ -26,6 +26,9 @@ public class Negocio { // <-- NÃO herda mais de BaseEntity
     @Column(nullable = false)
     private String etapa;
 
+    @Column(name = "data_de_abertura", nullable = false, updatable = false)
+    private LocalDate dataDeAbertura;
+
     private LocalDate data_de_fechamento;
 
     @ManyToOne(fetch = FetchType.LAZY)
