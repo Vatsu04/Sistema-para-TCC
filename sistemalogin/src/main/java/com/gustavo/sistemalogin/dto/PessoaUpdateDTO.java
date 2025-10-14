@@ -1,16 +1,25 @@
 package com.gustavo.sistemalogin.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDate;
 
 public class PessoaUpdateDTO  {
 
 
+    @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres.")
     private String nome;
+
+    @Email(message = "O formato do e-mail é inválido.")
     private String email;
+
     private String telefone;
+
     private String cpf;
+
     private String rg;
-    private LocalDate data_de_nascimento;
 
 
     public String getNome() {
@@ -51,14 +60,6 @@ public class PessoaUpdateDTO  {
 
     public void setRg(String rg) {
         this.rg = rg;
-    }
-
-    public LocalDate getData_de_nascimento() {
-        return data_de_nascimento;
-    }
-
-    public void setData_de_nascimento(LocalDate data_de_nascimento) {
-        this.data_de_nascimento = data_de_nascimento;
     }
 
 }

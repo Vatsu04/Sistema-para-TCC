@@ -2,17 +2,33 @@ package com.gustavo.sistemalogin.dto;
 
 
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDate;
 
 public class PessoaCreateDTO  {
 
-
-
+    @NotBlank(message = "O nome é obrigatório.")
+    @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres.")
     private String nome;
+
+    @NotBlank(message = "O e-mail é obrigatório.")
+    @Email(message = "O formato do e-mail é inválido.")
     private String email;
+
+    @NotBlank(message = "O telefone é obrigatório.")
     private String telefone;
+
+    @NotBlank(message = "O CPF é obrigatório.")
+    // Você pode adicionar uma validação de CPF customizada aqui no futuro (@CPF)
     private String cpf;
+
     private String rg;
+
+    @Past(message = "A data de nascimento deve ser no passado.")
     private LocalDate data_de_nascimento;
 
 
