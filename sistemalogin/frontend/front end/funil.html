@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Funil - FastCRM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/style-funil.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <a href="dashboard.html" class="sidebar-logo">F</a>
+        </aside>
+
+        <div class="main-content">
+            <header class="app-header">
+                <h1>Negócios</h1>
+                <div class="user-profile">A</div>
+            </header>
+
+            <main class="funnel-editor-container">
+                <div class="funnel-editor-header">
+                    <div class="form-group">
+                        <label for="funnel-name">Nome do funil</label>
+                        <input type="text" id="funnel-name" value="Novo funil">
+                    </div>
+                    <div class="action-buttons">
+                        <a href="dashboard.html" class="btn btn-cancel">Cancelar</a>
+                        <button class="btn btn-save">Salvar alterações</button>
+                    </div>
+                </div>
+
+                <div class="stages-container" id="stages-container">
+                    <div class="stage-column">
+                        <h3 class="stage-title">Etapa 1</h3>
+                        <div class="stage-card">
+                            <div class="form-group">
+                                <label for="stage-name-1">Nome</label>
+                                <input type="text" id="stage-name-1" value="Etapa 1">
+                            </div>
+                            <button class="delete-stage-btn"><i class="fa-solid fa-trash-can"></i> Excluir etapa</button>
+                        </div>
+                    </div>
+
+                    <div class="stage-column">
+                        <h3 class="stage-title">Bora bill</h3>
+                        <div class="stage-card">
+                            <div class="form-group">
+                                <label for="stage-name-2">Nome</label>
+                                <input type="text" id="stage-name-2" value="Bora Bill">
+                            </div>
+                            <button class="delete-stage-btn"><i class="fa-solid fa-trash-can"></i> Excluir etapa</button>
+                        </div>
+                    </div>
+
+                    <div class="stage-column add-stage-column">
+                        <div class="add-stage-card" id="add-stage-card-button">
+                            <h2>Adicionar nova etapa</h2>
+                            <p>As etapas do funil representam os passos em seu processo</p>
+                            <button class="btn-new-stage"><i class="fa-solid fa-plus"></i> Nova etapa</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="js/funil-script.js"></script>
+</body>
+</html>
