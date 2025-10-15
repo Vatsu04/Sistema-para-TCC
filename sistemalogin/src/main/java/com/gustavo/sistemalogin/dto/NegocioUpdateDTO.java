@@ -1,6 +1,5 @@
 package com.gustavo.sistemalogin.dto;
 
-import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -13,7 +12,7 @@ public class NegocioUpdateDTO {
     private Long etapaId;
     private Long funilId;
     private Long pessoaId;
-    private Long organizacaoId;
+    private String organizacao;
 
     public String getTitulo() {
         return titulo;
@@ -63,11 +62,11 @@ public class NegocioUpdateDTO {
         this.pessoaId = pessoaId;
     }
 
-    public Long getOrganizacaoId() {
-        return organizacaoId;
+    public String getOrganizacao() {
+        return organizacao;
     }
 
-    public void setOrganizacaoId(Long organizacaoId) {
-        this.organizacaoId = organizacaoId;
+    public void setOrganizacao(String organizacao) {
+        this.organizacao = organizacao;
     }
 }

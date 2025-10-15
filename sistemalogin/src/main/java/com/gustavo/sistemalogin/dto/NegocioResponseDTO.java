@@ -14,16 +14,15 @@ public class NegocioResponseDTO {
     private BigDecimal valor;
     private LocalDate dataDeAbertura;
     private LocalDate dataDeFechamento;
+    private String organizacao;
 
-    // Informações das entidades relacionadas
     private Long etapaId;
     private String etapaNome;
     private Long funilId;
     private String funilNome;
     private Long pessoaId;
     private String pessoaNome;
-    private Long organizacaoId;
-    private String organizacaoNome;
+
 
     public NegocioResponseDTO(Negocio negocio) {
         this.id = negocio.getId();
@@ -31,6 +30,7 @@ public class NegocioResponseDTO {
         this.valor = negocio.getValor();
         this.dataDeAbertura = negocio.getDataDeAbertura();
         this.dataDeFechamento = negocio.getDataDeFechamento();
+        this.organizacao = negocio.getOrganizacao();
 
         if (negocio.getEtapa() != null) {
             this.etapaId = negocio.getEtapa().getId();
@@ -44,9 +44,6 @@ public class NegocioResponseDTO {
             this.pessoaId = negocio.getPessoa().getId();
             this.pessoaNome = negocio.getPessoa().getNome();
         }
-        if (negocio.getOrganizacao() != null) {
-            this.organizacaoId = negocio.getOrganizacao().getId();
-            this.organizacaoNome = negocio.getOrganizacao().getNome();
-        }
+
     }
 }

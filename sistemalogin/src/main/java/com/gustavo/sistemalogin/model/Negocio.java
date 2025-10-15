@@ -29,7 +29,9 @@ public class Negocio {
     @Column(name = "data_de_fechamento")
     private LocalDate dataDeFechamento;
 
-    // --- Relacionamentos Corrigidos ---
+    @Column(name = "organizacao")
+    private String organizacao; // Agora é uma String
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "etapa_id", nullable = false) // Mapeia para a nova coluna de FK
@@ -46,8 +48,5 @@ public class Negocio {
     @JsonIgnore
     private Pessoa pessoa;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "organizacao_id", nullable = false)
-    @JsonIgnore
-    private Organizacao organizacao;
+
 }

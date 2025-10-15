@@ -24,8 +24,16 @@ public class NegocioCreateDTO {
     @NotNull(message = "O ID da pessoa (contato) é obrigatório.")
     private Long pessoaId;
 
-    @NotNull(message = "O ID da organização é obrigatório.")
-    private Long organizacaoId;
+    @NotNull(message = "O campo organização é obrigatório.")
+    private String organizacao; // Substitui o organizacaoId
+
+    public String getOrganizacao() {
+        return organizacao;
+    }
+
+    public void setOrganizacao(String organizacao) {
+        this.organizacao = organizacao;
+    }
 
     public String getTitulo() {
         return titulo;
@@ -75,11 +83,4 @@ public class NegocioCreateDTO {
         this.pessoaId = pessoaId;
     }
 
-    public Long getOrganizacaoId() {
-        return organizacaoId;
-    }
-
-    public void setOrganizacaoId(Long organizacaoId) {
-        this.organizacaoId = organizacaoId;
-    }
 }

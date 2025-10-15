@@ -17,16 +17,14 @@ public class NegocioService {
     private final NegocioRepository negocioRepository;
     private final FunilRepository funilRepository;
     private final PessoaRepository pessoaRepository;
-    private final OrganizacaoRepository organizacaoRepository;
     private final EtapaRepository etapaRepository; // Repositório necessário
 
     public NegocioService(NegocioRepository negocioRepository, FunilRepository funilRepository,
-                          PessoaRepository pessoaRepository, OrganizacaoRepository organizacaoRepository,
+                          PessoaRepository pessoaRepository,
                           EtapaRepository etapaRepository) {
         this.negocioRepository = negocioRepository;
         this.funilRepository = funilRepository;
         this.pessoaRepository = pessoaRepository;
-        this.organizacaoRepository = organizacaoRepository;
         this.etapaRepository = etapaRepository;
     }
 
@@ -40,10 +38,6 @@ public class NegocioService {
         Pessoa pessoa = pessoaRepository.findById(dto.getPessoaId())
                 .filter(p -> p.getUser().getEmail().equals(userEmail))
                 .orElseThrow(() -> new SecurityException("Pessoa não encontrada ou não pertence ao usuário."));
-
-        Organizacao organizacao = organizacaoRepository.findById(dto.getOrganizacaoId())
-                .filter(o -> o.getUser().getEmail().equals(userEmail))
-                .orElseThrow(() -> new SecurityException("Organização não encontrada ou não pertence ao usuário."));
 
         Etapa etapa = etapaRepository.findById(dto.getEtapaId())
                 .orElseThrow(() -> new RuntimeException("Etapa não encontrada."));
@@ -61,7 +55,6 @@ public class NegocioService {
         novoNegocio.setEtapa(etapa);
         novoNegocio.setFunil(funil);
         novoNegocio.setPessoa(pessoa);
-        novoNegocio.setOrganizacao(organizacao);
 
         Negocio negocioSalvo = negocioRepository.save(novoNegocio);
         return new NegocioResponseDTO(negocioSalvo);
