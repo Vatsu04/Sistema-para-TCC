@@ -7,16 +7,16 @@ import java.time.LocalDate;
 public class NegocioCreateDTO {
 
     @NotBlank(message = "O título é obrigatório.")
-    private String titulo;
+    private String titulo; // Corrigido de 'nome' para 'titulo'
 
     @NotNull(message = "O valor é obrigatório.")
     @Positive(message = "O valor deve ser positivo.")
     private BigDecimal valor;
 
-    @NotBlank(message = "A etapa do negócio é obrigatória.")
-    private String etapa;
-
     private LocalDate data_de_fechamento;
+
+    @NotNull(message = "O ID da etapa é obrigatório.")
+    private Long etapaId; // Corrigido de 'etapa' para 'etapaId'
 
     @NotNull(message = "O ID do funil é obrigatório.")
     private Long funilId;
@@ -31,12 +31,40 @@ public class NegocioCreateDTO {
         return titulo;
     }
 
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public BigDecimal getValor() {
+        return valor;
+    }
+
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
+    }
+
+    public Long getEtapaId() {
+        return etapaId;
+    }
+
+    public void setEtapaId(Long etapaId) {
+        this.etapaId = etapaId;
+    }
+
     public LocalDate getData_de_fechamento() {
         return data_de_fechamento;
     }
 
     public void setData_de_fechamento(LocalDate data_de_fechamento) {
         this.data_de_fechamento = data_de_fechamento;
+    }
+
+    public Long getFunilId() {
+        return funilId;
+    }
+
+    public void setFunilId(Long funilId) {
+        this.funilId = funilId;
     }
 
     public Long getPessoaId() {
@@ -53,33 +81,5 @@ public class NegocioCreateDTO {
 
     public void setOrganizacaoId(Long organizacaoId) {
         this.organizacaoId = organizacaoId;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public BigDecimal getValor() {
-        return valor;
-    }
-
-    public void setValor(BigDecimal valor) {
-        this.valor = valor;
-    }
-
-    public String getEtapa() {
-        return etapa;
-    }
-
-    public void setEtapa(String etapa) {
-        this.etapa = etapa;
-    }
-
-    public Long getFunilId() {
-        return funilId;
-    }
-
-    public void setFunilId(Long funilId) {
-        this.funilId = funilId;
     }
 }

@@ -3,14 +3,8 @@ package com.gustavo.sistemalogin.service;
 import com.gustavo.sistemalogin.dto.NegocioCreateDTO;
 import com.gustavo.sistemalogin.dto.NegocioResponseDTO;
 import com.gustavo.sistemalogin.dto.NegocioUpdateDTO;
-import com.gustavo.sistemalogin.model.Funil;
-import com.gustavo.sistemalogin.model.Negocio;
-import com.gustavo.sistemalogin.model.Organizacao;
-import com.gustavo.sistemalogin.model.Pessoa;
-import com.gustavo.sistemalogin.repository.FunilRepository;
-import com.gustavo.sistemalogin.repository.NegocioRepository;
-import com.gustavo.sistemalogin.repository.OrganizacaoRepository;
-import com.gustavo.sistemalogin.repository.PessoaRepository;
+import com.gustavo.sistemalogin.model.*;
+import com.gustavo.sistemalogin.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
@@ -24,41 +18,47 @@ public class NegocioService {
     private final FunilRepository funilRepository;
     private final PessoaRepository pessoaRepository;
     private final OrganizacaoRepository organizacaoRepository;
+    private final EtapaRepository etapaRepository; // Repositório necessário
 
     public NegocioService(NegocioRepository negocioRepository, FunilRepository funilRepository,
-                          PessoaRepository pessoaRepository, OrganizacaoRepository organizacaoRepository) {
+                          PessoaRepository pessoaRepository, OrganizacaoRepository organizacaoRepository,
+                          EtapaRepository etapaRepository) {
         this.negocioRepository = negocioRepository;
         this.funilRepository = funilRepository;
         this.pessoaRepository = pessoaRepository;
         this.organizacaoRepository = organizacaoRepository;
+        this.etapaRepository = etapaRepository;
     }
 
     @Transactional
     public NegocioResponseDTO criarNegocio(NegocioCreateDTO dto, String userEmail) {
+        // Validações de propriedade (o usuário é dono dos recursos?)
         Funil funil = funilRepository.findById(dto.getFunilId())
-                .orElseThrow(() -> new RuntimeException("Funil não encontrado."));
-        if (!funil.getUser().getEmail().equals(userEmail)) {
-            throw new SecurityException("Acesso negado: Funil não pertence a este usuário.");
-        }
+                .filter(f -> f.getUser().getEmail().equals(userEmail))
+                .orElseThrow(() -> new SecurityException("Funil não encontrado ou não pertence ao usuário."));
 
         Pessoa pessoa = pessoaRepository.findById(dto.getPessoaId())
-                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada."));
-        if (!pessoa.getUser().getEmail().equals(userEmail)) {
-            throw new SecurityException("Acesso negado: Contato não pertence a este usuário.");
-        }
+                .filter(p -> p.getUser().getEmail().equals(userEmail))
+                .orElseThrow(() -> new SecurityException("Pessoa não encontrada ou não pertence ao usuário."));
 
         Organizacao organizacao = organizacaoRepository.findById(dto.getOrganizacaoId())
-                .orElseThrow(() -> new RuntimeException("Organização não encontrada."));
-        if (!organizacao.getUser().getEmail().equals(userEmail)) {
-            throw new SecurityException("Acesso negado: Organização não pertence a este usuário.");
+                .filter(o -> o.getUser().getEmail().equals(userEmail))
+                .orElseThrow(() -> new SecurityException("Organização não encontrada ou não pertence ao usuário."));
+
+        Etapa etapa = etapaRepository.findById(dto.getEtapaId())
+                .orElseThrow(() -> new RuntimeException("Etapa não encontrada."));
+
+        // Validação de consistência (a etapa pertence ao funil?)
+        if (!etapa.getFunil().getId().equals(funil.getId())) {
+            throw new IllegalArgumentException("A etapa informada não pertence ao funil especificado.");
         }
 
         Negocio novoNegocio = new Negocio();
         novoNegocio.setTitulo(dto.getTitulo());
         novoNegocio.setValor(dto.getValor());
-        novoNegocio.setEtapa(dto.getEtapa());
         novoNegocio.setDataDeAbertura(LocalDate.now());
-        novoNegocio.setData_de_fechamento(dto.getData_de_fechamento());
+        novoNegocio.setDataDeFechamento(dto.getData_de_fechamento());
+        novoNegocio.setEtapa(etapa);
         novoNegocio.setFunil(funil);
         novoNegocio.setPessoa(pessoa);
         novoNegocio.setOrganizacao(organizacao);
@@ -66,7 +66,6 @@ public class NegocioService {
         Negocio negocioSalvo = negocioRepository.save(novoNegocio);
         return new NegocioResponseDTO(negocioSalvo);
     }
-
     @Transactional(readOnly = true)
     public List<NegocioResponseDTO> listarNegociosDoUsuario(String username) {
         return negocioRepository.findByFunilUserEmail(username).stream()
@@ -92,10 +91,23 @@ public class NegocioService {
             throw new SecurityException("Acesso negado.");
         }
 
-        // Lógica de atualização parcial...
         if (updateDTO.getTitulo() != null) negocio.setTitulo(updateDTO.getTitulo());
-        if (updateDTO.getEtapa() != null) negocio.setEtapa(updateDTO.getEtapa());
         if (updateDTO.getValor() != null) negocio.setValor(updateDTO.getValor());
+        if (updateDTO.getData_de_fechamento() != null) negocio.setDataDeFechamento(updateDTO.getData_de_fechamento());
+
+        // --- LÓGICA DE ATUALIZAÇÃO DA ETAPA CORRIGIDA ---
+        if (updateDTO.getEtapaId() != null) {
+            Etapa novaEtapa = etapaRepository.findById(updateDTO.getEtapaId())
+                    .orElseThrow(() -> new RuntimeException("Etapa com ID " + updateDTO.getEtapaId() + " não encontrada."));
+
+            // Validação de consistência: a nova etapa deve pertencer ao mesmo funil do negócio.
+            if (!novaEtapa.getFunil().getId().equals(negocio.getFunil().getId())) {
+                throw new IllegalArgumentException("Não é possível mover o negócio para uma etapa de outro funil.");
+            }
+            negocio.setEtapa(novaEtapa);
+        }
+
+        // Adicionar lógica para atualizar pessoa, funil e organização, se necessário...
 
         Negocio negocioAtualizado = negocioRepository.save(negocio);
         return new NegocioResponseDTO(negocioAtualizado);

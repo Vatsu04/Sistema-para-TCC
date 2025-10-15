@@ -12,11 +12,12 @@ public class NegocioResponseDTO {
     private Long id;
     private String titulo;
     private BigDecimal valor;
-    private String etapa;
     private LocalDate dataDeAbertura;
     private LocalDate dataDeFechamento;
 
     // Informações das entidades relacionadas
+    private Long etapaId;
+    private String etapaNome;
     private Long funilId;
     private String funilNome;
     private Long pessoaId;
@@ -28,10 +29,13 @@ public class NegocioResponseDTO {
         this.id = negocio.getId();
         this.titulo = negocio.getTitulo();
         this.valor = negocio.getValor();
-        this.etapa = negocio.getEtapa();
         this.dataDeAbertura = negocio.getDataDeAbertura();
-        this.dataDeFechamento = negocio.getData_de_fechamento();
+        this.dataDeFechamento = negocio.getDataDeFechamento();
 
+        if (negocio.getEtapa() != null) {
+            this.etapaId = negocio.getEtapa().getId();
+            this.etapaNome = negocio.getEtapa().getNome();
+        }
         if (negocio.getFunil() != null) {
             this.funilId = negocio.getFunil().getId();
             this.funilNome = negocio.getFunil().getNome();

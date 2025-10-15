@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Table(name = "negocios")
 @Data
 @NoArgsConstructor
-public class Negocio { // <-- NÃO herda mais de BaseEntity
+public class Negocio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,13 +23,18 @@ public class Negocio { // <-- NÃO herda mais de BaseEntity
     @Column(nullable = false)
     private BigDecimal valor;
 
-    @Column(nullable = false)
-    private String etapa;
-
     @Column(name = "data_de_abertura", nullable = false, updatable = false)
     private LocalDate dataDeAbertura;
 
-    private LocalDate data_de_fechamento;
+    @Column(name = "data_de_fechamento")
+    private LocalDate dataDeFechamento;
+
+    // --- Relacionamentos Corrigidos ---
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "etapa_id", nullable = false) // Mapeia para a nova coluna de FK
+    @JsonIgnore
+    private Etapa etapa;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "funil_id", nullable = false)
@@ -42,7 +47,7 @@ public class Negocio { // <-- NÃO herda mais de BaseEntity
     private Pessoa pessoa;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "organizacao_id") // Nome da coluna no banco
+    @JoinColumn(name = "organizacao_id", nullable = false)
     @JsonIgnore
     private Organizacao organizacao;
 }

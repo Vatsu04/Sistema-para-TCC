@@ -1,13 +1,16 @@
 package com.gustavo.sistemalogin.dto;
 
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class NegocioUpdateDTO {
+
+
     private String titulo;
     private BigDecimal valor;
-    private String etapa;
     private LocalDate data_de_fechamento;
+    private Long etapaId;
     private Long funilId;
     private Long pessoaId;
     private Long organizacaoId;
@@ -28,20 +31,20 @@ public class NegocioUpdateDTO {
         this.valor = valor;
     }
 
-    public String getEtapa() {
-        return etapa;
-    }
-
-    public void setEtapa(String etapa) {
-        this.etapa = etapa;
-    }
-
     public LocalDate getData_de_fechamento() {
         return data_de_fechamento;
     }
 
     public void setData_de_fechamento(LocalDate data_de_fechamento) {
         this.data_de_fechamento = data_de_fechamento;
+    }
+
+    public Long getEtapaId() {
+        return etapaId;
+    }
+
+    public void setEtapaId(Long etapaId) {
+        this.etapaId = etapaId;
     }
 
     public Long getFunilId() {
