@@ -2,7 +2,6 @@ package com.gustavo.sistemalogin.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,23 +9,20 @@ import lombok.NoArgsConstructor;
 @Table(name = "etapa")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class Etapa extends BaseEntity {
+public class Etapa { // <-- NÃO herda mais de BaseEntity
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public Funil getFunil() {
-        return funil;
-    }
+    @Column(nullable = false)
+    private String nome;
 
-    public void setFunil(Funil funil) {
-        this.funil = funil;
-    }
+    @Column(nullable = false)
+    private int posicao; // Campo que estava faltando
 
-// --- Relacionamentos ---
-
-    // Muitas etapas pertencem a um único funil.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "funil_id", nullable = false)
-    @JsonIgnore // Evita loops de serialização ao buscar a etapa
+    @JsonIgnore
     private Funil funil;
 }

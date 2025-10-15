@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -44,22 +44,5 @@ public class UserService implements UserDetailsService {
         newUser.setPerfil(PerfilUsuario.ASSISTENTE);
 
         return userRepository.save(newUser);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Utilizador não encontrado com o email: " + username));
-
-        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-        if (user.getPerfil() != null) {
-            authorities.add(new SimpleGrantedAuthority(user.getPerfil().getDescricao()));
-        }
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getSenha(),
-                authorities
-        );
     }
 }

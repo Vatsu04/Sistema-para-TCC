@@ -1,21 +1,18 @@
 package com.gustavo.sistemalogin.dto;
 
-import com.gustavo.sistemalogin.model.Funil;
-import com.gustavo.sistemalogin.model.Pessoa;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class NegocioUpdateDTO {
+
+
     private String titulo;
-    private int pipeline_stage;
-    private int id_organizacao;
-    private String etapa;
-    private Funil funil;
-    private Pessoa pessoa;
     private BigDecimal valor;
-
-    public BigDecimal getValor() {return valor;}
-
-    public void setValor(BigDecimal valor) {this.valor = valor;}
+    private LocalDate data_de_fechamento;
+    private Long etapaId;
+    private Long funilId;
+    private Long pessoaId;
+    private String organizacao;
 
     public String getTitulo() {
         return titulo;
@@ -25,43 +22,51 @@ public class NegocioUpdateDTO {
         this.titulo = titulo;
     }
 
-    public int getPipeline_stage() {
-        return pipeline_stage;
+    public BigDecimal getValor() {
+        return valor;
     }
 
-    public void setPipeline_stage(int pipeline_stage) {
-        this.pipeline_stage = pipeline_stage;
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
     }
 
-    public int getId_organizacao() {
-        return id_organizacao;
+    public LocalDate getData_de_fechamento() {
+        return data_de_fechamento;
     }
 
-    public void setId_organizacao(int id_organizacao) {
-        this.id_organizacao = id_organizacao;
+    public void setData_de_fechamento(LocalDate data_de_fechamento) {
+        this.data_de_fechamento = data_de_fechamento;
     }
 
-    public String getEtapa() {
-        return etapa;
+    public Long getEtapaId() {
+        return etapaId;
     }
 
-    public void setEtapa(String etapa) {
-        this.etapa = etapa;
+    public void setEtapaId(Long etapaId) {
+        this.etapaId = etapaId;
     }
 
-    public Funil getFunil() {
-        return funil;
+    public Long getFunilId() {
+        return funilId;
     }
 
-    public void setFunil(Funil funil) {
-        this.funil = funil;
+    public void setFunilId(Long funilId) {
+        this.funilId = funilId;
     }
 
-    public Pessoa getPessoa() {
-        return pessoa;
+    public Long getPessoaId() {
+        return pessoaId;
     }
 
-    public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
+    public void setPessoaId(Long pessoaId) {
+        this.pessoaId = pessoaId;
+    }
+
+    public String getOrganizacao() {
+        return organizacao;
+    }
+
+    public void setOrganizacao(String organizacao) {
+        this.organizacao = organizacao;
     }
 }

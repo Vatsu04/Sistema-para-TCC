@@ -1,26 +1,42 @@
 package com.gustavo.sistemalogin.dto;
-import com.gustavo.sistemalogin.model.Funil;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 
-public class EtapaCreateDTO  {
+public class EtapaCreateDTO {
 
+    @NotBlank(message = "O nome da etapa é obrigatório.")
     private String nome;
-    private Funil funil;
 
+    @NotNull(message = "A posição da etapa é obrigatória.")
+    @PositiveOrZero(message = "A posição deve ser um número positivo ou zero.")
+    private Integer posicao;
 
-    public String getNome() {return nome;}
+    @NotNull(message = "O ID do funil é obrigatório.")
+    private Long funilId;
 
-    public void setNome(String nome) {this.nome = nome;}
-
-    public Funil getFunil() {
-        return funil;
+    public String getNome() {
+        return nome;
     }
 
-    public void setFunil(Funil funil) {
-        this.funil = funil;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public Long getFunilId(Funil funil){
-        return funil.getId();
+    public Integer getPosicao() {
+        return posicao;
+    }
+
+    public void setPosicao(Integer posicao) {
+        this.posicao = posicao;
+    }
+
+    public Long getFunilId() {
+        return funilId;
+    }
+
+    public void setFunilId(Long funilId) {
+        this.funilId = funilId;
     }
 }
