@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastCRM</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style-login.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <h1 class="logo">FastCRM</h1>
+    </header>
+
+    <main class="login-container">
+        <div class="login-form">
+            <h2>Entrar</h2>
+            
+            <form action="#">
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" placeholder="E-mail" required>
+                </div> 
+                
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" placeholder="Senha" required>
+                </div>
+
+                <div class="password-options">
+                    <a href="#" class="forgot-password">Esqueci minha senha</a>
+                </div>
+                
+                <a href="dashboard.html" class="btn btn-primary">Entrar</a> <!-- <button type="submit" class="btn btn-primary">Entrar</button> Quando for funcional -->
+                
+                <div class="remember-me">
+                    <input type="checkbox" id="lembrar">
+                    <label for="lembrar">Lembrar</label>
+                </div>
+                
+                <div class="separator"></div>
+
+                <button type="button" class="btn btn-google">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo">
+                    Continue com Google
+                </button>
+            </form>
+        </div>
+        
+        <div class="signup-link">
+            <a href="#" class="forgot-password">Não tem uma conta?</a>
+        </div>
+    </main>
+
+</body>
+</html>

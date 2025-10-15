@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações - FastCRM</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/style-config.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <a href="dashboard.html" class="sidebar-logo">F</a>
+        </aside>
+
+        <div class="main-content">
+            <header class="app-header">
+                <h1 id="page-title">Configurações / Preferências pessoais</h1>
+                <div class="profile-container">
+                    <div class="user-profile" id="user-profile-icon">A</div>
+                    <div class="profile-dropdown hidden" id="profile-dropdown-menu">
+                        <ul>
+                            <li><a href="dashboard.html"><i class="fa-solid fa-table-columns"></i> Voltar</a></li>
+                            <li><a href="index.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <div class="settings-container">
+                <nav class="settings-menu">
+                    <ul>
+                        <li class="active"><a href="#" data-target="preferencias-pessoais"><i class="fa-solid fa-user-gear"></i> Preferências pessoais</a></li>
+                        <li><a href="#" data-target="gerenciar-usuarios"><i class="fa-solid fa-users"></i> Gerenciar usuários</a></li>
+                        <li><a href="index.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</a></li>
+                    </ul>
+                </nav>
+
+                <main class="settings-content-wrapper">
+                    <div id="preferencias-pessoais" class="settings-content">
+                        <h2>Preferências pessoais</h2>
+                        <form class="settings-form">
+                            <div class="form-group">
+                                <label for="name">Nome</label>
+                                <input type="text" id="name" value="Administrador" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">E-mail</label>
+                                <input type="email" id="email" value="adm@gmail.com" readonly>
+                            </div>
+                            <div class="form-group password-group">
+                                <label for="password">Senha</label>
+                                <input type="password" id="password" value="************" readonly>
+                                <button type="button" class="edit-btn"><i class="fa-solid fa-pencil"></i></button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="gerenciar-usuarios" class="settings-content hidden">
+                        <h2>Gerenciar usuários</h2>
+                        <button class="btn btn-add-user">+ Usuário</button>
+                        <div class="user-list-header">
+                            <span>Usuários:</span>
+                        </div>
+                        <ul class="user-list">
+                            <li class="user-item">
+                                <span class="user-name">Gustavo Tascheri</span>
+                                <span class="user-email">Gustavo@gmail.com</span>
+                                <span class="user-role">Assistente</span>
+                                <button class="delete-user-btn"><i class="fa-solid fa-xmark"></i></button>
+                            </li>
+                            </ul>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+    <script src="js/script.js"></script>
+</body>
+</html>
