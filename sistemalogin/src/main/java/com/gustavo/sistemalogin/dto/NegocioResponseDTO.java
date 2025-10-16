@@ -16,14 +16,19 @@ public class NegocioResponseDTO {
     private LocalDate dataDeFechamento;
     private String organizacao;
 
+    // Campos de relacionamento (Funil e Etapa)
     private Long etapaId;
     private String etapaNome;
     private Long funilId;
     private String funilNome;
-    private Long pessoaId;
-    private String pessoaNome;
+
+    // --- CAMPOS DO CONTATO (AGORA VINDOS DIRETAMENTE DE NEGOCIO) ---
+    private String pessoaNome; // Mapeado de 'pessoaContato'
+    private String emailPessoaContato;
+    private String telefonePessoaContato;
 
 
+    // O construtor agora usa os campos de String da própria entidade Negocio
     public NegocioResponseDTO(Negocio negocio) {
         this.id = negocio.getId();
         this.titulo = negocio.getTitulo();
@@ -40,10 +45,12 @@ public class NegocioResponseDTO {
             this.funilId = negocio.getFunil().getId();
             this.funilNome = negocio.getFunil().getNome();
         }
-        if (negocio.getPessoa() != null) {
-            this.pessoaId = negocio.getPessoa().getId();
-            this.pessoaNome = negocio.getPessoa().getNome();
-        }
 
+        // --- MAPEAMENTO CORRIGIDO ---
+        // Removemos o 'pessoaId' pois não há mais uma entidade para referenciar.
+        // Mapeamos diretamente os campos de texto.
+        this.pessoaNome = negocio.getPessoaContato();
+        this.emailPessoaContato = negocio.getEmailPessoaContato();
+        this.telefonePessoaContato = negocio.getTelefonePessoaContato();
     }
 }
