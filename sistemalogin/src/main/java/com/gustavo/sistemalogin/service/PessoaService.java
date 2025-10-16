@@ -89,4 +89,11 @@ public class PessoaService {
         }
         pessoaRepository.deleteById(id);
     }
+
+    @Transactional(readOnly = true)
+    public List<PessoaResponseDTO> listarTodasAsPessoas() {
+        return pessoaRepository.findAll().stream()
+                .map(PessoaResponseDTO::new)
+                .collect(Collectors.toList());
+    }
 }

@@ -24,13 +24,11 @@
                 <div class="sidebar-logo">F</div>
             </a>
         </aside>
-
-        <div class="main-content">
+<div class="main-content">
             <header class="app-header">
                 <h1>Negócios</h1>
                 <div class="profile-container">
                     <div class="user-profile" id="user-profile-icon">A</div>
-                    <!-- Menu dropdown -->
                     <div class="profile-dropdown hidden" id="profile-dropdown-menu">
                         <ul>
                             <li><a href="conf.html"><i class="fa-solid fa-user-gear"></i> Preferências pessoais</a></li>
@@ -43,17 +41,13 @@
 
             <div class="action-bar">
                 <button class="btn btn-new-deal">+ Negócio</button>
-
                 <div class="funnel-selector">
                     <div class="custom-select-wrapper">
                         <div class="custom-select">
-                            <span class="custom-select-trigger">Funil 1</span>
+                            <span id="funnel-trigger-text" class="custom-select-trigger">Carregando...</span>
                         </div>
                         <div class="custom-select-options hidden">
-                            <ul>
-                                <li class="selected" data-value="funil1">Funil 1</li>
-                                <li data-value="funil2">Funil 2</li>
-                                <li data-value="funil3">Funil 3</li>
+                            <ul id="funnel-options-list">
                                 <li class="new-funnel-option" data-value="novo">
                                     <i class="fa-solid fa-plus"></i> Novo Funil
                                 </li>
@@ -61,33 +55,10 @@
                         </div>
                     </div>
                 </div>
-                </div>
+            </div>
 
-            <main class="kanban-board">
-                <div class="kanban-column">
-                    <h2 class="column-title">Etapa 1</h2>
-                    <div class="cards-container">
-                    </div>
-                </div>
-
-                <div class="kanban-column">
-                    <h2 class="column-title">Etapa 2</h2>
-                    <div class="cards-container">
-                    </div>
-                </div>
-
-                <div class="kanban-column">
-                    <h2 class="column-title">Etapa 3</h2>
-                    <div class="cards-container">
-                    </div>
-                </div>
-
-                <div class="kanban-column">
-                    <h2 class="column-title">Etapa 4</h2>
-                    <div class="cards-container">
-                    </div>
-                </div>
-            </main>
+            <main id="kanban-board" class="kanban-board">
+                </main>
         </div>
     </div>
 
@@ -96,39 +67,26 @@
             <div class="modal-header">
                 <h2>Adicionar Negócio</h2>
             </div>
-            <form class="modal-form" action="#">
+            <form id="modal-form" class="modal-form">
+                <div class="form-group">
+                    <label for="modal-titulo">Título</label>
+                    <input type="text" id="modal-titulo" required>
+                </div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="contact-person">Pessoa de contato</label>
-                        <input type="text" id="contact-person">
+                         <label for="modal-pessoa">Pessoa de Contato</label>
+                        <select id="modal-pessoa" required>
+                            <option value="">Selecione um contato...</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label for="phone">Telefone</label>
-                        <input type="tel" id="phone">
-                    </div>
-                    <div class="form-group">
-                        <label for="organization">Organização</label>
-                        <input type="text" id="organization">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">E-mail</label>
-                        <input type="email" id="email">
+                        <label for="modal-organizacao">Organização</label>
+                        <input type="text" id="modal-organizacao">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="title">Título</label>
-                    <input type="text" id="title">
-                </div>
-                <div class="form-group">
-                    <label for="value">Valor</label>
-                    <input type="text" id="value">
-                </div>
-                <div class="form-group">
-                    <label for="modal-funnel">Funil</label>
-                    <select id="modal-funnel">
-                        <option value="funil1">Funil 1</option>
-                        <option value="funil2">Funil 2</option>
-                    </select>
+                    <label for="modal-valor">Valor</label>
+                    <input type="number" id="modal-valor" step="0.01" required>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary-green">Adicionar</button>
@@ -136,7 +94,8 @@
             </form>
         </div>
     </div>
-    <script src="js/script.js" defer></script>
-    </body>
+    
+    <script src="js/dashboard.js" defer></script>
+    <script src="js/script.js" defer></script> 
+</body>
 </html>
-

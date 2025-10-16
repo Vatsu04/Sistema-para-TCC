@@ -1,57 +1,56 @@
 // js/config.js
+
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. GUARDA DE AUTENTICAÇÃO ---
+    // --- 1. GUARDA DE AUTENTICAÇÃO (Auth Guard) ---
+    // Este bloco de código é a primeira linha de defesa de qualquer página protegida.
     const token = localStorage.getItem('jwt_token');
+
+    // Se não houver token, o usuário não está logado. Redireciona imediatamente para a página de login.
     if (!token) {
         window.location.href = 'index.html';
-        return;
+        return; // Para a execução do script para evitar erros
     }
-    const headers = { 'Authorization': `Bearer ${token}` };
 
-    // --- 2. BUSCAR DADOS DO USUÁRIO LOGADO ---
-    const fetchCurrentUser = async () => {
+    // --- 2. FUNÇÃO PARA BUSCAR OS DADOS DO USUÁRIO ---
+    // Esta função assíncrona fará a chamada à sua API.
+    const fetchCurrentUserData = async () => {
         try {
-            // NOTA: Você precisará criar este endpoint no back-end: GET /api/users/me
-            const response = await fetch('http://localhost:8080/api/users/me', { headers });
-            const user = await response.json();
+            // Faz a requisição para o endpoint /me, enviando o token no cabeçalho Authorization.
+            const response = await fetch('http://localhost:8080/api/users/me', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
 
-            document.getElementById('name').value = user.nome;
-            document.getElementById('email').value = user.email;
+            // Se a resposta for bem-sucedida...
+            if (response.ok) {
+                const user = await response.json(); // Converte a resposta JSON em um objeto JavaScript
 
-            // Se o usuário for admin, busca a lista de usuários
-            if (user.perfil === 'ADMINISTRADOR') {
-                fetchUserList();
+                // --- 3. ATUALIZAR A PÁGINA (O DOM) ---
+                // Pega os elementos do formulário e preenche com os dados do usuário.
+                document.getElementById('name').value = user.nome;
+                document.getElementById('email').value = user.email;
+                
+                // Atualiza também o ícone do perfil no header
+                const profileIcon = document.getElementById('user-profile-icon');
+                if (user.nome) {
+                    profileIcon.textContent = user.nome.charAt(0).toUpperCase(); // Pega a primeira letra do nome
+                }
+
+            } else {
+                // Se o token for inválido ou expirado, o back-end retornará um erro.
+                console.error('Falha ao buscar dados do usuário:', response.statusText);
+                // Como medida de segurança, limpa o token inválido e redireciona para o login.
+                localStorage.removeItem('jwt_token');
+                window.location.href = 'index.html';
             }
-
         } catch (error) {
-            console.error('Erro ao buscar dados do usuário:', error);
+            console.error('Erro de rede ou de servidor:', error);
+            alert('Não foi possível carregar os dados do usuário. Verifique sua conexão.');
         }
     };
 
-    // --- 3. BUSCAR LISTA DE USUÁRIOS (PARA ADMINS) ---
-    const fetchUserList = async () => {
-         try {
-            // NOTA: Você precisará criar este endpoint no back-end: GET /api/users
-            const response = await fetch('http://localhost:8080/api/users', { headers });
-            const users = await response.json();
 
-            const userList = document.querySelector('.user-list');
-            userList.innerHTML = ''; // Limpa a lista
-            users.forEach(user => {
-                const li = document.createElement('li');
-                li.classList.add('user-item');
-                li.innerHTML = `
-                    <span class="user-name">${user.nome}</span>
-                    <span class="user-email">${user.email}</span>
-                    <span class="user-role">${user.perfil}</span>
-                    <button class="delete-user-btn" data-user-id="${user.id}"><i class="fa-solid fa-xmark"></i></button>
-                `;
-                userList.appendChild(li);
-            });
-         } catch (error) {
-            console.error('Erro ao buscar lista de usuários:', error);
-         }
-    };
-
-    fetchCurrentUser();
+    fetchCurrentUserData();
 });

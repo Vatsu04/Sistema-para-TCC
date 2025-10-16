@@ -1,100 +1,167 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. GUARDA DE AUTENTICAÇÃO E LÓGICA DE LOGOUT (Já implementado) ---
+document.addEventListener('DOMContentLoaded', async () => {
+    // --- 1. GUARDA DE AUTENTICAÇÃO E CONFIGURAÇÕES GLOBAIS ---
     const token = localStorage.getItem('jwt_token');
     if (!token) {
         window.location.href = 'index.html';
         return;
     }
-    document.querySelectorAll('a[href="index.html"]').forEach(link => {
-        link.addEventListener('click', (event) => {
-            event.preventDefault();
-            localStorage.removeItem('jwt_token');
-            window.location.href = 'index.html';
-        });
-    });
-
     const headers = {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
     };
+    let funis = []; // Armazenará a lista de funis do usuário
+    let pessoas = []; // Armazenará a lista de contatos do usuário
 
-    // --- 2. LÓGICA DO KANBAN ---
-    const kanbanBoard = document.querySelector('.kanban-board');
-    const funnelSelector = document.querySelector('.custom-select-wrapper');
+    // --- 2. SELETORES DO DOM (ELEMENTOS DA PÁGINA) ---
+    const kanbanBoard = document.getElementById('kanban-board');
+    const funnelTriggerText = document.getElementById('funnel-trigger-text');
+    const funnelOptionsList = document.getElementById('funnel-options-list');
+    const modalForm = document.getElementById('modal-form');
+    const modalPessoaSelect = document.getElementById('modal-pessoa');
+    const openModalButton = document.querySelector('.btn-new-deal');
+    const userProfileIcon = document.getElementById('user-profile-icon');
 
-    // Função para buscar etapas e negócios e renderizar o quadro
+    // --- 3. FUNÇÕES DE RENDERIZAÇÃO E API ---
+
+    // Função para buscar dados do usuário e atualizar o ícone do perfil
+    const fetchCurrentUser = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/users/me', { headers });
+            if (response.ok) {
+                const user = await response.json();
+                if (user.nome) {
+                    userProfileIcon.textContent = user.nome.charAt(0).toUpperCase();
+                }
+            }
+        } catch (error) {
+            console.error('Erro ao buscar usuário atual:', error);
+        }
+    };
+    
+    // Função principal que desenha o quadro Kanban
     const renderKanban = async (funilId) => {
-        if (!funilId) return;
+        if (!funilId) {
+            kanbanBoard.innerHTML = '<h2>Selecione um funil para começar.</h2>';
+            return;
+        }
 
         try {
-            // Buscar as etapas do funil selecionado
             const etapasResponse = await fetch(`http://localhost:8080/api/etapas?funilId=${funilId}`, { headers });
             const etapas = await etapasResponse.json();
 
-            // Limpa o quadro atual
-            kanbanBoard.innerHTML = '';
+            const negociosResponse = await fetch('http://localhost:8080/api/negocios', { headers });
+            const negocios = await negociosResponse.json();
+            
+            kanbanBoard.innerHTML = ''; 
 
             if (etapas.length > 0) {
-                // Para cada etapa, cria uma coluna
                 etapas.forEach(etapa => {
                     const column = document.createElement('div');
-                    column.classList.add('kanban-column');
-                    column.setAttribute('data-etapa-id', etapa.id);
-                    column.innerHTML = `
-                        <h2 class="column-title">${etapa.nome}</h2>
-                        <div class="cards-container"></div>
-                    `;
+                    column.className = 'kanban-column';
+                    column.dataset.etapaId = etapa.id;
+                    column.innerHTML = `<h2 class="column-title">${etapa.nome}</h2><div class="cards-container"></div>`;
                     kanbanBoard.appendChild(column);
-                });
 
-                // Buscar os negócios e distribuí-los nas colunas
-                const negociosResponse = await fetch(`http://localhost:8080/api/negocios`, { headers });
-                const negocios = await negociosResponse.json();
+                    const negociosNestaEtapa = negocios.filter(neg => neg.etapaId === etapa.id && neg.funilId == funilId);
 
-                negocios.forEach(negocio => {
-                    // Encontra a coluna correta para o negócio
-                    const column = kanbanBoard.querySelector(`.kanban-column[data-etapa-id='${negocio.etapaId}']`);
-                    if (column) {
+                    negociosNestaEtapa.forEach(negocio => {
                         const card = document.createElement('div');
-                        card.classList.add('kanban-card');
+                        card.className = 'kanban-card';
                         card.innerHTML = `
                             <h4>${negocio.titulo}</h4>
-                            <p>${negocio.organizacaoNome}</p>
+                            <p>${negocio.pessoaNome}</p>
                             <span>${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(negocio.valor)}</span>
                         `;
                         column.querySelector('.cards-container').appendChild(card);
-                    }
+                    });
                 });
             } else {
-                kanbanBoard.innerHTML = '<p>Este funil ainda não possui etapas. Edite-o para adicioná-las.</p>';
+                kanbanBoard.innerHTML = '<h2>Este funil não possui etapas. <a href="funil.html">Adicione etapas</a> para começar.</h2>';
             }
-
         } catch (error) {
-            console.error('Erro ao renderizar o Kanban:', error);
+            console.error("Erro ao renderizar o Kanban:", error);
         }
     };
 
-    // --- 3. LÓGICA DO SELETOR DE FUNIL (Já implementado, agora com chamada de renderização) ---
-    // (O código para popular o seletor de funis continua aqui)
-    // Dentro do evento de clique de uma opção do funil, adicione:
-    // const funilId = item.getAttribute('data-value');
-    // renderKanban(funilId);
+    // Função para buscar e popular o seletor de funis
+    const fetchAndPopulateFunnels = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/funis', { headers });
+            funis = await response.json();
 
+            const newFunnelOption = funnelOptionsList.querySelector('.new-funnel-option');
+            funnelOptionsList.innerHTML = ''; 
+            funnelOptionsList.appendChild(newFunnelOption); 
 
-    // --- 4. LÓGICA DO MODAL "ADICIONAR NEGÓCIO" ---
-    const modalForm = document.querySelector('.modal-form');
+            if (funis.length > 0) {
+                funis.forEach((funil, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = funil.nome;
+                    li.dataset.value = funil.id;
+                    if (index === 0) {
+                        li.classList.add('selected');
+                        funnelTriggerText.textContent = funil.nome;
+                        funnelTriggerText.dataset.selectedFunilId = funil.id;
+                        renderKanban(funil.id); 
+                    }
+                    li.addEventListener('click', () => {
+                        funnelTriggerText.textContent = funil.nome;
+                        funnelTriggerText.dataset.selectedFunilId = funil.id;
+                        renderKanban(funil.id);
+                    });
+                    funnelOptionsList.insertBefore(li, newFunnelOption);
+                });
+            } else {
+                funnelTriggerText.textContent = "Crie um funil";
+                kanbanBoard.innerHTML = '<h2>Você ainda não tem funis. Crie um para começar.</h2>';
+            }
+        } catch (error) {
+            console.error("Erro ao buscar funis:", error);
+        }
+    };
+
+    // Função para buscar e popular o seletor de pessoas no modal
+    const fetchAndPopulatePessoas = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/pessoas', { headers });
+            pessoas = await response.json();
+            modalPessoaSelect.innerHTML = '<option value="">Selecione um contato...</option>'; 
+            pessoas.forEach(pessoa => {
+                const option = document.createElement('option');
+                option.value = pessoa.id;
+                option.textContent = pessoa.nome;
+                modalPessoaSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error("Erro ao buscar pessoas:", error);
+        }
+    };
+    
+    // --- 4. EVENT LISTENERS ---
+
+    openModalButton.addEventListener('click', () => {
+        fetchAndPopulatePessoas(); 
+    });
+
     modalForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        // Simulação de pegar dados do formulário
+        const selectedFunilId = funnelTriggerText.dataset.selectedFunilId;
+        
+        const etapasResponse = await fetch(`http://localhost:8080/api/etapas?funilId=${selectedFunilId}`, { headers });
+        const etapas = await etapasResponse.json();
+        if (etapas.length === 0) {
+            alert("Este funil não tem etapas. Adicione uma antes de criar um negócio.");
+            return;
+        }
+
         const negocioData = {
-            titulo: document.getElementById('title').value,
-            valor: parseFloat(document.getElementById('value').value),
-            // Aqui você precisaria buscar os IDs de pessoa, funil e etapa
-            pessoaId: 1, // Exemplo: você precisaria de um seletor de pessoas
-            funilId: 1,  // Exemplo: pegar o ID do funil selecionado
-            etapaId: 1,  // Exemplo: pegar o ID da primeira etapa do funil
-            organizacao: document.getElementById('organization').value
+            titulo: document.getElementById('modal-titulo').value,
+            valor: parseFloat(document.getElementById('modal-valor').value),
+            organizacao: document.getElementById('modal-organizacao').value,
+            pessoaId: parseInt(modalPessoaSelect.value),
+            funilId: parseInt(selectedFunilId),
+            etapaId: etapas[0].id 
         };
 
         try {
@@ -106,16 +173,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 alert('Negócio criado com sucesso!');
-                closeModal(); // Função do seu script.js
-                renderKanban(negocioData.funilId); // Atualiza o quadro
+                modalForm.reset();
+                document.querySelector('.modal-overlay').click(); 
+                renderKanban(selectedFunilId); 
             } else {
-                alert('Falha ao criar o negócio.');
+                alert('Erro ao criar negócio.');
             }
         } catch (error) {
-            console.error('Erro ao criar negócio:', error);
+            console.error("Erro ao submeter negócio:", error);
         }
     });
 
-    // Iniciar a renderização com o primeiro funil
-    // (Esta lógica precisa ser integrada com a busca de funis que já fizemos)
+    // --- 5. INICIALIZAÇÃO DA PÁGINA ---
+    fetchCurrentUser();
+    fetchAndPopulateFunnels();
 });

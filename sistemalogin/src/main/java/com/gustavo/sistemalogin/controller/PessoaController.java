@@ -7,6 +7,7 @@ import com.gustavo.sistemalogin.service.PessoaService;
 import jakarta.validation.Valid; // <-- Garanta que este import está correto
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -52,5 +53,14 @@ public class PessoaController {
         pessoaService.deletarPessoa(id, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
+
+/*    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMINISTRADOR')") // <-- A MÁGICA DA SEGURANÇA
+    public ResponseEntity<List<PessoaResponseDTO>> listarTodasAsPessoas() {
+        List<PessoaResponseDTO> todasAsPessoas = pessoaService.listarTodasAsPessoas();
+        return ResponseEntity.ok(todasAsPessoas);
+    }*/
+
+
 }
 
