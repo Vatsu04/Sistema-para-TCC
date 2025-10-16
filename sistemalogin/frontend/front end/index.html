@@ -25,22 +25,22 @@
         <div class="login-form">
             <h2>Entrar</h2>
             
-            <form action="#">
+            <form id="login-form">
                 <div class="input-group">
                     <i class="fas fa-envelope"></i>
-                    <input type="email" placeholder="E-mail" required>
+                    <input type="email" id="email" placeholder="E-mail" required>
                 </div> 
                 
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input type="password" placeholder="Senha" required>
+                    <input type="password" id="password" placeholder="Senha" required>
                 </div>
 
                 <div class="password-options">
                     <a href="#" class="forgot-password">Esqueci minha senha</a>
                 </div>
                 
-                <a href="dashboard.html" class="btn btn-primary">Entrar</a> <!-- <button type="submit" class="btn btn-primary">Entrar</button> Quando for funcional -->
+                <button type="submit" class="btn btn-primary">Entrar</button>
                 
                 <div class="remember-me">
                     <input type="checkbox" id="lembrar">
@@ -61,5 +61,6 @@
         </div>
     </main>
 
+    <script src="js/login.js"></script>
 </body>
 </html>
