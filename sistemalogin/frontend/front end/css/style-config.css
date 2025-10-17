@@ -1,72 +1,98 @@
-/* --- Reset Básico e Estilos Globais --- */
+/* ==========================================================================
+   1. :root - Variáveis Globais e Reset
+   ========================================================================== */
+:root {
+    /* Brand Colors */
+    --color-primary: #0d214d;
+    --color-primary-light: #e2f0ff;
+    --color-primary-hover: #1a3a7a;
+    /* Action Colors */
+    --color-success: #28a745;
+    --color-success-hover: #218838;
+    --color-danger: #dc3545;
+    --color-danger-hover: #c82333;
+    --color-secondary: #6c757d;
+    --color-secondary-hover: #5a6268;
+    /* Text Colors */
+    --text-primary: #333;
+    --text-secondary: #555;
+    --text-on-dark: #fff;
+    --text-link: #007bff;
+    /* Background & Border Colors */
+    --bg-main: #f4f7fa;
+    --bg-content: #fff;
+    --bg-content-alt: #f8f9fa;
+    --border-color: #e0e0e0;
+    --border-color-light: #eee;
+    /* Sizing & Shadows */
+    --border-radius-sm: 6px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-md: 0 5px 15px rgba(0,0,0,0.1);
+}
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #f4f7fa;
-    color: #333;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
 }
-
-/* --- Layout Principal da Aplicação --- */
+/* ==========================================================================
+   2. Layout Principal da Aplicação
+   ========================================================================== */
 .app-container {
     display: flex;
     min-height: 100vh;
 }
-
 .sidebar {
     flex: 0 0 60px;
-    background-color: #0d214d;
+    background-color: var(--color-primary);
     padding: 20px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-
 .sidebar-logo {
     font-family: 'Michroma', sans-serif;
     font-size: 46px;
     font-weight: 700;
-    color: #fff;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-    text-decoration: none; /* <-- ADICIONE ESTA LINHA */
+    color: var(--text-on-dark);
+    text-decoration: none;
+    border-radius: var(--border-radius-md);
 }
-
 .main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
-
-/* --- Cabeçalho Superior --- */
+/* ==========================================================================
+   3. Cabeçalho e Perfil do Usuário
+   ========================================================================== */
 .app-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px 30px;
-    background-color: #fff;
-    border-bottom: 1px solid #e0e0e0;
+    background-color: var(--bg-content);
+    border-bottom: 1px solid var(--border-color);
 }
-
 .app-header h1 {
     font-size: 24px;
     font-weight: 500;
-    color: #333;
 }
-
+.profile-container {
+    position: relative;
+}
 .user-profile {
     width: 40px;
     height: 40px;
-    background-color: #e0e0e0;
+    background-color: var(--border-color);
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -75,102 +101,110 @@ body {
     cursor: pointer;
     transition: background-color 0.2s;
 }
-
-.user-profile.active {
-    background-color: #cccccc;
+.profile-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: var(--bg-content);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+    width: 220px;
+    z-index: 110;
+    border: 1px solid var(--border-color-light);
+    overflow: hidden;
 }
-
-/* --- Conteúdo da Página de Configurações --- */
+.profile-dropdown ul {
+    list-style: none;
+}
+.profile-dropdown ul li a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: background-color 0.2s ease-in-out;
+}
+.profile-dropdown ul li a:hover {
+    background-color: #f5f5f5;
+}
+/* ==========================================================================
+   4. Página de Configurações
+   ========================================================================== */
 .settings-container {
     display: flex;
     flex-grow: 1;
-    background-color: #fff;
+    background-color: var(--bg-content);
     margin: 20px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
 }
-
-/* --- Menu Lateral de Configurações --- */
 .settings-menu {
     flex: 0 0 250px;
-    border-right: 1px solid #e0e0e0;
+    border-right: 1px solid var(--border-color);
     padding: 20px 0;
 }
-
 .settings-menu ul {
     list-style: none;
 }
-
 .settings-menu ul li a {
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 12px 20px;
     text-decoration: none;
-    color: #555;
+    color: var(--text-secondary);
     font-size: 15px;
     font-weight: 500;
     border-left: 3px solid transparent;
     transition: all 0.2s ease-in-out;
 }
-
 .settings-menu ul li.active a {
-    color: #0d214d;
-    background-color: #e2f0ff;
-    border-left-color: #0d214d;
+    color: var(--color-primary);
+    background-color: var(--color-primary-light);
+    border-left-color: var(--color-primary);
 }
-
-.settings-menu ul li a:hover {
+.settings-menu ul li a:hover:not(.active) {
     background-color: #f0f0f0;
 }
-
-.settings-menu ul li.active a:hover {
-    background-color: #e2f0ff;
-}
-
-.settings-menu ul li a .fa-solid {
-    width: 20px;
-    text-align: center;
-}
-
-/* --- Conteúdo Principal das Configurações --- */
 .settings-content-wrapper {
     flex-grow: 1;
     padding: 40px;
 }
-
 .settings-content h2 {
     font-size: 20px;
     font-weight: 700;
     margin-bottom: 30px;
-    color: #333;
 }
-
-.settings-form .form-group {
+.settings-content > .btn {
+    margin-bottom: 30px;
+}
+/* ==========================================================================
+   5. Componentes da Página de Configurações
+   ========================================================================== */
+/* --- Forms --- */
+.form-group {
     margin-bottom: 25px;
     max-width: 400px;
 }
-
-.settings-form label {
+.form-group label {
     display: block;
     font-size: 14px;
-    color: #555;
+    color: var(--text-secondary);
     margin-bottom: 8px;
 }
-
-.settings-form input {
+.form-group input {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 6px;
+    border-radius: var(--border-radius-sm);
     font-size: 15px;
-    background-color: #f8f9fa;
+    background-color: var(--bg-content-alt);
 }
-
 .form-group.password-group {
     position: relative;
 }
-
 .form-group .edit-btn {
     position: absolute;
     right: 10px;
@@ -178,132 +212,191 @@ body {
     background: none;
     border: none;
     cursor: pointer;
-    color: #555;
-    font-size: 14px;
+    color: var(--text-secondary);
 }
-
-.form-group .edit-btn:hover {
-    color: #000;
+.form-actions {
+    text-align: right;
+    margin-top: 30px;
+    max-width: 400px;
 }
-
-/* --- Estilos para "Gerenciar Usuários" --- */
-.btn-add-user {
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-bottom: 30px;
-}
-
-.btn-add-user:hover {
-    background-color: #218838;
-}
-
+/* --- Lista de Usuários --- */
 .user-list-header {
     font-size: 14px;
-    color: #555;
+    color: var(--text-secondary);
     margin-bottom: 15px;
 }
-
 .user-list {
     list-style: none;
     max-width: 800px;
+    margin-bottom: 40px;
 }
-
 .user-item {
     display: flex;
     align-items: center;
     padding: 15px 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border-color-light);
+}
+.user-name { flex: 1; font-weight: 500; }
+.user-email { flex: 2; color: var(--text-link); }
+.user-role { flex: 1; color: var(--text-secondary); }
+/* --- Botões --- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border: none;
+    border-radius: var(--border-radius-sm);
     font-size: 15px;
-}
-
-.user-item:last-child {
-    border-bottom: none;
-}
-
-.user-name {
-    flex: 1;
-    font-weight: 500;
-}
-
-.user-email {
-    flex: 2;
-    color: #007bff;
-    text-decoration: underline;
+    font-weight: 700;
     cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
 }
-
-.user-role {
-    flex: 1;
-    color: #555;
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
-
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--text-on-dark);
+}
+.btn-primary:hover {
+    background-color: var(--color-primary-hover);
+}
+.btn-success {
+    background-color: var(--color-success);
+    color: var(--text-on-dark);
+}
+.btn-success:hover {
+    background-color: var(--color-success-hover);
+}
+.btn-danger {
+    background-color: var(--color-danger);
+    color: var(--text-on-dark);
+}
+.btn-danger:hover {
+    background-color: var(--color-danger-hover);
+}
+.btn-secondary {
+    background-color: var(--color-secondary);
+    color: var(--text-on-dark);
+}
+.btn-secondary:hover {
+    background-color: var(--color-secondary-hover);
+}
 .delete-user-btn {
     background: none;
     border: none;
-    color: #dc3545;
+    color: var(--color-danger);
     cursor: pointer;
     font-size: 18px;
-    transition: color 0.2s;
+    transition: color 0.2s, transform 0.2s;
 }
-
 .delete-user-btn:hover {
-    color: #a71d2a;
+    transform: scale(1.2);
 }
-
-.hidden {
-    display: none;
-}
-
-
-/* --- Dropdown do Perfil (copiado do outro CSS para consistência) --- */
-.profile-container {
-    position: relative;
-}
-
-.profile-dropdown {
-    position: absolute;
-    top: 50px;
-    right: 0;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    width: 220px;
-    z-index: 110;
-    border: 1px solid #eee;
-    overflow: hidden;
-}
-
-.profile-dropdown ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.profile-dropdown ul li a {
+/* --- Modal de Confirmação --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.65);
+    z-index: 100;
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    text-decoration: none;
-    color: #333;
-    font-size: 14px;
-    transition: background-color 0.2s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
-
-.profile-dropdown ul li a:hover {
-    background-color: #f5f5f5;
+.modal-overlay:not(.hidden) {
+    opacity: 1;
+    visibility: visible;
 }
-
-.profile-dropdown ul li a .fa-solid {
-    width: 16px;
+.modal {
+    background-color: var(--bg-content);
+    padding: 2.5rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 450px;
+    z-index: 101;
+    position: relative;
     text-align: center;
-    color: #555;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
 }
-
+.modal-overlay:not(.hidden) .modal {
+    transform: scale(1);
+}
+.modal-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 32px;
+    color: #b0b0b0;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s, transform 0.2s;
+}
+.modal-close-btn:hover {
+    color: var(--text-primary);
+    transform: rotate(90deg);
+}
+.modal h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+}
+.user-name-to-delete {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    background-color: var(--color-primary-light);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-md);
+    display: inline-block;
+    margin-bottom: 2rem;
+}
+.modal .form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+.modal .form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+.modal .form-group input {
+    padding: 12px;
+    border-radius: var(--border-radius-md);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.modal .form-group input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+.modal-actions .btn {
+    padding: 12px 30px;
+    font-size: 1rem;
+}
+/* ==========================================================================
+   6. Classes Utilitárias
+   ========================================================================== */
+.hidden {
+    display: none !important;
+}
