@@ -38,6 +38,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Permite acesso público e sem autenticação a todas as rotas que começam com /api/auth/
                         .requestMatchers("/api/auth/**").permitAll()
+
+
                         // Exige que qualquer outra requisição seja autenticada
                         .anyRequest().authenticated()
                 )
@@ -45,11 +47,6 @@ public class SecurityConfig {
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
