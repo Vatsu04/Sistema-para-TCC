@@ -1,7 +1,7 @@
 package com.gustavo.sistemalogin.security;
 
 import com.gustavo.sistemalogin.dto.LoginDTO;
-import com.gustavo.sistemalogin.dto.UserCreateDTO;
+import com.gustavo.sistemalogin.dto.AdminUserCreateDTO;
 import com.gustavo.sistemalogin.model.User;
 import com.gustavo.sistemalogin.repository.UserRepository;
 import com.gustavo.sistemalogin.service.UserService;
@@ -31,8 +31,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
-        userService.createUser(userCreateDTO);
+    public ResponseEntity<String> registerUser(@Valid @RequestBody AdminUserCreateDTO adminUserCreateDTO) {
+        userService.createUser(adminUserCreateDTO);
         return ResponseEntity.ok("Usuário registrado com sucesso!");
     }
 

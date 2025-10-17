@@ -1,6 +1,6 @@
 package com.gustavo.sistemalogin.service;
 
-import com.gustavo.sistemalogin.dto.UserCreateDTO;
+import com.gustavo.sistemalogin.dto.AdminUserCreateDTO;
 import com.gustavo.sistemalogin.model.User;
 import com.gustavo.sistemalogin.repository.UserRepository;
 import com.gustavo.sistemalogin.security.TokenService;
@@ -45,7 +45,7 @@ public class AuthService {
     /**
      * Registo de novo usuário
      */
-    public User register(UserCreateDTO userData) {
+    public User register(AdminUserCreateDTO userData) {
         // A lógica de criação de usuário foi movida para o UserService
         return userService.createUser(userData);
     }
