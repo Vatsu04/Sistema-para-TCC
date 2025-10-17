@@ -2,7 +2,6 @@ package com.gustavo.sistemalogin.service;
 
 import com.gustavo.sistemalogin.dto.UserCreateDTO;
 import com.gustavo.sistemalogin.model.User;
-import com.gustavo.sistemalogin.model.enums.PerfilUsuario;
 import com.gustavo.sistemalogin.repository.UserRepository;
 import com.gustavo.sistemalogin.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,13 +21,14 @@ public class AuthService {
     private TokenService tokenService;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserService userService; // Adicionada a dependência do UserService
+    private UserService userService; // Usado para a lógica de registo
+
+    // --- MUDANÇA APLICADA AQUI ---
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService; // Usado para a lógica de validação
 
     /**
      * Faz login e retorna JWT
@@ -38,47 +37,30 @@ public class AuthService {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, senha)
         );
-        // Após a autenticação bem-sucedida, buscamos o objeto User para gerar o token
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado após autenticação."));
         return tokenService.gerarToken(user);
     }
 
     /**
-     * Logout (apenas client-side, pois JWT é stateless)
-     */
-    public void logout(String token) {
-        // Em JWT stateless, o logout é feito removendo o token do cliente.
-        // Se quiser blacklist, precisa implementar persistência de tokens inválidos.
-    }
-
-    /**
-     * Registro de novo usuário
+     * Registo de novo usuário
      */
     public User register(UserCreateDTO userData) {
-        if (userRepository.findByEmail(userData.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("E-mail já cadastrado!");
-        }
-        User newUser = new User();
-        newUser.setNome(userData.getNome());
-        newUser.setEmail(userData.getEmail());
-        newUser.setSenha(passwordEncoder.encode(userData.getSenha()));
-        newUser.setAtivo(true);
-        return userRepository.save(newUser);
+        // A lógica de criação de usuário foi movida para o UserService
+        return userService.createUser(userData);
     }
 
     /**
      * Valida o token JWT
      */
     public boolean validateToken(String token) {
-        // 1. Extrai o email (subject) do token
         String email = tokenService.getSubject(token);
         if (email == null) {
             return false;
         }
-        // 2. Carrega os detalhes do usuário a partir do email
-        UserDetails userDetails = userService.loadUserByUsername(email);
-        // 3. Valida o token contra os detalhes do usuário
+        // --- MUDANÇA APLICADA AQUI ---
+        // Agora usa o serviço correto para carregar os detalhes do usuário
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
         return tokenService.validateToken(token, userDetails);
     }
 
@@ -89,4 +71,6 @@ public class AuthService {
         String email = tokenService.getSubject(token);
         return userRepository.findByEmail(email).orElse(null);
     }
+
+    // O método de logout pode ser mantido ou removido, pois é client-side
 }
