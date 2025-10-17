@@ -6,6 +6,11 @@ import com.gustavo.sistemalogin.model.enums.PerfilUsuario;
 import com.gustavo.sistemalogin.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.gustavo.sistemalogin.dto.UserResponseDTO; // Adicione este import
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.stream.Collectors; // Adicione este import
+import java.util.List; // Adicione este import
 
 
 @Service
@@ -39,4 +44,11 @@ public class UserService {
 
         return userRepository.save(newUser);
     }
+    @Transactional(readOnly = true)
+    public List<UserResponseDTO> findAllUsers() {
+        return userRepository.findAll().stream()
+                .map(UserResponseDTO::new)
+                .collect(Collectors.toList());
+    }
+
 }

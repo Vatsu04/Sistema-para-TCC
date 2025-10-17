@@ -3,21 +3,30 @@ package com.gustavo.sistemalogin.controller;
 import com.gustavo.sistemalogin.dto.UserResponseDTO;
 import com.gustavo.sistemalogin.model.User;
 import com.gustavo.sistemalogin.repository.UserRepository;
+import com.gustavo.sistemalogin.service.FunilService;
+import com.gustavo.sistemalogin.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
     private final UserRepository userRepository;
+    private final UserService userService;
 
-    public UserController(UserRepository userRepository) {
+
+    public UserController(UserRepository userRepository, UserService userService) {
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     /**
@@ -38,5 +47,11 @@ public class UserController {
         return ResponseEntity.ok(new UserResponseDTO(user));
     }
 
-    // Você pode adicionar outros endpoints aqui, como o de listar todos os usuários para um admin.
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        List<UserResponseDTO> users = userService.findAllUsers();
+        return ResponseEntity.ok(users);
+    }
+
 }
