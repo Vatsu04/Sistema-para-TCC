@@ -1,150 +1,236 @@
 // js/config.js
 
-document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. GUARDA DE AUTENTICAÇÃO E CABEÇALHOS ---
-    const token = localStorage.getItem('jwt_token');
-    if (!token) {
-        window.location.href = 'index.html';
-        return;
-    }
-    const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-    };
+// Flag para garantir que o script só execute uma vez
+if (!window.configScriptLoaded) {
+    window.configScriptLoaded = true;
 
-    // --- 2. SELETORES DE ELEMENTOS DO MODAL E DA LISTA ---
-    const addUserModal = document.getElementById('add-user-modal');
-    const addUserBtn = document.getElementById('add-user-btn');
-    const addUserForm = document.getElementById('add-user-form');
-    const closeModalBtns = document.querySelectorAll('.modal-close-btn, [data-close-modal]');
-    const userListElement = document.querySelector('.user-list');
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log("DOM Carregado - Iniciando config.js");
 
-    // --- 3. FUNÇÕES PARA CONTROLAR O MODAL ---
-    const openModal = () => addUserModal.classList.remove('hidden');
-    const closeModal = () => addUserModal.classList.add('hidden');
-
-    // --- 4. LÓGICA DE API E RENDERIZAÇÃO ---
-
-    // Função para buscar e renderizar a lista de usuários
-    const fetchAndRenderUsers = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/api/users/all', { headers });
-            if (!response.ok) {
-                // Se o usuário não for admin, o back-end retornará 403 Forbidden
-                console.warn('Usuário não tem permissão para ver a lista de usuários.');
-                document.getElementById('gerenciar-usuarios').innerHTML = '<h2>Acesso negado. Apenas administradores podem gerenciar usuários.</h2>';
-                return;
-            }
-            const users = await response.json();
-            
-            userListElement.innerHTML = ''; // Limpa a lista atual
-            users.forEach(user => {
-                const li = document.createElement('li');
-                li.className = 'user-item';
-                li.innerHTML = `
-                    <span class="user-name">${user.nome}</span>
-                    <span class="user-email">${user.email}</span>
-                    <span class="user-role">${user.perfil}</span>
-                    <button class="delete-user-btn" data-user-id="${user.id}"><i class="fa-solid fa-xmark"></i></button>
-                `;
-                userListElement.appendChild(li);
-            });
-        } catch (error) {
-            console.error('Erro ao buscar lista de usuários:', error);
-        }
-    };
-
-    // Função para buscar os dados do usuário logado
-    const fetchCurrentUserData = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/api/users/me', { headers });
-            if (response.ok) {
-                const user = await response.json();
-                document.getElementById('name').value = user.nome;
-                document.getElementById('email').value = user.email;
-                const profileIcon = document.getElementById('user-profile-icon');
-                if (user.nome) {
-                    profileIcon.textContent = user.nome.charAt(0).toUpperCase();
-                }
-
-                // Se o usuário for um administrador, busca a lista de usuários
-                if (user.perfil === 'ADMINISTRADOR') {
-                    fetchAndRenderUsers();
-                } else {
-                    // Esconde a aba de gerenciar usuários se não for admin
-                    const manageUsersTab = document.querySelector('a[data-target="gerenciar-usuarios"]').parentElement;
-                    manageUsersTab.style.display = 'none';
-                }
-            } else {
-                localStorage.removeItem('jwt_token');
-                window.location.href = 'index.html';
-            }
-        } catch (error) {
-            console.error('Erro de rede ou de servidor:', error);
-        }
-    };
-
-    // --- 5. EVENT LISTENERS ---
-
-    // Abre o modal ao clicar no botão "+ Usuário"
-    addUserBtn.addEventListener('click', openModal);
-
-    // Fecha o modal ao clicar nos botões de fechar/cancelar
-    closeModalBtns.forEach(btn => btn.addEventListener('click', closeModal));
-
-    // Fecha o modal ao clicar no overlay
-    addUserModal.addEventListener('click', (event) => {
-        if (event.target === addUserModal) {
-            closeModal();
-        }
-    });
-
-    // Lida com a submissão do formulário de novo usuário
-    addUserForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        const name = document.getElementById('new-user-name').value;
-        const email = document.getElementById('new-user-email').value;
-        const password = document.getElementById('new-user-password').value;
-        const passwordConfirm = document.getElementById('new-user-password-confirm').value;
-
-        // Validação simples no front-end
-        if (password !== passwordConfirm) {
-            alert('As senhas não coincidem!');
+        // --- 1. GUARDA DE AUTENTICAÇÃO E CABEÇALHOS ---
+        const token = localStorage.getItem('jwt_token');
+        if (!token) {
+            console.error("Token não encontrado, redirecionando para login.");
+            window.location.href = 'index.html';
             return;
         }
+        const headers = {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+        console.log("Token encontrado.");
 
-        const newUser = {
-            nome: name,
-            email: email,
-            senha: password
+        // --- 2. SELETORES DE ELEMENTOS ---
+        const addUserModal = document.getElementById('add-user-modal');
+        const addUserBtn = document.getElementById('add-user-btn');
+        const addUserForm = document.getElementById('add-user-form');
+        const closeModalBtns = document.querySelectorAll('.modal-close-btn, [data-close-modal]');
+        const userListElement = document.querySelector('.user-list');
+        const manageUsersSection = document.getElementById('gerenciar-usuarios');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const profileIcon = document.getElementById('user-profile-icon');
+
+
+        // Verifica se todos os elementos essenciais foram encontrados
+        if (!addUserModal || !addUserBtn || !addUserForm || !userListElement || !manageUsersSection || !nameInput || !emailInput || !profileIcon) {
+            console.error("ERRO CRÍTICO: Elementos essenciais do DOM não foram encontrados!");
+            return;
+        }
+        console.log("Seletores do DOM carregados.");
+
+        // --- 3. FUNÇÕES PARA CONTROLAR O MODAL ---
+        const openModal = () => {
+            console.log("Abrindo modal add-user.");
+            addUserModal.classList.remove('hidden');
+        }
+        const closeModal = () => {
+            console.log("Fechando modal add-user.");
+            addUserModal.classList.add('hidden');
+            addUserForm.reset(); // Limpa o formulário ao fechar
+        }
+
+        // --- 4. LÓGICA DE API E RENDERIZAÇÃO ---
+
+        // Função para buscar e renderizar a lista de usuários
+        const fetchAndRenderUsers = async () => {
+            try {
+                console.log("Buscando lista completa de usuários (/all)...");
+                const response = await fetch('http://localhost:8080/api/users/all', { headers });
+                console.log("Resposta /all:", response.status);
+
+                if (!response.ok) {
+                    console.warn('Usuário não tem permissão para ver a lista de usuários ou ocorreu um erro.');
+                    manageUsersSection.innerHTML = '<h2>Acesso negado ou erro ao buscar usuários.</h2>';
+                    return;
+                }
+                const users = await response.json();
+                console.log("Usuários recebidos:", users);
+
+                userListElement.innerHTML = ''; // Limpa a lista atual
+                users.forEach(user => {
+                    const li = document.createElement('li');
+                    li.className = 'user-item';
+                    li.innerHTML = `
+                        <span class="user-name">${user.nome}</span>
+                        <span class="user-email">${user.email}</span>
+                        <span class="user-role">${user.perfil}</span>
+                        <button class="delete-user-btn" data-user-id="${user.id}"><i class="fa-solid fa-xmark"></i></button>
+                    `;
+                    userListElement.appendChild(li);
+                });
+                console.log("Lista de usuários renderizada.");
+            } catch (error) {
+                console.error('Erro ao buscar ou renderizar lista de usuários:', error);
+                userListElement.innerHTML = '<p>Erro ao carregar a lista de usuários.</p>';
+            }
         };
 
-        try {
-            // Usa o endpoint público de registro, que já tem a validação de senha forte
-            const response = await fetch('http://localhost:8080/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }, // Não precisa de token de admin aqui
-                body: JSON.stringify(newUser)
-            });
+        // Função para buscar os dados do usuário logado
+        const fetchCurrentUserData = async () => {
+            try {
+                console.log("Buscando dados do usuário atual (/me)...");
+                const response = await fetch('http://localhost:8080/api/users/me', { headers });
+                console.log("Resposta /me:", response.status);
 
-            if (response.ok) {
-                alert('Usuário adicionado com sucesso!');
-                closeModal();
-                addUserForm.reset();
-                fetchAndRenderUsers(); // Atualiza a lista de usuários na tela
-            } else {
-                // Tenta extrair a mensagem de erro da API
-                const errorData = await response.json();
-                const errorMessage = errorData.messages ? errorData.messages.join('\n') : 'Erro ao adicionar usuário.';
-                alert(errorMessage);
+                if (response.ok) {
+                    const user = await response.json();
+                    console.log("Dados do usuário atual:", user);
+                    nameInput.value = user.nome;
+                    emailInput.value = user.email;
+                    if (user.nome) {
+                        profileIcon.textContent = user.nome.charAt(0).toUpperCase();
+                    }
+
+                    if (user.perfil === 'ADMINISTRADOR') {
+                        console.log("Usuário é ADMINISTRADOR, buscando lista completa.");
+                        fetchAndRenderUsers();
+                    } else {
+                        console.log("Usuário NÃO é ADMINISTRADOR, escondendo seção.");
+                        const manageUsersTabLink = document.querySelector('a[data-target="gerenciar-usuarios"]');
+                         if(manageUsersTabLink) manageUsersTabLink.parentElement.style.display = 'none';
+                         manageUsersSection.innerHTML = '<h2>Acesso negado. Apenas administradores podem gerenciar usuários.</h2>';
+                    }
+                } else {
+                    console.error('Falha ao buscar dados do usuário atual. Status:', response.status);
+                    localStorage.removeItem('jwt_token');
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                console.error('Erro de rede ao buscar dados do usuário atual:', error);
+                alert('Não foi possível carregar os dados do usuário. Verifique sua conexão e se o servidor está online.');
             }
-        } catch (error) {
-            console.error('Erro ao criar usuário:', error);
-            alert('Ocorreu um erro de rede.');
+        };
+
+        // --- 5. EVENT LISTENERS ---
+
+        console.log("Adicionando event listeners...");
+        addUserBtn.addEventListener('click', openModal);
+        closeModalBtns.forEach(btn => btn.addEventListener('click', closeModal));
+        addUserModal.addEventListener('click', (event) => {
+            if (event.target === addUserModal) closeModal();
+        });
+
+        // Verifica se o listener já foi adicionado para evitar duplicação
+        if (!addUserForm.dataset.listenerAttached) {
+            addUserForm.addEventListener('submit', async (event) => {
+                event.preventDefault(); // Impede o recarregamento da página
+                console.log("Evento SUBMIT do formulário 'Adicionar Usuário' acionado!");
+
+                // --- LEITURA E VALIDAÇÃO ---
+                const nameInputElem = document.getElementById('new-user-name');
+                const emailInputElem = document.getElementById('new-user-email');
+                const passwordInputElem = document.getElementById('new-user-password');
+                const passwordConfirmInputElem = document.getElementById('new-user-password-confirm');
+                const roleSelectElem = document.getElementById('new-user-role');
+                const statusSelectElem = document.getElementById('new-user-status');
+
+
+                const name = nameInputElem.value.trim();
+                const email = emailInputElem.value.trim();
+                const password = passwordInputElem.value;
+                const passwordConfirm = passwordConfirmInputElem.value;
+                const role = roleSelectElem.value;
+                const isActive = statusSelectElem.value === 'true';
+        
+
+                console.log("--- Iniciando Validação Explícita ---");
+                console.log("Nome:", name, `(comprimento ${name.length})`);
+                console.log("Email:", email, `(comprimento ${email.length})`);
+                console.log("Senha:", password ? `(comprimento ${password.length})` : '(vazio)');
+                console.log("Perfil:", role);
+                console.log("Status Selecionado (string):", isActive ? 'true' : 'false');
+                console.log("Ativo (boolean):", isActive);
+
+                let isValid = true;
+                const missingFields = [];
+                if (name.length === 0) { isValid = false; missingFields.push('Nome'); console.error("FALHA CHECK: Nome"); }
+                if (email.length === 0) { isValid = false; missingFields.push('E-mail'); console.error("FALHA CHECK: E-mail"); }
+                if (password === '') { isValid = false; missingFields.push('Senha'); console.error("FALHA CHECK: Senha"); }
+                if (role === '') { isValid = false; missingFields.push('Perfil'); console.error("FALHA CHECK: Perfil"); }
+                if (isActive === '') { isValid = false; missingFields.push('Status'); console.error("FALHA CHECK: Status"); }
+
+                if (!isValid) {
+                    alert('Por favor, preencha todos os campos obrigatórios: ' + missingFields.join(', ') + '.');
+                    return;
+                }
+
+                if (password !== passwordConfirm) {
+                    alert('As senhas não coincidem!');
+                    return;
+                }
+                console.log("Validação OK.");
+
+                // --- MONTAGEM E FETCH ---
+                const newUser = {
+                    nome: name,
+                    email: email,
+                    senha: password,
+                    perfil: role,
+                    ativo: isActive
+                };
+                console.log("Objeto newUser a ser enviado:", newUser);
+
+                try {
+                    console.log("Enviando requisição para /api/users/admin/create...");
+                    const response = await fetch('http://localhost:8080/api/users/admin/create', {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify(newUser)
+                    });
+                    console.log("Resposta recebida:", response.status, response.statusText);
+
+                    if (response.ok) {
+                        alert('Usuário adicionado com sucesso!');
+                        closeModal();
+                        fetchAndRenderUsers(); // Atualiza a lista
+                    } else {
+                        let apiErrorMessage = 'Erro ao adicionar usuário.';
+                        try {
+                            const errorData = await response.json();
+                            apiErrorMessage = errorData.messages ? errorData.messages.join('\n') : (errorData.message || apiErrorMessage);
+                        } catch (e) {
+                            apiErrorMessage = `Erro ${response.status}: ${response.statusText}`;
+                        }
+                        console.error("Erro da API:", apiErrorMessage);
+                        alert(apiErrorMessage);
+                    }
+                } catch (error) {
+                    console.error('Erro de rede ou ao processar requisição:', error);
+                    alert('Ocorreu um erro de rede. Verifique se o servidor está online.');
+                }
+            });
+            addUserForm.dataset.listenerAttached = 'true'; // Marca que o listener foi adicionado
+            console.log("Listener de SUBMIT adicionado ao formulário 'Adicionar Usuário'.");
+        } else {
+            console.warn("Listener de SUBMIT para 'Adicionar Usuário' já estava adicionado.");
         }
+
+        // --- 6. INICIALIZAÇÃO DA PÁGINA ---
+        console.log("Iniciando busca de dados do usuário atual...");
+        fetchCurrentUserData();
     });
 
-    // --- 6. INICIALIZAÇÃO DA PÁGINA ---
-    fetchCurrentUserData();
-});
+} else {
+    console.warn("Script config.js já carregado ou flag não definida, pulando execução.");
+}

@@ -90,7 +90,7 @@
             </div>
         </div>
     </div>
-    <script src="js/script.js"></script>
+
     <div id="delete-user-modal" class="modal-overlay hidden">
     <div class="modal">
         <button class="modal-close-btn">&times;</button>
@@ -138,10 +138,18 @@
             </div>
 
             <div class="form-group">
-            <label for="new-user-role">Perfil</label>
-            <select id="new-user-role" required>
-                <option value="ASSISTENTE" selected>Assistente</option>
-                <option value="ADMINISTRADOR">Administrador</option>
+                <label for="new-user-role">Perfil</label>
+                <select id="new-user-role" required>
+                    <option value="ASSISTENTE" selected>Assistente</option>
+                    <option value="ADMINISTRADOR">Administrador</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+            <label for="new-user-status">Ativo</label>
+            <select id="new-user-status" required>
+                <option value="true" selected>Sim</option>
+                <option value="false">Não</option>
             </select>
         </div>
 
@@ -155,6 +163,7 @@
     </div>
 </div>
     <script src="js/config.js"></script>
+    <script src="js/script.js"></script>
 </body>
 
 
