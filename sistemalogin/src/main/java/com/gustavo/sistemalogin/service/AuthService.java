@@ -47,7 +47,7 @@ public class AuthService {
      */
     public User register(AdminUserCreateDTO userData) {
         // A lógica de criação de usuário foi movida para o UserService
-        return userService.createUser(userData);
+        return userService.createUserAsAdmin(userData);
     }
 
     /**
