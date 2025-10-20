@@ -179,7 +179,7 @@ if (!window.configScriptLoaded) {
                     alert('As senhas não coincidem!');
                     return;
                 }
-                console.log("Validação OK.");
+
 
                 // --- MONTAGEM E FETCH ---
                 const newUser = {
@@ -189,10 +189,10 @@ if (!window.configScriptLoaded) {
                     perfil: role,
                     ativo: isActive
                 };
-                console.log("Objeto newUser a ser enviado:", newUser);
+
 
                 try {
-                    console.log("Enviando requisição para /api/users/admin/create...");
+
                     const response = await fetch('http://localhost:8080/api/users/admin/create', {
                         method: 'POST',
                         headers: headers,
@@ -221,16 +221,16 @@ if (!window.configScriptLoaded) {
                 }
             });
             addUserForm.dataset.listenerAttached = 'true'; // Marca que o listener foi adicionado
-            console.log("Listener de SUBMIT adicionado ao formulário 'Adicionar Usuário'.");
+
         } else {
-            console.warn("Listener de SUBMIT para 'Adicionar Usuário' já estava adicionado.");
+
         }
 
         // --- 6. INICIALIZAÇÃO DA PÁGINA ---
-        console.log("Iniciando busca de dados do usuário atual...");
+
         fetchCurrentUserData();
     });
 
 } else {
-    console.warn("Script config.js já carregado ou flag não definida, pulando execução.");
+
 }

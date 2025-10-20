@@ -30,9 +30,20 @@ public class EtapaService {
                 .filter(f -> f.getUser().getEmail().equals(userEmail))
                 .orElseThrow(() -> new SecurityException("Funil não encontrado ou não pertence ao usuário."));
 
+        // --- INÍCIO DA LÓGICA DE POSIÇÃO AUTOMÁTICA ---
+        // 1. Busca as etapas atuais do funil usando o método do repositório
+        List<Etapa> etapasAtuais = etapaRepository.findByFunilId(funil.getId());
+
+        // 2. A nova posição é o número de etapas existentes.
+        //    - Se 0 etapas existem, nova posição é 0.
+        //    - Se 1 etapa existe (pos 0), nova posição é 1.
+        //    - Se 2 etapas existem (pos 0, 1), nova posição é 2.
+        int novaPosicao = etapasAtuais.size();
+        // --- FIM DA LÓGICA DE POSIÇÃO AUTOMÁTICA ---
+
         Etapa novaEtapa = new Etapa();
         novaEtapa.setNome(dto.getNome());
-        novaEtapa.setPosicao(dto.getPosicao());
+        novaEtapa.setPosicao(novaPosicao); // <-- Seta a posição calculada
         novaEtapa.setFunil(funil);
 
         Etapa etapaSalva = etapaRepository.save(novaEtapa);
@@ -53,7 +64,17 @@ public class EtapaService {
     public EtapaResponseDTO atualizarEtapa(Long etapaId, EtapaUpdateDTO dto, String userEmail) {
         Etapa etapa = findEtapaByIdAndValidateOwner(etapaId, userEmail);
 
-        etapa.setNome(dto.getNome());
+        // Atualiza o nome se for fornecido
+        if (dto.getNome() != null && !dto.getNome().isBlank()) {
+            etapa.setNome(dto.getNome());
+        }
+
+        // Nota: A lógica para ATUALIZAR a posição (drag-and-drop)
+        // exigiria reordenar as outras etapas e não está implementada aqui.
+        if (dto.getPosicao() != null) {
+            // TODO: Implementar lógica de reordenação se necessário
+            etapa.setPosicao(dto.getPosicao());
+        }
 
         Etapa etapaAtualizada = etapaRepository.save(etapa);
         return new EtapaResponseDTO(etapaAtualizada);

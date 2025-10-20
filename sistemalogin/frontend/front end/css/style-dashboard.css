@@ -1,9 +1,12 @@
+
+
 /* --- Reset Básico e Estilos Globais --- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+
 
 body {
     font-family: 'Roboto', sans-serif;
@@ -385,6 +388,7 @@ body {
     background-color: #f0f5ff;
 }
 
+
 /* Estilo do checkmark (✓) na opção selecionada */
 .custom-select-options li.selected::after {
     content: '\f00c'; /* Ícone de check do Font Awesome */
@@ -403,3 +407,6 @@ body {
 .new-funnel-option i {
     margin-right: 8px;
 }
+
+
+
