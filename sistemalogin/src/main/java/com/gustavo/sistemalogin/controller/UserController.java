@@ -13,6 +13,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import com.gustavo.sistemalogin.dto.UserSelfUpdateDTO; // Import necessário
+import org.springframework.http.HttpMethod;
 
 import java.util.List;
 
@@ -79,5 +81,14 @@ public class UserController {
     public ResponseEntity<Void> deleteUserAsAdmin(@PathVariable Long id) {
         userService.deleteUserAsAdmin(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/me") // Usa PUT na rota /me
+    public ResponseEntity<UserResponseDTO> updateMyProfile(
+            @Valid @RequestBody UserSelfUpdateDTO dto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        UserResponseDTO updatedUser = userService.updateMyProfile(userDetails.getUsername(), dto);
+        return ResponseEntity.ok(updatedUser);
     }
 }

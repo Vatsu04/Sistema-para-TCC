@@ -1,5 +1,73 @@
 // js/config.js
 
+// js/config.js
+
+document.addEventListener('DOMContentLoaded', () => {
+    // ... (todo o código existente: Auth Guard, seletores, modais, fetch users, etc.) ...
+
+    // --- NOVO: SELETOR PARA O FORMULÁRIO DE PREFERÊNCIAS ---
+    const userPrefsForm = document.getElementById('user-prefs-form');
+    if (!userPrefsForm) {
+        console.error("ERRO: Formulário de preferências 'user-prefs-form' não encontrado!");
+        return; // Impede erros se o elemento não existir
+    }
+
+    // --- NOVO: EVENT LISTENER PARA SALVAR PREFERÊNCIAS ---
+    userPrefsForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Impede o recarregamento da página
+
+        const newName = document.getElementById('name').value.trim();
+
+        if (!newName) {
+            alert('O nome não pode ficar vazio.');
+            return;
+        }
+
+        const updateData = {
+            nome: newName
+        };
+
+        console.log("Enviando atualização de perfil:", updateData);
+
+        try {
+            const response = await fetch('http://localhost:8080/api/users/me', {
+                method: 'PUT', // Método HTTP para atualização
+                headers: headers, // Cabeçalhos com token e Content-Type
+                body: JSON.stringify(updateData) // Envia apenas o nome a ser atualizado
+            });
+
+            console.log("Resposta PUT /me:", response.status, response.statusText);
+
+            if (response.ok) {
+                const updatedUser = await response.json();
+                alert('Alterações salvas com sucesso!');
+                // Opcional: Atualiza o nome no campo e no ícone do header, caso tenha mudado
+                document.getElementById('name').value = updatedUser.nome;
+                 if (updatedUser.nome) {
+                    profileIcon.textContent = updatedUser.nome.charAt(0).toUpperCase();
+                }
+            } else {
+                // Tenta mostrar erro da API
+                let apiErrorMessage = 'Erro ao salvar alterações.';
+                try {
+                    const errorData = await response.json();
+                    apiErrorMessage = errorData.messages ? errorData.messages.join('\n') : (errorData.message || apiErrorMessage);
+                } catch (e) {
+                    apiErrorMessage = `Erro ${response.status}: ${response.statusText}`;
+                }
+                console.error("Erro da API ao atualizar perfil:", apiErrorMessage);
+                alert(apiErrorMessage);
+            }
+        } catch (error) {
+            console.error('Erro de rede ao atualizar perfil:', error);
+            alert('Ocorreu um erro de rede ao tentar salvar as alterações.');
+        }
+    });
+
+    // A chamada inicial para fetchCurrentUserData() já existe e preencherá os campos
+    // fetchCurrentUserData(); // Garanta que esta linha está no final do script
+});
+
 // Flag para garantir que o script só execute uma vez
 if (!window.configScriptLoaded) {
     window.configScriptLoaded = true;
@@ -234,3 +302,4 @@ if (!window.configScriptLoaded) {
 } else {
 
 }
+
