@@ -438,3 +438,19 @@ body {
 .btn-new-deal-in-column:hover{
     background-color: #218838;
 }
+
+/* Feedback visual para o card que está sendo arrastado */
+.kanban-card.dragging {
+    opacity: 0.5;
+    transform: rotate(3deg);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Feedback visual para a coluna que está prestes a receber o card */
+.cards-container.drag-over {
+    background-color: #e6f7ff; /* Um azul bem claro */
+    border: 2px dashed #096dd9;
+    border-radius: 6px;
+    /* Garante que a área de drop tenha uma altura mínima */
+    min-height: 100px; 
+}

@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             ]);
 
             if (!etapasResponse.ok || !negociosResponse.ok) {
-                 throw new Error(`Falha ao buscar dados: Etapas ${etapasResponse.status}, Negócios ${negociosResponse.status}`);
+                throw new Error(`Falha ao buscar dados: Etapas ${etapasResponse.status}, Negócios ${negociosResponse.status}`);
             }
 
             let etapas = await etapasResponse.json();
@@ -78,29 +78,44 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <i class="fa-solid fa-plus"></i>
                         </button>
                     </div>
-                    <div class="cards-container"></div>`;
+                    <div class="cards-container"></div>`; // Este é o container dos cards
                 kanbanBoard.appendChild(column);
 
                 const cardsContainer = column.querySelector('.cards-container');
+                
+                // *** NOVO: Adiciona listeners de Drop Zone na coluna ***
+                cardsContainer.addEventListener('dragover', handleDragOver);
+                cardsContainer.addEventListener('dragenter', handleDragEnter);
+                cardsContainer.addEventListener('dragleave', handleDragLeave);
+                cardsContainer.addEventListener('drop', handleDrop);
+
                 const negociosNestaEtapa = negocios.filter(neg => neg.etapaId === etapa.id && neg.funilId == funilId);
 
                 // Renderiza os Cards de Negócio
                 negociosNestaEtapa.forEach(negocio => {
                     const card = document.createElement('div');
                     card.className = 'kanban-card';
-                    // Adicionando mais detalhes ao card
+                    
+                    // *** NOVO: Adiciona atributos para Drag ***
+                    card.draggable = true;
+                    // Certifique-se que seu objeto 'negocio' tem um 'id'
+                    card.dataset.negocioId = negocio.id; 
+                    card.dataset.currentEtapaId = etapa.id;
+
                     card.innerHTML = `
                         <h4>${negocio.titulo}</h4>
                         <p><i class="fa-solid fa-building"></i> ${negocio.organizacaoNome || 'Sem organização'}</p>
                         <p><i class="fa-solid fa-user"></i> ${negocio.pessoaNome}</p>
                         <span class="deal-value">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(negocio.valor)}</span>
                     `;
+                    
+                    // *** NOVO: Adiciona listeners de Drag no card ***
+                    card.addEventListener('dragstart', handleDragStart);
+                    card.addEventListener('dragend', handleDragEnd);
+                    
                     cardsContainer.appendChild(card);
                 });
             });
-
-            // Adiciona a coluna "Adicionar Etapa" (se necessário)
-            // (Você pode adicionar a lógica do botão 'add-stage-button' aqui se desejar)
 
         } catch (error) {
             console.error("Erro ao renderizar o Kanban:", error);
@@ -136,7 +151,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                         renderKanban(funil.id);
                     }
                     li.addEventListener('click', () => {
-                        // Lógica para trocar seleção no dropdown (do script.js, adaptada)
                         const previouslySelected = funnelOptionsList.querySelector('li.selected');
                         if(previouslySelected) previouslySelected.classList.remove('selected');
                         li.classList.add('selected');
@@ -181,7 +195,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentEtapaIdForModal = null; // Limpa a etapa selecionada
     };
 
-    // --- 5. EVENT LISTENERS ---
+    // --- 5. EVENT LISTENERS (Modal e Formulário) ---
 
     // Listener de delegação no Kanban para abrir o modal
     kanbanBoard.addEventListener('click', (event) => {
@@ -241,8 +255,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             etapaId: parseInt(currentEtapaIdForModal)
         };
 
-        console.log("Enviando dados do negócio:", negocioData);
-
         try {
             const response = await fetch('http://localhost:8080/api/negocios', {
                 method: 'POST',
@@ -264,7 +276,140 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // --- 6. INICIALIZAÇÃO DA PÁGINA ---
+    // --- 6. NOVAS FUNÇÕES E HANDLERS DE DRAG & DROP ---
+
+    const handleDragStart = (event) => {
+        const card = event.target.closest('.kanban-card');
+        if (!card) return;
+        
+        event.dataTransfer.setData("text/plain", card.dataset.negocioId);
+        event.dataTransfer.effectAllowed = "move";
+        // Adiciona a classe 'dragging' para feedback visual
+        setTimeout(() => { 
+            card.classList.add('dragging');
+        }, 0);
+    };
+
+    const handleDragEnd = (event) => {
+        // Limpa a classe 'dragging' quando o arraste termina
+        const card = event.target.closest('.kanban-card');
+        if (card) {
+            card.classList.remove('dragging');
+        }
+    };
+
+    const handleDragOver = (event) => {
+        event.preventDefault(); // Essencial para permitir o 'drop'
+        event.dataTransfer.dropEffect = "move";
+    };
+
+    const handleDragEnter = (event) => {
+        // Adiciona feedback visual à coluna que está recebendo o card
+        const container = event.target.closest('.cards-container');
+        if (container) {
+            container.classList.add('drag-over');
+        }
+    };
+
+    const handleDragLeave = (event) => {
+        // Remove o feedback visual
+        const container = event.target.closest('.cards-container');
+        if (container) {
+            container.classList.remove('drag-over');
+        }
+    };
+
+    const handleDrop = async (event) => {
+        event.preventDefault();
+        const cardsContainer = event.target.closest('.cards-container');
+        const column = event.target.closest('.kanban-column');
+
+        if (!column || !cardsContainer) return;
+
+        cardsContainer.classList.remove('drag-over'); // Limpa o feedback visual
+
+        const negocioId = event.dataTransfer.getData("text/plain");
+        const newEtapaId = column.dataset.etapaId;
+        const draggedCard = document.querySelector(`.kanban-card[data-negocio-id="${negocioId}"]`);
+        
+        if (!draggedCard) return;
+
+        const originalEtapaId = draggedCard.dataset.currentEtapaId;
+
+        // Não faz nada se soltar na mesma coluna
+        if (newEtapaId === originalEtapaId) {
+            return;
+        }
+
+        // 1. Atualização Otimista da UI
+        // Move o card no DOM imediatamente para uma resposta rápida
+        cardsContainer.appendChild(draggedCard);
+        draggedCard.dataset.currentEtapaId = newEtapaId; // Atualiza o estado do card
+
+        // 2. Chamada da API para persistir a mudança
+        try {
+            await updateNegocioEtapa(negocioId, newEtapaId);
+            // Sucesso! A UI já está atualizada.
+        } catch (error) {
+            console.error("Falha ao atualizar etapa:", error);
+            alert("Erro ao mover o card. A alteração será desfeita.");
+            // Reverte a mudança recarregando o kanban
+            renderKanban(funnelTriggerText.dataset.selectedFunilId); 
+        }
+    };
+
+    // Nova função para chamar a API e atualizar a etapa do negócio
+    // Nova função para chamar a API e atualizar a etapa do negócio (versão PUT)
+    const updateNegocioEtapa = async (negocioId, newEtapaId) => {
+        try {
+            // 1. Buscar (GET) o estado atual do negócio
+            const getResponse = await fetch(`http://localhost:8080/api/negocios/${negocioId}`, {
+                method: 'GET',
+                headers: headers
+            });
+
+            if (!getResponse.ok) {
+                throw new Error(`Falha ao buscar negócio: ${getResponse.status}`);
+            }
+
+            const negocio = await getResponse.json();
+            console.log("Objeto recebido (GET):", negocio); // Para depuração
+
+            // 2. Modificar o campo etapaId
+            // (IMPORTANTE: Verifique se o campo no seu GET é 'etapaId')
+            negocio.etapaId = parseInt(newEtapaId);
+
+            /* * NOTA: É comum a API de GET retornar campos com nomes diferentes
+             * da API de PUT/POST (ex: GET retorna 'organizacaoNome', mas PUT espera 'organizacao').
+             * Se o PUT falhar, precisaremos mapear os campos do objeto 'negocio' aqui.
+             * Por enquanto, vamos assumir que o GET /api/negocios/{id} 
+             * retorna um objeto compatível com o PUT /api/negocios/{id}.
+            */
+           
+            // 3. Enviar (PUT) o objeto completo e atualizado
+            const putResponse = await fetch(`http://localhost:8080/api/negocios/${negocioId}`, {
+                method: 'PUT', 
+                headers: headers,
+                body: JSON.stringify(negocio) // Envia o objeto inteiro
+            });
+
+            if (!putResponse.ok) {
+                const errorData = await putResponse.json();
+                console.error("Erro do PUT:", errorData);
+                throw new Error(errorData.message || `Status ${putResponse.status}`);
+            }
+            
+            // Sucesso
+            console.log('Negócio movido com sucesso na API.');
+
+        } catch (error) {
+            console.error("Erro detalhado em updateNegocioEtapa:", error);
+            // Propaga o erro para o 'handleDrop' tratar (mostrar o alert e reverter)
+            throw error; 
+        }
+    };
+
+    // --- 7. INICIALIZAÇÃO DA PÁGINA ---
     fetchCurrentUser(); // Busca o usuário atual para o ícone
     fetchAndPopulateFunnels(); // Busca os funis e renderiza o primeiro Kanban
 
