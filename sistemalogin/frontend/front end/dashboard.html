@@ -4,31 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Negócios - FastCRM</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    
     <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="css/style-dashboard.css">
-    <!-- Adicionando Font Awesome para os ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-        <link rel="icon" type="image/x-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA+CAIAAADvdH/nAAAAAXNSR0IArs4c6QAAAQ5JREFUaIHt2b8LAWEcx3FkEFEm42VTioH/QhY7i9Eok0kWZbQZrAablcEfcHUymay6xIM6OT/KJnTnos/FU5/3eN/l1T133bfOG47nPf+d79cA50hERCIiEhGRiIhERBIQ/e/HASVbKqSUkMsKczMdjwaaYTl0IMaSmWI5lw66I7t31Yfr2UBbWA4lOGgSETk8i1addsI4XqAKU2z3Z7vh50Sx6FYbzYn12+dGEhw0iYhIREQiIhIRff51iSZqvX4NSFip9Uqro57s5hLcRRIRSUD8Yhmbt7mMvUQiIhIRkYiIREQkIiIRkQREh2XseDD0pdAjD5dWYmu6rXrKy7/6gEhERCIiEhGRiIhERDcP+jnCtWZCaQAAAABJRU5ErkJggg==">
-</head>
+    <link rel="icon" type="image/x-icon" href="data:image/png;base64,..."> </head>
 <body>
-
     <div class="app-container">
         <aside class="sidebar">
-            <a href="dashboard.html" class="sidebar-logo-link">
-                <div class="sidebar-logo">F</div>
-            </a>
+            <a href="dashboard.html" class="sidebar-logo-link"><div class="sidebar-logo">F</div></a>
         </aside>
-<div class="main-content">
+
+        <div class="main-content">
             <header class="app-header">
                 <h1>Negócios</h1>
                 <div class="profile-container">
-                    <div class="user-profile" id="user-profile-icon">A</div>
+                    <div class="user-profile" id="user-profile-icon">?</div>
                     <div class="profile-dropdown hidden" id="profile-dropdown-menu">
                         <ul>
                             <li><a href="conf.html"><i class="fa-solid fa-user-gear"></i> Preferências pessoais</a></li>
@@ -40,11 +33,11 @@
             </header>
 
             <div class="action-bar">
-                <button class="btn btn-new-deal">+ Negócio</button>
+                <button class="btn btn-new-deal" style="display: none;">+ Negócio Fantasma</button>
                 <div class="funnel-selector">
                     <div class="custom-select-wrapper">
                         <div class="custom-select">
-                            <span id="funnel-trigger-text" class="custom-select-trigger">Carregando...</span>
+                            <span id="funnel-trigger-text" class="custom-select-trigger">Carregando Funis...</span>
                         </div>
                         <div class="custom-select-options hidden">
                             <ul id="funnel-options-list">
@@ -66,36 +59,59 @@
         <div class="modal hidden">
             <div class="modal-header">
                 <h2>Adicionar Negócio</h2>
-            </div>
+
             <form id="modal-form" class="modal-form">
                 <div class="form-group">
-                    <label for="modal-titulo">Título</label>
+                    <label for="modal-titulo">Título do Negócio *</label>
                     <input type="text" id="modal-titulo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="modal-pessoa-nome">Pessoa de Contato *</label>
+                    <input type="text" id="modal-pessoa-nome" required>
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
-                         <label for="modal-pessoa">Pessoa de Contato</label>
-                        <select id="modal-pessoa" required>
-                            <option value="">Selecione um contato...</option>
-                        </select>
+                        <label for="modal-pessoa-email">Email do Contato *</label>
+                        <input type="email" id="modal-pessoa-email" required>
                     </div>
                     <div class="form-group">
-                        <label for="modal-organizacao">Organização</label>
-                        <input type="text" id="modal-organizacao">
+                        <label for="modal-pessoa-telefone">Telefone do Contato *</label>
+                        <input type="tel" id="modal-pessoa-telefone" required>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="modal-valor">Valor</label>
-                    <input type="number" id="modal-valor" step="0.01" required>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="modal-organizacao">Organização *</label>
+                        <input type="text" id="modal-organizacao" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-valor">Valor (R$) *</label>
+                        <input type="number" id="modal-valor" step="0.01" min="0" required>
+                    </div>
                 </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="modal-data-abertura">Data de Abertura *</label>
+                        <input type="date" id="modal-data-abertura" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-data-fechamento">Data de Fechamento</label>
+                        <input type="date" id="modal-data-fechamento">
+                    </div>
+                </div>
+
                 <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-close-modal>Cancelar</button>
                     <button type="submit" class="btn btn-primary-green">Adicionar</button>
                 </div>
             </form>
         </div>
     </div>
-    
+
     <script src="js/dashboard.js" defer></script>
-    <script src="js/script.js" defer></script> 
+    <script src="js/script.js" defer></script>
 </body>
 </html>

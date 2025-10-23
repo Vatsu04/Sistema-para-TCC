@@ -410,3 +410,31 @@ body {
 
 
 
+.kanban-column-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.kanban-column-header h2{
+    font-size: 16px;
+    font-weight: 700;
+    color: #0d214d;
+    margin: 0;
+}
+
+.btn-new-deal-in-column{
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-new-deal-in-column:hover{
+    background-color: #218838;
+}

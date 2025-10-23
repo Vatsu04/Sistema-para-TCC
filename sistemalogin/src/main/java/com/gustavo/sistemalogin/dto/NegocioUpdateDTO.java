@@ -18,9 +18,18 @@ public class NegocioUpdateDTO {
     private String emailPessoaContato;
     private String telefonePessoaContato;
 
-    // Getters e Setters...
-    // (O campo pessoaId foi removido)
 
+    private LocalDate dataDeAbertura;
+
+
+
+    public LocalDate getDataDeAbertura() {
+        return dataDeAbertura;
+    }
+
+    public void setDataDeAbertura(LocalDate dataDeAbertura) {
+        this.dataDeAbertura = dataDeAbertura;
+    }
     public String getTitulo() { return titulo; }
     public void setTitulo(String titulo) { this.titulo = titulo; }
     public BigDecimal getValor() { return valor; }

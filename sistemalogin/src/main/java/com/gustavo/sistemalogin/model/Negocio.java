@@ -20,12 +20,11 @@ public class Negocio {
     @Column(nullable = false)
     private String titulo;
 
-    // A tabela permite nulo, mas a regra de negócio pode exigir.
-    // Manter nullable = false força a validação no DTO.
     @Column(nullable = false)
     private BigDecimal valor;
 
-    @Column(name = "data_de_abertura", nullable = false, updatable = false)
+    // --- CORREÇÃO: Removido 'updatable = false' ---
+    @Column(name = "data_de_abertura", nullable = false)
     private LocalDate dataDeAbertura;
 
     @Column(name = "data_de_fechamento")
@@ -34,7 +33,7 @@ public class Negocio {
     @Column(name = "organizacao")
     private String organizacao;
 
-    // --- NOVOS CAMPOS DESNORMALIZADOS ---
+    // --- CAMPOS DESNORMALIZADOS ---
     @Column(name = "Pessoa_Contato", nullable = false)
     private String pessoaContato;
 
@@ -43,7 +42,6 @@ public class Negocio {
 
     @Column(name = "Telefone_Pessoa_Contato", nullable = false)
     private String telefonePessoaContato;
-
 
     // --- RELACIONAMENTOS ---
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,5 +53,4 @@ public class Negocio {
     @JoinColumn(name = "funil_id", nullable = false)
     @JsonIgnore
     private Funil funil;
-
 }

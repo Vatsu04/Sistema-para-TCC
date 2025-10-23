@@ -4,6 +4,7 @@ import com.gustavo.sistemalogin.dto.NegocioCreateDTO;
 import com.gustavo.sistemalogin.dto.NegocioResponseDTO;
 import com.gustavo.sistemalogin.dto.NegocioUpdateDTO;
 import com.gustavo.sistemalogin.service.NegocioService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
 /**
  * Controller para gerir as operações CRUD de Negócios.
  * Todos os endpoints são protegidos e requerem autenticação.
@@ -33,7 +35,7 @@ public class NegocioController {
      * @return O negócio recém-criado.
      */
     @PostMapping
-    public ResponseEntity<NegocioResponseDTO> criarNegocio(@RequestBody NegocioCreateDTO negocioCreateDTO, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<NegocioResponseDTO> criarNegocio(@Valid @RequestBody NegocioCreateDTO negocioCreateDTO, @AuthenticationPrincipal UserDetails userDetails) {
         // Extrai o email (username) do utilizador autenticado e passa para o serviço
         NegocioResponseDTO novoNegocio = negocioService.criarNegocio(negocioCreateDTO, userDetails.getUsername());
         return new ResponseEntity<>(novoNegocio, HttpStatus.CREATED);
@@ -70,7 +72,7 @@ public class NegocioController {
      * @return O negócio atualizado.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<NegocioResponseDTO> atualizarNegocio(@PathVariable Long id, @RequestBody NegocioUpdateDTO negocioUpdateDTO, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<NegocioResponseDTO> atualizarNegocio(@PathVariable Long id,@Valid @RequestBody NegocioUpdateDTO negocioUpdateDTO, @AuthenticationPrincipal UserDetails userDetails) {
         NegocioResponseDTO negocioAtualizado = negocioService.atualizarNegocio(id, negocioUpdateDTO, userDetails.getUsername());
         return ResponseEntity.ok(negocioAtualizado);
     }
