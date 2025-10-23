@@ -95,4 +95,19 @@ public class UserService {
                 .map(UserResponseDTO::new)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public UserResponseDTO updateMyProfile(String userEmail, UserSelfUpdateDTO dto) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("Usuário logado não encontrado no banco."));
+
+        // Atualiza o nome se foi fornecido no DTO
+        if (dto.getNome() != null && !dto.getNome().trim().isEmpty()) {
+            user.setNome(dto.getNome().trim());
+        }
+        // No futuro, a lógica para alterar senha (com validação da senha atual) pode entrar aqui.
+
+        User updatedUser = userRepository.save(user);
+        return new UserResponseDTO(updatedUser);
+    }
 }
