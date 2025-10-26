@@ -164,22 +164,45 @@ if (!window.configScriptLoaded) {
                 if (response.ok) {
                     const user = await response.json();
                     console.log("Dados do usuário atual:", user);
+
+                    // Preenche os campos do formulário de preferências
                     nameInput.value = user.nome;
                     emailInput.value = user.email;
                     if (user.nome) {
                         profileIcon.textContent = user.nome.charAt(0).toUpperCase();
                     }
 
+                    // --- LÓGICA DE PERMISSÃO PARA EDIÇÃO ---
                     if (user.perfil === 'ADMINISTRADOR') {
-                        console.log("Usuário é ADMINISTRADOR, buscando lista completa.");
+                        console.log("Usuário é ADMINISTRADOR. Habilitando edição de perfil.");
+                        // Permite editar o nome
+                        nameInput.readOnly = false;
+                        // Mostra o botão "Salvar Alterações"
+                        document.getElementById('save-prefs-actions').style.display = 'block';
+                        // Mostra o botão de editar senha (se houver lógica futura)
+                        document.getElementById('edit-password-btn').style.display = 'inline-block'; // Ou 'block'
+
+                        // Busca a lista de usuários (como já fazia)
+                        console.log("Buscando lista completa de usuários...");
                         fetchAndRenderUsers();
-                    } else {
-                        console.log("Usuário NÃO é ADMINISTRADOR, escondendo seção.");
+                    } else { // Se for ASSISTENTE
+                        console.log("Usuário NÃO é ADMINISTRADOR. Desabilitando edição de perfil.");
+                        // Garante que o nome NÃO seja editável
+                        nameInput.readOnly = true;
+                        // Garante que o botão "Salvar" NÃO apareça
+                        document.getElementById('save-prefs-actions').style.display = 'none';
+                        // Esconde o botão de editar senha
+                        document.getElementById('edit-password-btn').style.display = 'none';
+
+                        // Esconde a seção de gerenciar usuários (como já fazia)
+                        console.log("Escondendo seção de Gerenciar Usuários.");
                         const manageUsersTabLink = document.querySelector('a[data-target="gerenciar-usuarios"]');
-                         if(manageUsersTabLink) manageUsersTabLink.parentElement.style.display = 'none';
-                         manageUsersSection.innerHTML = '<h2>Acesso negado. Apenas administradores podem gerenciar usuários.</h2>';
+                        if(manageUsersTabLink) manageUsersTabLink.parentElement.style.display = 'none';
+                        manageUsersSection.innerHTML = '<h2>Acesso negado. Apenas administradores podem gerenciar usuários.</h2>';
                     }
-                } else {
+                    // --- FIM DA LÓGICA DE PERMISSÃO ---
+
+                } else { // Falha ao buscar /me
                     console.error('Falha ao buscar dados do usuário atual. Status:', response.status);
                     localStorage.removeItem('jwt_token');
                     window.location.href = 'index.html';
