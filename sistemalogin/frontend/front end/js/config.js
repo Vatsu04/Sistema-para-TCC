@@ -1,20 +1,13 @@
-// js/config.js
-
-// js/config.js
-
 document.addEventListener('DOMContentLoaded', () => {
-    // ... (todo o código existente: Auth Guard, seletores, modais, fetch users, etc.) ...
-
-    // --- NOVO: SELETOR PARA O FORMULÁRIO DE PREFERÊNCIAS ---
     const userPrefsForm = document.getElementById('user-prefs-form');
     if (!userPrefsForm) {
         console.error("ERRO: Formulário de preferências 'user-prefs-form' não encontrado!");
-        return; // Impede erros se o elemento não existir
+        return; 
     }
 
-    // --- NOVO: EVENT LISTENER PARA SALVAR PREFERÊNCIAS ---
+
     userPrefsForm.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Impede o recarregamento da página
+        event.preventDefault();
 
         const newName = document.getElementById('name').value.trim();
 
@@ -136,6 +129,8 @@ if (!window.configScriptLoaded) {
                 console.log("Usuários recebidos:", users);
 
                 userListElement.innerHTML = ''; // Limpa a lista atual
+
+            
                 users.forEach(user => {
                     const li = document.createElement('li');
                     li.className = 'user-item';
@@ -143,7 +138,7 @@ if (!window.configScriptLoaded) {
                         <span class="user-name">${user.nome}</span>
                         <span class="user-email">${user.email}</span>
                         <span class="user-role">${user.perfil}</span>
-                        <button class="delete-user-btn" data-user-id="${user.id}"><i class="fa-solid fa-xmark"></i></button>
+                        <button class="delete-user-btn" data-user-id="${user.id}"><i class="fa-solid fa-pencil"></i></i></i></button>
                     `;
                     userListElement.appendChild(li);
                 });
@@ -313,16 +308,11 @@ if (!window.configScriptLoaded) {
             });
             addUserForm.dataset.listenerAttached = 'true'; // Marca que o listener foi adicionado
 
-        } else {
-
-        }
-
-        // --- 6. INICIALIZAÇÃO DA PÁGINA ---
+        } 
 
         fetchCurrentUserData();
     });
 
-} else {
-
 }
+
 

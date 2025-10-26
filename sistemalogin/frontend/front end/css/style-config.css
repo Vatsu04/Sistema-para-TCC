@@ -9,8 +9,10 @@
     /* Action Colors */
     --color-success: #28a745;
     --color-success-hover: #218838;
-    --color-danger: #dc3545;
-    --color-danger-hover: #c82333;
+    --color-danger: #35dc8e;
+    --color-danger-hover: #24c016;
+    --color-inactive: #ff0000;
+    --color-inactive-hover: #990000;
     --color-secondary: #6c757d;
     --color-secondary-hover: #5a6268;
     /* Text Colors */

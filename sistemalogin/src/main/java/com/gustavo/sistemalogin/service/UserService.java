@@ -9,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.gustavo.sistemalogin.dto.UserSelfUpdateDTO;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -110,4 +109,6 @@ public class UserService {
         User updatedUser = userRepository.save(user);
         return new UserResponseDTO(updatedUser);
     }
+
+
 }
