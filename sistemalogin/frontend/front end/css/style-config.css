@@ -33,6 +33,24 @@
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
     --shadow-md: 0 5px 15px rgba(0,0,0,0.1);
 }
+/* Adicione isso ao seu arquivo .css */
+
+/* No seu arquivo .css */
+
+.user-status-icon {
+    display: inline-block;
+    width: 20px; /* Mantém um alinhamento */
+    text-align: center;
+    margin-left: 8px; /* Adiciona um espaço DEPOIS do botão de lápis */
+}
+
+.user-status-icon.status-active {
+    color: #28a745; /* Verde */
+}
+
+.user-status-icon.status-inactive {
+    color: #dc3545; /* Vermelho */
+}
 * {
     margin: 0;
     padding: 0;

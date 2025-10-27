@@ -38,8 +38,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = 'dashboard.html';
 
             } else {
-                // Se o login falhar (senha errada, etc.), mostra um alerta
-                alert('E-mail ou senha inválidos. Tente novamente.');
+                let errorMessage = 'E-mail ou senha inválidos. Tente novamente.'; // Mensagem padrão
+
+                // A alteração no backend (UserDetailsServiceImpl) faz o 
+                // Spring Security retornar HTTP 403 (Forbidden) para usuários inativos.
+                if (response.status === 403) {
+                    errorMessage = 'Este usuário está inativo. Contate um administrador.';
+                }
+                
+                // Se o status for 401 (Unauthorized) ou outro,
+                // a mensagem padrão de "E-mail ou senha inválidos" será usada.
+
+                alert(errorMessage);
             }
         } catch (error) {
             console.error('Erro ao tentar fazer login:', error);

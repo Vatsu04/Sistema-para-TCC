@@ -189,14 +189,34 @@ if (!window.configScriptLoaded) {
 
                 userListElement.innerHTML = ''; // Limpa a lista atual
 
-                users.forEach(user => {
+            users.forEach(user => {
+                    const statusIcon = user.ativo
+                        ? '<i class="fa-solid fa-check"></i>'
+                        : '<i class="fa-solid fa-xmark"></i>';
+                    
+
+                    const statusTooltip = user.ativo
+                        ? 'Usuário está ativo'
+                        : 'Usuário está inativo';
+
+
+                    const statusClass = user.ativo
+                        ? 'status-active'
+                        : 'status-inactive';
+  
+
                     const li = document.createElement('li');
                     li.className = 'user-item';
+                    
+                    // Mova o user-status-icon para depois do botão
                     li.innerHTML = `
                         <span class="user-name">${user.nome}</span>
                         <span class="user-email">${user.email}</span>
                         <span class="user-role">${user.perfil}</span>
                         <button class="edit-user-btn" data-user-id="${user.id}"><i class="fa-solid fa-pencil"></i></button>
+                        <span class="user-status-icon ${statusClass}" title="${statusTooltip}">
+                            ${statusIcon}
+                        </span>
                     `;
                     userListElement.appendChild(li);
                 });
