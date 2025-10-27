@@ -62,10 +62,6 @@ public class UserService {
             });
             user.setEmail(dto.getEmail());
         }
-        if (dto.getSenha() != null && !dto.getSenha().isEmpty()) {
-            // Só atualiza a senha se uma nova senha (válida) for fornecida
-            user.setSenha(passwordEncoder.encode(dto.getSenha()));
-        }
         if (dto.getAtivo() != null) user.setAtivo(dto.getAtivo());
         if (dto.getPerfil() != null) user.setPerfil(dto.getPerfil());
 
@@ -109,6 +105,15 @@ public class UserService {
         User updatedUser = userRepository.save(user);
         return new UserResponseDTO(updatedUser);
     }
+
+    // Pegar informação de usuário específico pelo id
+    @Transactional(readOnly = true)
+    public UserResponseDTO getUserById(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário com ID " + userId + " não encontrado."));
+        return new UserResponseDTO(user);
+    }
+
 
 
 }

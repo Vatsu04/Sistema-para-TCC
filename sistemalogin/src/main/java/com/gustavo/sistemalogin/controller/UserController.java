@@ -92,4 +92,13 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
+    @GetMapping("/admin/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
+        UserResponseDTO user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
+    }
+
+    
+
 }

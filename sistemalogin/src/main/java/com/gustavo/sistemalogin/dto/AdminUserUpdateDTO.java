@@ -12,21 +12,10 @@ public class AdminUserUpdateDTO {
     @Email(message = "O email deve ser válido (se informado).")
     private String email;
 
-    @Password // Valida a senha apenas se ela for fornecida
-    private String senha;
-
     private Boolean ativo;
 
     private PerfilUsuario perfil;
 
-    // Getters e Setters
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
 
     public Boolean getAtivo() {
         return ativo;

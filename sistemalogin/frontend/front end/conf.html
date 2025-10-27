@@ -82,8 +82,7 @@
             <span class="user-name">Gustavo Tascheri</span>
             <span class="user-email">Gustavo@gmail.com</span>
             <span class="user-role">Assistente</span>
-            <button class="delete-user-btn"><i class="fa-solid fa-check"></i></button>
-            
+            <button class="edit-user-btn" data-user-id="1"><i class="fa-solid fa-pencil"></i></button>
         </li>
     </ul>
 </div>
@@ -154,8 +153,6 @@
             </select>
         </div>
 
-
-
             <div class="modal-actions">
                 <button type="button" class="btn btn-secondary" data-close-modal>Cancelar</button>
                 <button type="submit" class="btn btn-success">Adicionar</button>
@@ -164,48 +161,7 @@
     </div>
 </div>
 
-<div id="add-user-modal" class="modal-overlay hidden">
-    <div class="modal">
-        <button class="modal-close-btn">&times;</button>
-        <form id="edit-user-form">
-            <h2>Editar usuário</h2>
-            
-            <div class="form-group">
-                <label for="edit-user-name">Nome</label>
-                <input type="text" id="new-user-name" required>
-            </div>
-
-            <div class="form-group">
-                <label for="edit-user-email">E-mail</label>
-                <input type="email" id="new-user-email" required>
-            </div>
-
-            <div class="form-group">
-                <label for="edit-user-role">Perfil</label>
-                <select id="edit-user-role" required>
-                    <option value="ASSISTENTE" selected>Assistente</option>
-                    <option value="ADMINISTRADOR">Administrador</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-            <label for="edit-user-status">Ativo</label>
-            <select id="edit-user-status" required>
-                <option value="true" selected>Sim</option>
-                <option value="false">Não</option>
-            </select>
-        </div>
-
-
-
-            <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" data-close-modal>Cancelar</button>
-                <button type="submit" class="btn btn-success">Editar</button>
-            </div>
-        </form>
-    </div>
-</div>
-
+<!-- EDIT USER MODAL (unique ids for edit form fields) -->
 <div id="edit-user-modal" class="modal-overlay hidden">
     <div class="modal">
         <button class="modal-close-btn">&times;</button>
@@ -213,32 +169,30 @@
             <h2>Editar usuário</h2>
             
             <div class="form-group">
-                <label for="new-user-name">Nome</label>
-                <input type="text" id="new-user-name" required>
+                <label for="edit-user-name">Nome</label>
+                <input type="text" id="edit-user-name" required>
             </div>
 
             <div class="form-group">
-                <label for="new-user-email">E-mail</label>
-                <input type="email" id="new-user-email" required>
+                <label for="edit-user-email">E-mail</label>
+                <input type="email" id="edit-user-email" required>
             </div>
 
             <div class="form-group">
-                <label for="new-user-role">Perfil</label>
-                <select id="new-user-role" required>
-                    <option value="ASSISTENTE" selected>Assistente</option>
+                <label for="edit-user-role">Perfil</label>
+                <select id="edit-user-role" required>
+                    <option value="ASSISTENTE">Assistente</option>
                     <option value="ADMINISTRADOR">Administrador</option>
                 </select>
             </div>
 
             <div class="form-group">
-            <label for="new-user-status">Ativo</label>
-            <select id="new-user-status" required>
-                <option value="true" selected>Sim</option>
+            <label for="edit-user-status">Ativo</label>
+            <select id="edit-user-status" required>
+                <option value="true">Sim</option>
                 <option value="false">Não</option>
             </select>
         </div>
-
-
 
             <div class="modal-actions">
                 <button type="button" class="btn btn-secondary" data-close-modal>Cancelar</button>
@@ -247,33 +201,7 @@
         </form>
     </div>
 </div>
-<!-- 
-<div id="reset-password-modal" class="modal-overlay hidden">
-    <div class="modal">
-        <button class="modal-close-btn">&times;</button>
-        <form id="reset-password-form">
-            <h2>Resetar senha de Usuário</h2>
-            
 
-            <div class="form-group">
-                <label for="new-user-password">Senha</label>
-                <input type="password" id="new-user-password" required>
-            </div>
-
-            <div class="form-group">
-                <label for="new-user-password-confirm">Confirmar Senha</label>
-                <input type="password" id="new-user-password-confirm" required>
-            </div>
-
-
-
-            <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" data-close-modal>Cancelar</button>
-                <button type="submit" class="btn btn-success">Editar</button>
-            </div>
-        </form>
-    </div>
-</div> -->
     <script src="js/config.js"></script>
     <script src="js/script.js"></script>
 </body>
