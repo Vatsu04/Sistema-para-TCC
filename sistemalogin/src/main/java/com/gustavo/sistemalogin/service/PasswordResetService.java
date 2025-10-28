@@ -39,16 +39,25 @@ public class PasswordResetService {
         }
         User user = userOptional.get();
 
-        // 3. Gera uma string de token única e aleatória
+        // 3. ANTES de criar um novo token, verifica se já existe um antigo.
+        //    (O seu PasswordResetTokenRepository já tem esse método)
+        Optional<PasswordResetToken> existingToken = tokenRepository.findByUserEmail(userEmail);
+
+        // 4. Se existir, deleta o token antigo.
+        if (existingToken.isPresent()) {
+            tokenRepository.delete(existingToken.get());
+        }
+
+        // 5. Gera uma string de token única e aleatória
         String tokenString = UUID.randomUUID().toString();
 
-        // 4. Define a data de expiração do token (ex: válido por 1 hora a partir de agora)
+        // 6. Define a data de expiração do token (ex: válido por 1 hora a partir de agora)
         LocalDateTime expirationDate = LocalDateTime.now().plusHours(1);
 
-        // 5. Cria a entidade PasswordResetToken usando o construtor correto (que recebe o objeto User)
+        // 7. Cria a entidade PasswordResetToken...
         PasswordResetToken resetToken = new PasswordResetToken(tokenString, user, expirationDate);
 
-        // 6. Salva o novo token no banco de dados e o retorna
+        // 8. Salva o novo token no banco de dados e o retorna
         return tokenRepository.save(resetToken);
     }
 

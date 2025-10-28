@@ -1,59 +1,105 @@
-
 document.addEventListener('DOMContentLoaded', () => {
+
+    // --- Seletores (Tudo em um só lugar) ---
+    const loginContainer = document.querySelector('.login-container');
+    const forgotPassContainer = document.querySelector('.forgot-password-container');
+    const showForgotPassLink = document.querySelector('.forgot-password');
+    const forgotPassForm = document.getElementById('fpassword-form');
+    const backToLoginBtn = document.querySelector('.btn-back');
     const loginForm = document.getElementById('login-form');
 
-    loginForm.addEventListener('submit', async (event) => {
-        // 1. Impede o comportamento padrão do formulário (que seria recarregar a página)
-        event.preventDefault();
+    // --- Lógica para mostrar o formulário "Esqueci Senha" ---
+    if (showForgotPassLink) {
+        showForgotPassLink.addEventListener('click', (e) => {
+            e.preventDefault(); // Impede o link de navegar
+            
+            if (loginContainer) loginContainer.style.display = 'none';
+            if (forgotPassContainer) forgotPassContainer.style.display = 'flex'; // <-- MUDANÇA AQUI
+        });
+    }
 
-        // 2. Pega os valores dos campos de e-mail e senha
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+    // --- Lógica para o botão "Voltar" ---
+    if (backToLoginBtn) {
+        backToLoginBtn.addEventListener('click', () => {
+            if (loginContainer) loginContainer.style.display = 'flex'; // <-- MUDANÇA AQUI
+            if (forgotPassContainer) forgotPassContainer.style.display = 'none';
+        });
+    }
 
-        // 3. Monta o corpo da requisição em formato JSON
-        const loginData = {
-            email: email,
-            senha: password // Certifique-se que o nome 'senha' corresponde ao seu LoginDTO.java
-        };
+    // --- Lógica de Envio do "Esqueci Senha" ---
+    if (forgotPassForm) {
+        forgotPassForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const emailInput = document.getElementById('fpass-email');
+            const email = emailInput.value;
 
-        try {
-            // 4. Envia a requisição POST para a sua API usando fetch
-            const response = await fetch('http://localhost:8080/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(loginData)
-            });
-
-            // 5. Verifica se a resposta foi bem-sucedida (status 200-299)
-            if (response.ok) {
-                const data = await response.json();
-
-                // 6. Armazena o token JWT no navegador (localStorage)
-                // Este token será usado para autenticar todas as futuras requisições
-                localStorage.setItem('jwt_token', data.token);
-
-                // 7. Redireciona o usuário para o dashboard
-                window.location.href = 'dashboard.html';
-
-            } else {
-                let errorMessage = 'E-mail ou senha inválidos. Tente novamente.'; // Mensagem padrão
-
-                // A alteração no backend (UserDetailsServiceImpl) faz o 
-                // Spring Security retornar HTTP 403 (Forbidden) para usuários inativos.
-                if (response.status === 403) {
-                    errorMessage = 'Este usuário está inativo. Contate um administrador.';
-                }
-                
-                // Se o status for 401 (Unauthorized) ou outro,
-                // a mensagem padrão de "E-mail ou senha inválidos" será usada.
-
-                alert(errorMessage);
+            if (!email) {
+                alert('Por favor, insira seu e-mail.');
+                return;
             }
-        } catch (error) {
-            console.error('Erro ao tentar fazer login:', error);
-            alert('Não foi possível conectar ao servidor. Verifique sua conexão.');
-        }
-    });
+
+            try {
+                const response = await fetch('http://localhost:8080/api/auth/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+
+                // Resposta genérica por segurança
+                alert('Solicitação recebida! Se este e-mail estiver cadastrado, você receberá um link para redefinir sua senha.');
+                
+                // Volta para a tela de login
+                if (loginContainer) loginContainer.style.display = 'flex'; // <-- MUDANÇA AQUI
+                if (forgotPassContainer) forgotPassContainer.style.display = 'none';
+
+            } catch (error) {
+                console.error('Erro ao solicitar redefinição de senha:', error);
+                alert('Erro ao conectar com o servidor. Tente novamente.');
+            }
+        });
+    }
+
+    // --- Lógica de Envio do Login (vinda do segundo DOMContentLoaded) ---
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const loginData = {
+                email: email,
+                senha: password 
+            };
+
+            try {
+                const response = await fetch('http://localhost:8080/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('jwt_token', data.token);
+                    window.location.href = 'dashboard.html';
+
+                } else {
+                    let errorMessage = 'E-mail ou senha inválidos. Tente novamente.'; 
+                    if (response.status === 403) {
+                        errorMessage = 'Este usuário está inativo. Contate um administrador.';
+                    }
+                    alert(errorMessage);
+                }
+            } catch (error) {
+                console.error('Erro ao tentar fazer login:', error);
+                alert('Não foi possível conectar ao servidor. Verifique sua conexão.');
+            }
+        });
+    }
 });

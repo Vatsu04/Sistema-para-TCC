@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Permite acesso público para login e registo
                         .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/forgot-password").permitAll()
                         // Para todo o resto, basta estar autenticado. O controlo fino será feito nos controllers.
                         .anyRequest().authenticated()
                 )
