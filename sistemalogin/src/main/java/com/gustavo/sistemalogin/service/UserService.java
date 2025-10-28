@@ -5,12 +5,15 @@ import com.gustavo.sistemalogin.dto.AdminUserUpdateDTO;
 import com.gustavo.sistemalogin.dto.UserResponseDTO;
 import com.gustavo.sistemalogin.model.User;
 import com.gustavo.sistemalogin.repository.UserRepository;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.gustavo.sistemalogin.dto.UserSelfUpdateDTO;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Service
 public class UserService {
@@ -23,10 +26,6 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    /**
-     * [ADMIN] Cria um novo usuário com perfil e status definidos pelo admin.
-     * Substitui o antigo método público 'createUser'.
-     */
     @Transactional
     public User createUserAsAdmin(AdminUserCreateDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
@@ -43,18 +42,14 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    /**
-     * [ADMIN] Atualiza os dados de um usuário existente.
-     */
     @Transactional
     public UserResponseDTO updateUserAsAdmin(Long userId, AdminUserUpdateDTO dto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário com ID " + userId + " não encontrado."));
 
-        // Atualiza apenas os campos fornecidos no DTO
         if (dto.getNome() != null) user.setNome(dto.getNome());
         if (dto.getEmail() != null) {
-            // Verifica se o novo email já não está em uso por OUTRO usuário
+
             userRepository.findByEmail(dto.getEmail()).ifPresent(existingUser -> {
                 if (!existingUser.getId().equals(userId)) {
                     throw new IllegalArgumentException("Este e-mail já está em uso por outro usuário.");
@@ -69,9 +64,6 @@ public class UserService {
         return new UserResponseDTO(updatedUser);
     }
 
-    /**
-     * [ADMIN] Deleta um usuário pelo ID.
-     */
     @Transactional
     public void deleteUserAsAdmin(Long userId) {
         if (!userRepository.existsById(userId)) {
@@ -81,9 +73,6 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    /**
-     * [ADMIN] Retorna uma lista de todos os usuários do sistema.
-     */
     @Transactional(readOnly = true)
     public List<UserResponseDTO> findAllUsers() {
         return userRepository.findAll().stream()
@@ -112,6 +101,21 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário com ID " + userId + " não encontrado."));
         return new UserResponseDTO(user);
+    }
+
+
+    @Transactional(readOnly = true)
+    public User findAndValidateUserForOAuth(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não cadastrado."));
+
+
+        if (!user.isAtivo()) {
+            throw new DisabledException("Usuário está inativo.");
+        }
+
+
+        return user;
     }
 
 
