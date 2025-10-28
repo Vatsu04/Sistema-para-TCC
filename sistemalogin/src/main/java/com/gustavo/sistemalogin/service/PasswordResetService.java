@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,50 +25,33 @@ public class PasswordResetService {
     @Autowired
     private PasswordResetTokenRepository tokenRepository;
 
-    /**
-     * Cria um token de redefinição de senha para um usuário com base no email.
-     * @param userEmail O email do usuário que solicitou a redefinição.
-     * @return A entidade PasswordResetToken que foi criada e salva.
-     * @throws UsernameNotFoundException se nenhum usuário for encontrado com o email fornecido.
-     */
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public PasswordResetToken createTokenForUser(String userEmail) {
 
-        // 1. Encontra o usuário no banco de dados pelo email
         Optional<User> userOptional = userRepository.findByEmail(userEmail);
 
         if (userOptional.isEmpty()) {
-            // 2. Se o usuário não existir, lança uma exceção
             throw new UsernameNotFoundException("Não foi encontrado um usuário com o email: " + userEmail);
         }
         User user = userOptional.get();
 
-        // 3. ANTES de criar um novo token, verifica se já existe um antigo.
-        //    (O seu PasswordResetTokenRepository já tem esse método)
         Optional<PasswordResetToken> existingToken = tokenRepository.findByUserEmail(userEmail);
 
-        // 4. Se existir, deleta o token antigo.
         if (existingToken.isPresent()) {
             tokenRepository.delete(existingToken.get());
         }
 
-        // 5. Gera uma string de token única e aleatória
         String tokenString = UUID.randomUUID().toString();
 
-        // 6. Define a data de expiração do token (ex: válido por 1 hora a partir de agora)
         LocalDateTime expirationDate = LocalDateTime.now().plusHours(1);
 
-        // 7. Cria a entidade PasswordResetToken...
         PasswordResetToken resetToken = new PasswordResetToken(tokenString, user, expirationDate);
 
-        // 8. Salva o novo token no banco de dados e o retorna
         return tokenRepository.save(resetToken);
     }
 
-    /**
-     * Valida um token de redefinição de senha.
-     * @param token A string do token a ser validada.
-     * @return O objeto PasswordResetToken se for válido, ou null se não for.
-     */
     public Optional<PasswordResetToken> validatePasswordResetToken(String token) {
         Optional<PasswordResetToken> passToken = tokenRepository.findByToken(token);
 
@@ -76,5 +62,22 @@ public class PasswordResetService {
         return passToken;
     }
 
-    // Você pode adicionar outros métodos aqui, como um para efetivamente redefinir a senha.
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
+
+        PasswordResetToken resetToken = validatePasswordResetToken(token)
+                .orElseThrow(() -> new RuntimeException("Token inválido ou expirado."));
+
+        User user = resetToken.getUser();
+        if (user == null) {
+            throw new RuntimeException("Token não está associado a nenhum usuário.");
+        }
+
+        user.setSenha(passwordEncoder.encode(newPassword));
+
+        resetToken.setUsed(true);
+
+        userRepository.save(user);
+        tokenRepository.save(resetToken);
+    }
 }

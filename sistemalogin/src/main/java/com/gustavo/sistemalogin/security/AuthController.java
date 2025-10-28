@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.gustavo.sistemalogin.dto.ForgotPasswordRequestDTO;
+import com.gustavo.sistemalogin.dto.ResetPasswordRequestDTO;
+
 
 
 @RestController
@@ -76,15 +78,13 @@ public class AuthController {
 
             String resetLink = "http://127.0.0.1:5500/mudarsenha.html?token=" + token.getToken();
 
-
 /*
-      ----- SIMULAÇÃO DE ENVIO REAL:
-*/
+
             
             System.out.println("---- LINK DE REDEFINIÇÃO GERADO (SIMULANDO ENVIO DE E-MAIL) ----");
             System.out.println("Para: " + request.getEmail());
             System.out.println("Link: " + resetLink);
-            System.out.println("---------------------------------------------------------------");
+            System.out.println("---------------------------------------------------------------");*/
 
             emailService.sendPasswordResetEmail(request.getEmail(), resetLink);
 
@@ -102,4 +102,33 @@ public class AuthController {
         return ResponseEntity.ok("Solicitação recebida. Se o e-mail estiver cadastrado, um link será enviado.");
     }
 
+    @PostMapping("/validate-token")
+    public ResponseEntity<String> validateToken(@RequestBody Map<String, String> payload) {
+        String token = payload.get("token");
+        if (token == null) {
+            return ResponseEntity.badRequest().body("Token não fornecido.");
+        }
+
+        if (passwordResetService.validatePasswordResetToken(token).isPresent()) {
+            return ResponseEntity.ok("Token é válido.");
+        } else {
+            return ResponseEntity.badRequest().body("Token inválido ou expirado.");
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> handleResetPassword(@Valid @RequestBody ResetPasswordRequestDTO request) {
+
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            return ResponseEntity.badRequest().body("As senhas não coincidem.");
+        }
+
+        try {
+            passwordResetService.resetPassword(request.getToken(), request.getNewPassword());
+            return ResponseEntity.ok("Senha alterada com sucesso!");
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
