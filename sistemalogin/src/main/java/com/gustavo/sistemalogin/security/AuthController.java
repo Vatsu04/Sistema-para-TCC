@@ -76,10 +76,10 @@ public class AuthController {
             PasswordResetToken token = passwordResetService.createTokenForUser(request.getEmail());
 
 
-            String resetLink = "http://127.0.0.1:5500/mudarsenha.html?token=" + token.getToken();
+            String resetLink = "http://127.0.0.1:5500/sistemalogin/frontend/front%20end/mudarsenha.html?token=" + token.getToken();
 
 /*
-
+"http://127.0.0.1:5500/mudarsenha.html?token="
             
             System.out.println("---- LINK DE REDEFINIÇÃO GERADO (SIMULANDO ENVIO DE E-MAIL) ----");
             System.out.println("Para: " + request.getEmail());
