@@ -8,6 +8,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const backToLoginBtn = document.querySelector('.btn-back');
     const loginForm = document.getElementById('login-form');
 
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const oauthError = urlParams.get('error');
+
+    if (oauthError) {
+        if (oauthError === 'oauth_user_not_found') {
+            alert('Falha no login com Google: Este e-mail não está cadastrado no sistema.');
+        } else if (oauthError === 'oauth_user_inactive') {
+            alert('Falha no login com Google: Este usuário está inativo.');
+        }
+        
+        // Limpa a URL para que o alerta não apareça de novo se o usuário recarregar
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     // --- Lógica para mostrar o formulário "Esqueci Senha" ---
     if (showForgotPassLink) {
         showForgotPassLink.addEventListener('click', (e) => {
