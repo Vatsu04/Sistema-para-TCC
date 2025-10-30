@@ -56,9 +56,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/oauth2/**").permitAll()
                         .requestMatchers("/login/oauth2/code/*").permitAll()
-
-
-                        // Para todo o resto, basta estar autenticado.
                         .anyRequest().authenticated()
                 )
 
