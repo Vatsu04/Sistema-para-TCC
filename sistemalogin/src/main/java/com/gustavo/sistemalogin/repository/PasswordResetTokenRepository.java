@@ -11,17 +11,8 @@ import java.util.Optional;
  */
 public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetToken, Long> {
 
-    /**
-     * Busca um token pelo valor do token (geralmente usado na etapa de validação de redefinição de senha).
-     * @param token Valor do token (UUID)
-     * @return Optional contendo o PasswordResetToken, se existir.
-     */
+
     Optional<PasswordResetToken> findByToken(String token);
 
-    /**
-     * Busca um token pelo e-mail do usuário (útil para evitar múltiplos tokens ativos para o mesmo e-mail).
-     * @param email E-mail do usuário
-     * @return Optional contendo o PasswordResetToken, se existir.
-     */
     Optional<PasswordResetToken> findByUserEmail(String email);
 }

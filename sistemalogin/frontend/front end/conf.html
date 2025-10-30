@@ -13,6 +13,7 @@
     
     <link rel="stylesheet" href="css/style-config.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        <link rel="icon" type="image/x-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA+CAIAAADvdH/nAAAAAXNSR0IArs4c6QAAAQ5JREFUaIHt2b8LAWEcx3FkEFEm42VTioH/QhY7i9Eok0kWZbQZrAablcEfcHUymay6xIM6OT/KJnTnos/FU5/3eN/l1T133bfOG47nPf+d79cA50hERCIiEhGRiIhERBIQ/e/HASVbKqSUkMsKczMdjwaaYTl0IMaSmWI5lw66I7t31Yfr2UBbWA4lOGgSETk8i1addsI4XqAKU2z3Z7vh50Sx6FYbzYn12+dGEhw0iYhIREQiIhIRff51iSZqvX4NSFip9Uqro57s5hLcRRIRSUD8Yhmbt7mMvUQiIhIRkYiIREQkIiIRkQREh2XseDD0pdAjD5dWYmu6rXrKy7/6gEhERCIiEhGRiIhERDcP+jnCtWZCaQAAAABJRU5ErkJggg==">
 </head>
 <body>
 
@@ -45,44 +46,165 @@
                 </nav>
 
                 <main class="settings-content-wrapper">
-                    <div id="preferencias-pessoais" class="settings-content">
-                        <h2>Preferências pessoais</h2>
-                        <form class="settings-form">
-                            <div class="form-group">
-                                <label for="name">Nome</label>
-                                <input type="text" id="name" value="Administrador" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">E-mail</label>
-                                <input type="email" id="email" value="adm@gmail.com" readonly>
-                            </div>
-                            <div class="form-group password-group">
-                                <label for="password">Senha</label>
-                                <input type="password" id="password" value="************" readonly>
-                                <button type="button" class="edit-btn"><i class="fa-solid fa-pencil"></i></button>
-                            </div>
-                        </form>
-                    </div>
+                <div id="preferencias-pessoais" class="settings-content">
+                    <h2>Preferências pessoais</h2>
+                    <form id="user-prefs-form" class="settings-form">
+                        <div class="form-group">
+                            <label for="name">Nome</label>
+                            <input type="text" id="name" value="Carregando..." readonly required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" value="Carregando..." readonly>
+                        </div>
+                        <div class="form-group password-group">
+                            <label for="password">Senha</label>
+                            <input type="password" id="password" value="************" readonly>
+                            <button type="button" class="edit-btn" id="edit-password-btn"><i class="fa-solid fa-pencil"></i></button>
+                        </div>
+
+                        <div class="form-actions" id="save-prefs-actions" style="display: none;">
+                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
 
                     <div id="gerenciar-usuarios" class="settings-content hidden">
-                        <h2>Gerenciar usuários</h2>
-                        <button class="btn btn-add-user">+ Usuário</button>
-                        <div class="user-list-header">
-                            <span>Usuários:</span>
-                        </div>
-                        <ul class="user-list">
-                            <li class="user-item">
-                                <span class="user-name">Gustavo Tascheri</span>
-                                <span class="user-email">Gustavo@gmail.com</span>
-                                <span class="user-role">Assistente</span>
-                                <button class="delete-user-btn"><i class="fa-solid fa-xmark"></i></button>
-                            </li>
-                            </ul>
-                    </div>
+    <h2>Gerenciar usuários</h2>
+    <button id="add-user-btn" class="btn btn-success">+ Usuário</button>
+    
+    <div class="user-list-header">
+        <span>Usuários:</span>
+    </div>
+
+    <ul class="user-list">
+        <li class="user-item">
+            <span class="user-name">Gustavo Tascheri</span>
+            <span class="user-email">Gustavo@gmail.com</span>
+            <span class="user-role">Assistente</span>
+            <button class="edit-user-btn" data-user-id="1"><i class="fa-solid fa-pencil"></i></button>
+        </li>
+    </ul>
+</div>
                 </main>
             </div>
         </div>
     </div>
+
+    <div id="delete-user-modal" class="modal-overlay hidden">
+    <div class="modal">
+        <button class="modal-close-btn">&times;</button>
+        <div class="modal-content text-center">
+            <h2>Tem certeza que deseja excluir esse usuário?</h2>
+            <p class="user-name-to-delete" id="user-name-to-delete">Gustavo Tascheri</p>
+            
+            <div class="form-group">
+                <label for="password-confirm">Digite sua senha</label>
+                <input type="password" id="password-confirm" placeholder="************">
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-danger">Sim</button>
+                <button class="btn btn-secondary">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="add-user-modal" class="modal-overlay hidden">
+    <div class="modal">
+        <button class="modal-close-btn">&times;</button>
+        <form id="add-user-form">
+            <h2>Adicionar Novo Usuário</h2>
+            
+            <div class="form-group">
+                <label for="new-user-name">Nome</label>
+                <input type="text" id="new-user-name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="new-user-email">E-mail</label>
+                <input type="email" id="new-user-email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="new-user-password">Senha</label>
+                <input type="password" id="new-user-password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="new-user-password-confirm">Confirmar Senha</label>
+                <input type="password" id="new-user-password-confirm" required>
+            </div>
+
+            <div class="form-group">
+                <label for="new-user-role">Perfil</label>
+                <select id="new-user-role" required>
+                    <option value="ASSISTENTE" selected>Assistente</option>
+                    <option value="ADMINISTRADOR">Administrador</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+            <label for="new-user-status">Ativo</label>
+            <select id="new-user-status" required>
+                <option value="true" selected>Sim</option>
+                <option value="false">Não</option>
+            </select>
+        </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" data-close-modal>Cancelar</button>
+                <button type="submit" class="btn btn-success">Adicionar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- EDIT USER MODAL (unique ids for edit form fields) -->
+<div id="edit-user-modal" class="modal-overlay hidden">
+    <div class="modal">
+        <button class="modal-close-btn">&times;</button>
+        <form id="edit-user-form">
+            <h2>Editar usuário</h2>
+            
+            <div class="form-group">
+                <label for="edit-user-name">Nome</label>
+                <input type="text" id="edit-user-name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-user-email">E-mail</label>
+                <input type="email" id="edit-user-email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-user-role">Perfil</label>
+                <select id="edit-user-role" required>
+                    <option value="ASSISTENTE">Assistente</option>
+                    <option value="ADMINISTRADOR">Administrador</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+            <label for="edit-user-status">Ativo</label>
+            <select id="edit-user-status" required>
+                <option value="true">Sim</option>
+                <option value="false">Não</option>
+            </select>
+        </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" data-close-modal>Cancelar</button>
+                <button type="submit" class="btn btn-success">Editar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <script src="js/config.js"></script>
     <script src="js/script.js"></script>
 </body>
+
+
 </html>

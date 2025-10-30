@@ -32,6 +32,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getSenha(),
+                user.isAtivo(),     // 1. enabled (aqui está a sua verificação!)
+                true,               // 2. accountNonExpired
+                true,               // 3. credentialsNonExpired
+                true,               // 4. accountNonLocked
                 authorities
         );
     }

@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <link rel="stylesheet" href="css/style-login.css">
+
+    <link rel="icon" type="image/x-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA+CAIAAADvdH/nAAAAAXNSR0IArs4c6QAAAQ5JREFUaIHt2b8LAWEcx3FkEFEm42VTioH/QhY7i9Eok0kWZbQZrAablcEfcHUymay6xIM6OT/KJnTnos/FU5/3eN/l1T133bfOG47nPf+d79cA50hERCIiEhGRiIhERBIQ/e/HASVbKqSUkMsKczMdjwaaYTl0IMaSmWI5lw66I7t31Yfr2UBbWA4lOGgSETk8i1addsI4XqAKU2z3Z7vh50Sx6FYbzYn12+dGEhw0iYhIREQiIhIRff51iSZqvX4NSFip9Uqro57s5hLcRRIRSUD8Yhmbt7mMvUQiIhIRkYiIREQkIiIRkQREh2XseDD0pdAjD5dWYmu6rXrKy7/6gEhERCIiEhGRiIhERDcP+jnCtWZCaQAAAABJRU5ErkJggg==">
 </head>
 <body>
 
@@ -25,22 +27,22 @@
         <div class="login-form">
             <h2>Entrar</h2>
             
-            <form action="#">
+            <form id="login-form">
                 <div class="input-group">
                     <i class="fas fa-envelope"></i>
-                    <input type="email" placeholder="E-mail" required>
+                    <input type="email" id="email" placeholder="E-mail" required>
                 </div> 
                 
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input type="password" placeholder="Senha" required>
+                    <input type="password" id="password" placeholder="Senha" required>
                 </div>
 
                 <div class="password-options">
                     <a href="#" class="forgot-password">Esqueci minha senha</a>
                 </div>
                 
-                <a href="dashboard.html" class="btn btn-primary">Entrar</a> <!-- <button type="submit" class="btn btn-primary">Entrar</button> Quando for funcional -->
+                <button type="submit" class="btn btn-primary">Entrar</button>
                 
                 <div class="remember-me">
                     <input type="checkbox" id="lembrar">
@@ -49,17 +51,38 @@
                 
                 <div class="separator"></div>
 
-                <button type="button" class="btn btn-google">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo">
-                    Continue com Google
-                </button>
+        <a href="http://localhost:8080/oauth2/authorization/google" class="btn btn-google">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo">
+                            Continue com Google
+                </a>
             </form>
         </div>
-        
-        <div class="signup-link">
-            <a href="#" class="forgot-password">Não tem uma conta?</a>
-        </div>
     </main>
+
+<main class="forgot-password-container" style="display: none;">
+        <div class="forgot-password-form">
+            <h2>Recuperar Senha</h2>
+            
+            <form id="fpassword-form">
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="fpass-email" placeholder="E-mail" required> </div>
+                
+
+                <button type="submit" class="btn btn-primary">Enviar email</button>
+                
+               </form> <div class="separator"></div>
+                <button type="button" class="btn btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Voltar
+
+            
+        </div>
+
+
+
+    </main>
+    <script src="js/login.js"></script>
 
 </body>
 </html>

@@ -7,33 +7,37 @@ import java.time.LocalDate;
 public class NegocioCreateDTO {
 
     @NotBlank(message = "O título é obrigatório.")
-    private String titulo; // Corrigido de 'nome' para 'titulo'
+    private String titulo;
 
     @NotNull(message = "O valor é obrigatório.")
     @Positive(message = "O valor deve ser positivo.")
     private BigDecimal valor;
 
+    // --- CAMPO ADICIONADO E OBRIGATÓRIO ---
+    @NotNull(message = "A data de abertura é obrigatória.")
+    private LocalDate dataDeAbertura; // Usuário agora informa
+
     private LocalDate data_de_fechamento;
 
     @NotNull(message = "O ID da etapa é obrigatório.")
-    private Long etapaId; // Corrigido de 'etapa' para 'etapaId'
+    private Long etapaId;
 
     @NotNull(message = "O ID do funil é obrigatório.")
     private Long funilId;
 
-    @NotNull(message = "O ID da pessoa (contato) é obrigatório.")
-    private Long pessoaId;
+    @NotBlank(message = "O nome da organização é obrigatório.")
+    private String organizacao;
 
-    @NotNull(message = "O campo organização é obrigatório.")
-    private String organizacao; // Substitui o organizacaoId
+    // --- CAMPOS PARA DADOS DO CONTATO ---
+    @NotBlank(message = "O nome do contato é obrigatório.")
+    private String pessoaContato;
 
-    public String getOrganizacao() {
-        return organizacao;
-    }
+    @NotBlank(message = "O email do contato é obrigatório.")
+    @Email(message = "O formato do e-mail do contato é inválido.")
+    private String emailPessoaContato;
 
-    public void setOrganizacao(String organizacao) {
-        this.organizacao = organizacao;
-    }
+    @NotBlank(message = "O telefone do contato é obrigatório.")
+    private String telefonePessoaContato;
 
     public String getTitulo() {
         return titulo;
@@ -49,6 +53,14 @@ public class NegocioCreateDTO {
 
     public void setValor(BigDecimal valor) {
         this.valor = valor;
+    }
+
+    public LocalDate getDataDeAbertura() {
+        return dataDeAbertura;
+    }
+
+    public void setDataDeAbertura(LocalDate dataDeAbertura) {
+        this.dataDeAbertura = dataDeAbertura;
     }
 
     public Long getEtapaId() {
@@ -75,12 +87,35 @@ public class NegocioCreateDTO {
         this.funilId = funilId;
     }
 
-    public Long getPessoaId() {
-        return pessoaId;
+    public String getPessoaContato() {
+        return pessoaContato;
     }
 
-    public void setPessoaId(Long pessoaId) {
-        this.pessoaId = pessoaId;
+    public void setPessoaContato(String pessoaContato) {
+        this.pessoaContato = pessoaContato;
     }
 
+    public String getEmailPessoaContato() {
+        return emailPessoaContato;
+    }
+
+    public void setEmailPessoaContato(String emailPessoaContato) {
+        this.emailPessoaContato = emailPessoaContato;
+    }
+
+    public String getOrganizacao() {
+        return organizacao;
+    }
+
+    public void setOrganizacao(String organizacao) {
+        this.organizacao = organizacao;
+    }
+
+    public String getTelefonePessoaContato() {
+        return telefonePessoaContato;
+    }
+
+    public void setTelefonePessoaContato(String telefonePessoaContato) {
+        this.telefonePessoaContato = telefonePessoaContato;
+    }
 }

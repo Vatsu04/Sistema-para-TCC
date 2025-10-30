@@ -10,7 +10,7 @@ body {
     background-color: #f7f8fc;
     color: #333;
     display: flex;
-    flex-direction: center;
+    justify-content: center;
     align-items: center;
     min-height: 100vh;
 }
@@ -33,7 +33,9 @@ body {
 }
 
 /* --- Container Principal do Login --- */
-.login-container {
+.login-container,
+.forgot-password-container,
+.change-password-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -41,7 +43,9 @@ body {
 }
 
 /* --- Formulário de Login --- */
-.login-form {
+.login-form,
+.forgot-password-form,
+.change-password-form {
     background-color: #ffffff;
     padding: 40px;
     border-radius: 10px;
@@ -51,7 +55,9 @@ body {
     text-align: center;
 }
 
-.login-form h2 {
+.login-form h2,
+.forgot-password-form h2,
+.change-password-form h2 {
     margin-bottom: 25px;
     font-size: 24px;
     color: #333;

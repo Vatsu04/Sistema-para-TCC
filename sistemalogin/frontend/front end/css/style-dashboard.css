@@ -1,9 +1,12 @@
+
+
 /* --- Reset Básico e Estilos Globais --- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+
 
 body {
     font-family: 'Roboto', sans-serif;
@@ -385,6 +388,7 @@ body {
     background-color: #f0f5ff;
 }
 
+
 /* Estilo do checkmark (✓) na opção selecionada */
 .custom-select-options li.selected::after {
     content: '\f00c'; /* Ícone de check do Font Awesome */
@@ -402,4 +406,51 @@ body {
 
 .new-funnel-option i {
     margin-right: 8px;
+}
+
+
+
+.kanban-column-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.kanban-column-header h2{
+    font-size: 16px;
+    font-weight: 700;
+    color: #0d214d;
+    margin: 0;
+}
+
+.btn-new-deal-in-column{
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-new-deal-in-column:hover{
+    background-color: #218838;
+}
+
+/* Feedback visual para o card que está sendo arrastado */
+.kanban-card.dragging {
+    opacity: 0.5;
+    transform: rotate(3deg);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Feedback visual para a coluna que está prestes a receber o card */
+.cards-container.drag-over {
+    background-color: #e6f7ff; /* Um azul bem claro */
+    border: 2px dashed #096dd9;
+    border-radius: 6px;
+    /* Garante que a área de drop tenha uma altura mínima */
+    min-height: 100px; 
 }

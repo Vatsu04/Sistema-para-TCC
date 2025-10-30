@@ -23,18 +23,29 @@ public class Negocio {
     @Column(nullable = false)
     private BigDecimal valor;
 
-    @Column(name = "data_de_abertura", nullable = false, updatable = false)
+    // --- CORREÇÃO: Removido 'updatable = false' ---
+    @Column(name = "data_de_abertura", nullable = false)
     private LocalDate dataDeAbertura;
 
     @Column(name = "data_de_fechamento")
     private LocalDate dataDeFechamento;
 
     @Column(name = "organizacao")
-    private String organizacao; // Agora é uma String
+    private String organizacao;
 
+    // --- CAMPOS DESNORMALIZADOS ---
+    @Column(name = "Pessoa_Contato", nullable = false)
+    private String pessoaContato;
 
+    @Column(name = "Email_Pessoa_Contato", nullable = false)
+    private String emailPessoaContato;
+
+    @Column(name = "Telefone_Pessoa_Contato", nullable = false)
+    private String telefonePessoaContato;
+
+    // --- RELACIONAMENTOS ---
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "etapa_id", nullable = false) // Mapeia para a nova coluna de FK
+    @JoinColumn(name = "etapa_id", nullable = false)
     @JsonIgnore
     private Etapa etapa;
 
@@ -42,11 +53,4 @@ public class Negocio {
     @JoinColumn(name = "funil_id", nullable = false)
     @JsonIgnore
     private Funil funil;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pessoa_id", nullable = false)
-    @JsonIgnore
-    private Pessoa pessoa;
-
-
 }
