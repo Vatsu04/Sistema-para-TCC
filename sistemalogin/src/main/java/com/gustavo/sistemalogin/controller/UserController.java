@@ -41,7 +41,7 @@ public class UserController {
         return ResponseEntity.ok(new UserResponseDTO(user));
     }
 
-    // --- ENDPOINTS EXCLUSIVOS PARA ADMINISTRADORES ---
+    // --- ENDOINTS EXCLUSIVOS PARA ADMINISTRADORES ---
 
     /**
      * [ADMIN] Lista TODOS os usuários do sistema.
