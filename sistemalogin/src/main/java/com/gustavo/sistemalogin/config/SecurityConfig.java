@@ -52,10 +52,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/oauth2/**").permitAll()
-                        .requestMatchers("/login/oauth2/code/*").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/auth/**").permitAll() // Deixa login/registro passarem livre
+                        .requestMatchers("/oauth2/**").permitAll() // Deixa o fluxo do Google passar
+                        .requestMatchers("/login/oauth2/code/*").permitAll() // Deixa o callback do Google passar
+                        .anyRequest().authenticated() // TUDO o resto exige estar logado
                 )
 
                 .oauth2Login(oauth2 -> oauth2

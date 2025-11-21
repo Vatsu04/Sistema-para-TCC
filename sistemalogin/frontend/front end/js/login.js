@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- Seletores (Tudo em um só lugar) ---
     const loginContainer = document.querySelector('.login-container');
     const forgotPassContainer = document.querySelector('.forgot-password-container');
     const showForgotPassLink = document.querySelector('.forgot-password');

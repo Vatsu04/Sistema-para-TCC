@@ -2,14 +2,43 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>FastCRM - Logando...</title>
+    <title>FastCRM - Processando Login...</title>
     <style>
-        body { display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; }
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+        }
+
+        /* Estilo do Spinner de Carregamento */
+        .loader {
+            border: 5px solid #f3f3f3; /* Cinza claro */
+            border-top: 5px solid #3498db; /* Azul */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h2 { color: #555; font-size: 1.2rem; }
     </style>
     <link rel="icon" type="image/x-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA+CAIAAADvdH/nAAAAAXNSR0IArs4c6QAAAQ5JREFUaIHt2b8LAWEcx3FkEFEm42VTioH/QhY7i9Eok0kWZbQZrAablcEfcHUymay6xIM6OT/KJnTnos/FU5/3eN/l1T133bfOG47nPf+d79cA50hERCIiEhGRiIhERBIQ/e/HASVbKqSUkMsKczMdjwaaYTl0IMaSmWI5lw66I7t31Yfr2UBbWA4lOGgSETk8i1addsI4XqAKU2z3Z7vh50Sx6FYbzYn12+dGEhw0iYhIREQiIhIRff51iSZqvX4NSFip9Uqro57s5hLcRRIRSUD8Yhmbt7mMvUQiIhIRkYiIREQkIiIRkQREh2XseDD0pdAjD5dWYmu6rXrKy7/6gEhERCIiEhGRiIhERDcP+jnCtWZCaQAAAABJRU5ErkJggg==">
 </head>
 <body>
-    <h2>Autenticando...</h2>
-    <script src="js/login-success.js"></script>
+<div class="loader"></div>
+<h2>Autenticando com segurança...</h2>
+
+<script src="js/login-success.js"></script>
 </body>
 </html>
