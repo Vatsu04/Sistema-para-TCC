@@ -52,7 +52,6 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Permite acesso público para todas as rotas de autenticação
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/oauth2/**").permitAll()
                         .requestMatchers("/login/oauth2/code/*").permitAll()
@@ -68,46 +67,15 @@ public class SecurityConfig {
                                 // Este é o link que o Google chamará de volta
                                 .baseUri("/login/oauth2/code/*")
                         )
-                        // Usa o seu handler customizado para gerar o JWT
+
                         .successHandler(oAuth2AuthenticationSuccessHandler())
                 )
-                // --- FIM DAS ADIÇÕES ---
 
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-
-/*    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        // Permite acesso público a todas as rotas de autenticação
-                        .requestMatchers("/api/auth/**").permitAll()
-
-                        // --- REGRAS REFINADAS AQUI ---
-                        // Para Pessoas, permite qualquer método (GET, POST, etc.) se autenticado
-                        .requestMatchers(HttpMethod.GET, "/api/pessoas", "/api/pessoas/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/pessoas").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/pessoas/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/pessoas/**").authenticated()
-
-                        // Para Funis, permite qualquer método se autenticado
-                        .requestMatchers("/api/funis/**").authenticated()
-
-                        // Adicione regras para negócios aqui...
-                        .requestMatchers("/api/negocios/**").authenticated()
-
-                        // Exige que qualquer outra requisição seja autenticada
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }*/
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
