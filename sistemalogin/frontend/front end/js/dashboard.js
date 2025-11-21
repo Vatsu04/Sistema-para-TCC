@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     card.innerHTML = `
                         <h4>${negocio.titulo}</h4>
-                        <p><i class="fa-solid fa-building"></i> ${negocio.organizacaoNome || 'Sem organização'}</p>
+                        <p><i class="fa-solid fa-building"></i> ${negocio.organizacao || 'Sem organização'}</p>
                         <p><i class="fa-solid fa-user"></i> ${negocio.pessoaNome}</p>
                         <span class="deal-value">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(negocio.valor)}</span>
                     `;
