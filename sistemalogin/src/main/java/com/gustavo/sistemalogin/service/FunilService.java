@@ -5,7 +5,9 @@ import com.gustavo.sistemalogin.dto.FunilResponseDTO;
 import com.gustavo.sistemalogin.dto.FunilUpdateDTO;
 import com.gustavo.sistemalogin.model.Funil;
 import com.gustavo.sistemalogin.model.User;
+import com.gustavo.sistemalogin.repository.EtapaRepository;
 import com.gustavo.sistemalogin.repository.FunilRepository;
+import com.gustavo.sistemalogin.repository.NegocioRepository;
 import com.gustavo.sistemalogin.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +20,17 @@ public class FunilService {
 
     private final FunilRepository funilRepository;
     private final UserRepository userRepository;
+    private final EtapaRepository etapaRepository;
+    private final NegocioRepository negocioRepository;
 
-    public FunilService(FunilRepository funilRepository, UserRepository userRepository) {
+    public FunilService(FunilRepository funilRepository,
+                        UserRepository userRepository,
+                        EtapaRepository etapaRepository,
+                        NegocioRepository negocioRepository) {
         this.funilRepository = funilRepository;
         this.userRepository = userRepository;
+        this.etapaRepository = etapaRepository;
+        this.negocioRepository = negocioRepository;
     }
 
     @Transactional
@@ -76,7 +85,7 @@ public class FunilService {
         return new FunilResponseDTO(funilAtualizado);
     }
 
-    @Transactional
+    @Transactional // <--- Essencial para garantir que tudo seja apagado ou nada seja
     public void deletarFunil(Long id, String userEmail) {
         Funil funil = funilRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Funil com ID " + id + " não encontrado."));
@@ -84,6 +93,14 @@ public class FunilService {
         if (!funil.getUser().getEmail().equals(userEmail)) {
             throw new SecurityException("Acesso negado.");
         }
+
+        // 1. Primeiro deletamos os NEGÓCIOS (Netos)
+        negocioRepository.deleteByFunilId(id);
+
+        // 2. Depois deletamos as ETAPAS (Filhos)
+        etapaRepository.deleteByFunilId(id);
+
+        // 3. Por fim, deletamos o FUNIL (Pai)
         funilRepository.deleteById(id);
     }
 }

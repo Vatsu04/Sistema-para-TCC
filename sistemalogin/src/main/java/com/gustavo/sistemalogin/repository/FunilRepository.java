@@ -10,4 +10,6 @@ public interface FunilRepository extends JpaRepository<Funil, Long> {
     List<Funil> findByUserId(Long userId);
 
     List<Funil> findByUserEmail(String userEmail);
+
+    void deleteByFunilId(Long funilId);
 }

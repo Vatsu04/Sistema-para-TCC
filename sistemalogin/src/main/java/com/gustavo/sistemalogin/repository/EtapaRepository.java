@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface EtapaRepository extends JpaRepository<Etapa, Long> {
     List<Etapa> findByFunilId(Long id);
+
+    void deleteByFunilId(Long funilId);
 }

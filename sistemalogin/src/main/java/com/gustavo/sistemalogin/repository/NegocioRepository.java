@@ -13,4 +13,8 @@ public interface NegocioRepository extends JpaRepository<Negocio, Long> {
     List<Negocio> findByFunilUserEmail(String email);
 
     void deleteByEtapaId(Long etapaId);
+
+    void deleteByFunilId(Long funilId);
+
+
 }
