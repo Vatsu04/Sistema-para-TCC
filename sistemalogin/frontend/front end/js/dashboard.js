@@ -455,7 +455,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            const newName = prompt("Novo nome do funil:", currentName);
+            const newName = prompt("Renomiar funil:", currentName);
 
             if (!newName || newName.trim() === "" || newName === currentName) {
                 return; 
@@ -623,10 +623,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
         window.deleteNegocio = async (negocioId) => {
-        // 1. Busca o elemento do card pelo ID
+
         const cardElement = document.querySelector(`.kanban-card[data-negocio-id="${negocioId}"]`);
-        
-        // 2. Extrai o texto do título (h4)
+
         const negocioTitulo = cardElement ? cardElement.querySelector('h4').textContent : 'este negócio';
 
         if (!confirm(`Tem certeza que deseja excluir o negócio "${negocioTitulo}"?`)) return;
@@ -648,8 +647,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert("Erro de conexão.");
         }
     };
-    // --- 8. INICIALIZAÇÃO DA PÁGINA ---
-    fetchCurrentUser(); // Busca o usuário atual para o ícone
-    fetchAndPopulateFunnels(); // Busca os funis e renderiza o primeiro Kanban
 
-}); // Fim do DOMContentLoaded
+    fetchCurrentUser(); 
+    fetchAndPopulateFunnels();
+
+});
