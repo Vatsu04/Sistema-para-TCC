@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const userProfileIcon = document.getElementById('user-profile-icon');
     const closeModalBtns = document.querySelectorAll('.modal-close-btn, [data-close-modal]'); // Seleciona botões de fechar
     const editFunnelBtn = document.getElementById('edit-funnel-btn');
+    const deleteFunnelBtn = document.getElementById('delete-funnel-btn');
 
     // --- 3. FUNÇÕES DE RENDERIZAÇÃO E API ---
 
@@ -384,6 +385,49 @@ if (editFunnelBtn) {
         });
     }
 
+    if (deleteFunnelBtn) {
+        deleteFunnelBtn.addEventListener('click', async () => {
+            const funilId = funnelTriggerText.dataset.selectedFunilId;
+            const funilNome = funnelTriggerText.textContent;
+
+            // Validações
+            if (!funilId || funilId === 'undefined' || funilId === 'novo') {
+                alert("Selecione um funil válido para excluir.");
+                return;
+            }
+
+            // Confirmação de segurança
+            const confirmacao = confirm(
+                `PERIGO: Você está prestes a excluir o funil "${funilNome}".\n\n` +
+                `Isso irá apagar PERMANENTEMENTE:\n` +
+                `- Todas as etapas deste funil.\n` +
+                `- Todos os negócios/cards dentro deste funil.\n\n` +
+                `Tem certeza absoluta que deseja continuar?`
+            );
+
+            if (!confirmacao) return;
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/funis/${funilId}`, {
+                    method: 'DELETE',
+                    headers: headers
+                });
+
+                if (response.ok || response.status === 204) {
+                    alert('Funil excluído com sucesso.');
+                    // Recarrega a página para limpar o estado e buscar a lista atualizada
+                    window.location.reload(); 
+                } else {
+                    const err = await response.json();
+                    alert('Erro ao excluir funil: ' + (err.message || response.statusText));
+                }
+            } catch (error) {
+                console.error("Erro ao excluir funil:", error);
+                alert("Erro de conexão ao tentar excluir o funil.");
+            }
+        });
+    }
+
     const handleDrop = async (event) => {
         event.preventDefault();
         const cardsContainer = event.target.closest('.cards-container');
@@ -423,8 +467,6 @@ if (editFunnelBtn) {
         }
     };
 
-    // Nova função para chamar a API e atualizar a etapa do negócio
-    // Nova função para chamar a API e atualizar a etapa do negócio (versão PUT)
     const updateNegocioEtapa = async (negocioId, newEtapaId) => {
         try {
             // 1. Buscar (GET) o estado atual do negócio
@@ -440,22 +482,16 @@ if (editFunnelBtn) {
             const negocio = await getResponse.json();
             console.log("Objeto recebido (GET):", negocio); // Para depuração
 
-            // 2. Modificar o campo etapaId
-            // (IMPORTANTE: Verifique se o campo no seu GET é 'etapaId')
+
             negocio.etapaId = parseInt(newEtapaId);
 
-            /* * NOTA: É comum a API de GET retornar campos com nomes diferentes
-             * da API de PUT/POST (ex: GET retorna 'organizacaoNome', mas PUT espera 'organizacao').
-             * Se o PUT falhar, precisaremos mapear os campos do objeto 'negocio' aqui.
-             * Por enquanto, vamos assumir que o GET /api/negocios/{id} 
-             * retorna um objeto compatível com o PUT /api/negocios/{id}.
-            */
+
            
-            // 3. Enviar (PUT) o objeto completo e atualizado
+
             const putResponse = await fetch(`http://localhost:8080/api/negocios/${negocioId}`, {
                 method: 'PUT', 
                 headers: headers,
-                body: JSON.stringify(negocio) // Envia o objeto inteiro
+                body: JSON.stringify(negocio) 
             });
 
             if (!putResponse.ok) {
