@@ -11,16 +11,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.gustavo.sistemalogin.repository.NegocioRepository;
 
 @Service
 public class EtapaService {
 
     private final EtapaRepository etapaRepository;
     private final FunilRepository funilRepository;
+    private final NegocioRepository negocioRepository;
 
-    public EtapaService(EtapaRepository etapaRepository, FunilRepository funilRepository) {
+    public EtapaService(EtapaRepository etapaRepository, FunilRepository funilRepository, NegocioRepository negocioRepository) {
         this.etapaRepository = etapaRepository;
         this.funilRepository = funilRepository;
+        this.negocioRepository = negocioRepository;
     }
 
     @Transactional
@@ -87,6 +90,8 @@ public class EtapaService {
     public void deletarEtapa(Long etapaId, String userEmail) {
         // Valida a propriedade antes de deletar
         findEtapaByIdAndValidateOwner(etapaId, userEmail);
+
+        negocioRepository.deleteByEtapaId(etapaId);
         etapaRepository.deleteById(etapaId);
     }
 

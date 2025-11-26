@@ -454,3 +454,72 @@ body {
     /* Garante que a área de drop tenha uma altura mínima */
     min-height: 100px; 
 }
+
+/* --- Ações da Etapa (Editar/Excluir) --- */
+.kanban-column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Alinha ao topo para evitar quebra feia */
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+.column-title-wrapper {
+    flex-grow: 1;
+}
+
+.stage-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-icon-stage {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #8898aa;
+    transition: color 0.2s;
+    padding: 2px;
+}
+
+.btn-icon-stage:hover {
+    color: #0d214d;
+}
+
+.btn-icon-stage.delete:hover {
+    color: #dc3545;
+}
+
+/* --- Coluna de Adicionar Nova Etapa no Kanban --- */
+.add-new-stage-column {
+    min-width: 280px;
+    max-width: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 5px;
+}
+
+.btn-add-stage-kanban {
+    background-color: transparent;
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    color: #6c757d;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.btn-add-stage-kanban:hover {
+    border-color: #0d214d;
+    color: #0d214d;
+    background-color: rgba(13, 33, 77, 0.05);
+}

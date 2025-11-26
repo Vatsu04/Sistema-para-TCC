@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Funil extends BaseEntity {
+public class Funil  {
 
 
     // --- Relacionamentos ---
@@ -24,13 +24,18 @@ public class Funil extends BaseEntity {
     @JsonIgnore // Evita que os dados do usuário venham junto com o funil, prevenindo loops
     private User user;
 
-    // Um funil pode ter uma lista de negócios.
-    // 'mappedBy' indica que o lado 'Negocio' é o dono do relacionamento.
-    // 'cascade = CascadeType.ALL' significa que se um funil for apagado, todos os negócios dentro dele também serão.
-    @OneToMany(mappedBy = "funil", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Negocio> negocios;
 
+    private Long id;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    private String nome;
 
     public User getUser() {
         return user;
@@ -40,11 +45,11 @@ public class Funil extends BaseEntity {
         this.user = user;
     }
 
-    public List<Negocio> getNegocios() {
-        return negocios;
+    public String getNome() {
+        return nome;
     }
 
-    public void setNegocios(List<Negocio> negocios) {
-        this.negocios = negocios;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 }

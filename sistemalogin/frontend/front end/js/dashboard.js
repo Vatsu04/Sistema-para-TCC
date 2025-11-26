@@ -43,12 +43,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     // Renderiza o quadro Kanban
-    const renderKanban = async (funilId) => {
+const renderKanban = async (funilId) => {
         if (!funilId) {
             kanbanBoard.innerHTML = '<h2>Selecione um funil para começar.</h2>';
             return;
         }
-        kanbanBoard.innerHTML = '<h2>Carregando Kanban...</h2>'; // Feedback visual
+        kanbanBoard.innerHTML = '<h2>Carregando Kanban...</h2>';
 
         try {
             const [etapasResponse, negociosResponse] = await Promise.all([
@@ -57,48 +57,61 @@ document.addEventListener('DOMContentLoaded', async () => {
             ]);
 
             if (!etapasResponse.ok || !negociosResponse.ok) {
-                throw new Error(`Falha ao buscar dados: Etapas ${etapasResponse.status}, Negócios ${negociosResponse.status}`);
+                throw new Error(`Falha ao buscar dados.`);
             }
 
             let etapas = await etapasResponse.json();
             const negocios = await negociosResponse.json();
-            etapas.sort((a, b) => a.posicao - b.posicao); // Ordena etapas pela posição
+            etapas.sort((a, b) => a.posicao - b.posicao);
 
             kanbanBoard.innerHTML = '';
 
-            // Renderiza Colunas de Etapas
+            // 1. Renderiza Colunas Existentes
             etapas.forEach(etapa => {
                 const column = document.createElement('div');
                 column.className = 'kanban-column';
                 column.dataset.etapaId = etapa.id;
+                
+                // HTML Atualizado com botões de Editar/Excluir Etapa
                 column.innerHTML = `
                     <div class="kanban-column-header">
-                        <h2 class="column-title">${etapa.nome}</h2>
-                        <button class="btn-new-deal-in-column" data-etapa-id="${etapa.id}" title="Adicionar Negócio nesta Etapa">
-                            <i class="fa-solid fa-plus"></i>
+                        <div class="column-title-wrapper">
+                            <h2 class="column-title">${etapa.nome}</h2>
+                        </div>
+                        <div class="stage-actions">
+                            <button class="btn-icon-stage edit" title="Renomear Etapa" onclick="window.editStage(${etapa.id}, '${etapa.nome}')">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="btn-icon-stage delete" title="Excluir Etapa e Negócios" onclick="window.deleteStage(${etapa.id})">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 10px;">
+                        <button class="btn-new-deal-in-column" data-etapa-id="${etapa.id}" style="width:100%">
+                            <i class="fa-solid fa-plus"></i> Novo Negócio
                         </button>
                     </div>
-                    <div class="cards-container"></div>`; // Este é o container dos cards
+
+                    <div class="cards-container"></div>`; 
+                
                 kanbanBoard.appendChild(column);
 
                 const cardsContainer = column.querySelector('.cards-container');
                 
-                // *** NOVO: Adiciona listeners de Drop Zone na coluna ***
+                // Listeners de Drop Zone (Drag & Drop)
                 cardsContainer.addEventListener('dragover', handleDragOver);
                 cardsContainer.addEventListener('dragenter', handleDragEnter);
                 cardsContainer.addEventListener('dragleave', handleDragLeave);
                 cardsContainer.addEventListener('drop', handleDrop);
 
+                // Renderiza Cards
                 const negociosNestaEtapa = negocios.filter(neg => neg.etapaId === etapa.id && neg.funilId == funilId);
-
-                // Renderiza os Cards de Negócio
                 negociosNestaEtapa.forEach(negocio => {
                     const card = document.createElement('div');
                     card.className = 'kanban-card';
-                    
-                    // *** NOVO: Adiciona atributos para Drag ***
                     card.draggable = true;
-                    // Certifique-se que seu objeto 'negocio' tem um 'id'
                     card.dataset.negocioId = negocio.id; 
                     card.dataset.currentEtapaId = etapa.id;
 
@@ -108,18 +121,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <p><i class="fa-solid fa-user"></i> ${negocio.pessoaNome}</p>
                         <span class="deal-value">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(negocio.valor)}</span>
                     `;
-                    
-                    // *** NOVO: Adiciona listeners de Drag no card ***
                     card.addEventListener('dragstart', handleDragStart);
                     card.addEventListener('dragend', handleDragEnd);
-                    
                     cardsContainer.appendChild(card);
                 });
             });
 
+            // 2. Renderiza Coluna "Adicionar Nova Etapa" no final
+            const addStageDiv = document.createElement('div');
+            addStageDiv.className = 'add-new-stage-column';
+            addStageDiv.innerHTML = `
+                <button class="btn-add-stage-kanban" onclick="window.createNewStage()">
+                    <i class="fa-solid fa-plus"></i> Adicionar Etapa
+                </button>
+            `;
+            kanbanBoard.appendChild(addStageDiv);
+
         } catch (error) {
             console.error("Erro ao renderizar o Kanban:", error);
-            kanbanBoard.innerHTML = '<h2>Erro ao carregar o Kanban. Tente novamente.</h2>';
+            kanbanBoard.innerHTML = '<h2>Erro ao carregar o Kanban.</h2>';
         }
     };
 
@@ -406,6 +426,83 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error("Erro detalhado em updateNegocioEtapa:", error);
             // Propaga o erro para o 'handleDrop' tratar (mostrar o alert e reverter)
             throw error; 
+        }
+    };
+
+    window.createNewStage = async () => {
+        const funilId = document.getElementById('funnel-trigger-text').dataset.selectedFunilId;
+        if (!funilId) { alert('Erro: Nenhum funil selecionado.'); return; }
+
+        const nome = prompt("Digite o nome da nova etapa:");
+        if (!nome || !nome.trim()) return;
+
+        try {
+            const response = await fetch('http://localhost:8080/api/etapas', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    nome: nome,
+                    funilId: parseInt(funilId)
+                    // A posição é calculada no backend, conforme seu EtapaService
+                })
+            });
+
+            if (response.ok) {
+                renderKanban(funilId); // Recarrega o quadro
+            } else {
+                alert('Erro ao criar etapa.');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Erro de conexão.');
+        }
+    };
+
+    window.editStage = async (etapaId, currentName) => {
+        const funilId = document.getElementById('funnel-trigger-text').dataset.selectedFunilId;
+        const newName = prompt("Renomear etapa:", currentName);
+        
+        if (!newName || newName.trim() === "" || newName === currentName) return;
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/etapas/${etapaId}`, {
+                method: 'PUT',
+                headers: headers,
+                body: JSON.stringify({ nome: newName }) // Envia apenas o nome para atualizar
+            });
+
+            if (response.ok) {
+                renderKanban(funilId);
+            } else {
+                alert('Erro ao atualizar etapa.');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    window.deleteStage = async (etapaId) => {
+        const funilId = document.getElementById('funnel-trigger-text').dataset.selectedFunilId;
+        const confirmMsg = "ATENÇÃO: Ao excluir esta etapa, TODOS OS NEGÓCIOS dentro dela também serão excluídos permanentemente.\n\nDeseja continuar?";
+        
+        if (!confirm(confirmMsg)) return;
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/etapas/${etapaId}`, {
+                method: 'DELETE',
+                headers: headers
+            });
+
+            if (response.ok || response.status === 204) {
+                renderKanban(funilId);
+            } else {
+                const err = await response.json();
+                // Aqui capturamos o erro caso o backend não tenha feito o Cascade
+                alert('Erro ao excluir: ' + (err.message || 'Verifique se existem negócios nesta etapa.'));
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Erro de conexão.');
         }
     };
 

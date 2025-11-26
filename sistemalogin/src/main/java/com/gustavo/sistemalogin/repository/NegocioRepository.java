@@ -11,4 +11,6 @@ public interface NegocioRepository extends JpaRepository<Negocio, Long> {
     // Busca todos os negócios cujo funil pertence a um usuário específico (pelo email)
     // O Spring Data JPA entende a navegação: Negocio -> Funil -> User -> Email
     List<Negocio> findByFunilUserEmail(String email);
+
+    void deleteByEtapaId(Long etapaId);
 }
