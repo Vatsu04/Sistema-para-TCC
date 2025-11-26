@@ -69,13 +69,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             kanbanBoard.innerHTML = '';
 
-            // 1. Renderiza Colunas Existentes
+        
             etapas.forEach(etapa => {
                 const column = document.createElement('div');
                 column.className = 'kanban-column';
-                column.dataset.etapaId = etapa.id;
+                column.dataset.etapaId = etapa.id; 
                 
-                // HTML Atualizado com botões de Editar/Excluir Etapa
                 column.innerHTML = `
                     <div class="kanban-column-header">
                         <div class="column-title-wrapper">
@@ -115,10 +114,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const card = document.createElement('div');
                     card.className = 'kanban-card';
                     card.draggable = true;
-                    card.dataset.negocioId = negocio.id; 
+                    card.dataset.negocioId = negocio.id; // Importante para a busca funcionar
                     card.dataset.currentEtapaId = etapa.id;
 
-                    // HTML Atualizado com botões de Editar/Excluir Negócio
                     card.innerHTML = `
                         <div class="card-header">
                             <h4>${negocio.titulo}</h4>
@@ -577,9 +575,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
-    window.deleteStage = async (etapaId) => {
-        const funilId = document.getElementById('funnel-trigger-text').dataset.selectedFunilId;
-        const confirmMsg = "ATENÇÃO: Ao excluir esta etapa, TODOS OS NEGÓCIOS dentro dela também serão excluídos permanentemente.\n\nDeseja continuar?";
+        window.deleteStage = async (etapaId) => {
+        // 1. Busca o elemento da coluna pelo ID
+        const columnElement = document.querySelector(`.kanban-column[data-etapa-id="${etapaId}"]`);
+        
+        // 2. Extrai o texto do título (h2)
+        // Se por algum motivo não achar, usa um texto padrão "esta etapa"
+        const etapaNome = columnElement ? columnElement.querySelector('.column-title').textContent : 'esta etapa';
+
+        const confirmMsg = `ATENÇÃO: Ao excluir a etapa "${etapaNome}", TODOS OS NEGÓCIOS dentro dela também serão excluídos permanentemente.\n\nDeseja continuar?`;
         
         if (!confirm(confirmMsg)) return;
 
@@ -590,6 +594,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             if (response.ok || response.status === 204) {
+                const funilId = document.getElementById('funnel-trigger-text').dataset.selectedFunilId;
                 renderKanban(funilId);
             } else {
                 const err = await response.json();
@@ -600,7 +605,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('Erro de conexão.');
         }
     };
-
     // Ações de Negócio
     window.editNegocio = async (negocioId) => {
         try {
@@ -618,8 +622,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
-    window.deleteNegocio = async (negocioId) => {
-        if (!confirm("Tem certeza que deseja excluir este negócio?")) return;
+        window.deleteNegocio = async (negocioId) => {
+        // 1. Busca o elemento do card pelo ID
+        const cardElement = document.querySelector(`.kanban-card[data-negocio-id="${negocioId}"]`);
+        
+        // 2. Extrai o texto do título (h4)
+        const negocioTitulo = cardElement ? cardElement.querySelector('h4').textContent : 'este negócio';
+
+        if (!confirm(`Tem certeza que deseja excluir o negócio "${negocioTitulo}"?`)) return;
 
         try {
             const response = await fetch(`http://localhost:8080/api/negocios/${negocioId}`, {
@@ -628,8 +638,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             if (response.ok || response.status === 204) {
-                // Recarrega o Kanban atual
-                const funilId = funnelTriggerText.dataset.selectedFunilId;
+                const funilId = document.getElementById('funnel-trigger-text').dataset.selectedFunilId;
                 renderKanban(funilId);
             } else {
                 alert("Erro ao excluir negócio.");
@@ -639,7 +648,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert("Erro de conexão.");
         }
     };
-
     // --- 8. INICIALIZAÇÃO DA PÁGINA ---
     fetchCurrentUser(); // Busca o usuário atual para o ícone
     fetchAndPopulateFunnels(); // Busca os funis e renderiza o primeiro Kanban
