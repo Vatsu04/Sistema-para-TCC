@@ -1,3 +1,5 @@
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const stagesContainer = document.getElementById('stages-container');
     // O botão agora é o card inteiro para uma área de clique maior
@@ -36,7 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    
     // Adiciona os event listeners
     addCardButton.addEventListener('click', addNewStage);
     stagesContainer.addEventListener('click', handleContainerClick);
 });
+

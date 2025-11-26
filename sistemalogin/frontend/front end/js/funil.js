@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const funnelNameInput = document.getElementById('funnel-name');
     const stagesContainer = document.getElementById('stages-container');
     const saveButton = document.querySelector('.btn-save');
+    const userProfileIcon = document.getElementById('user-profile-icon');
     const addStageColumn = document.querySelector('.add-stage-column'); // Pega a coluna "Adicionar"
 
     // --- 3. FUNÇÕES DE RENDERIZAÇÃO ---
@@ -48,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const input = newColumn.querySelector(`#stage-name-${etapa.id}`);
         const title = newColumn.querySelector('.stage-title');
         input.addEventListener('input', () => {
-            title.textContent = input.value || 'Nova Etapa'; // Atualiza o título em tempo real
+            title.textContent = input.value || 'Etapa'; // Atualiza o título em tempo real
         });
     };
 
@@ -86,6 +87,24 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Erro ao buscar dados do funil:', error);
             alert(error.message);
             window.location.href = 'dashboard.html'; // Volta se der erro
+        }
+    };
+
+
+    const fetchCurrentUser = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/users/me', { headers });
+            if (response.ok) {
+                const user = await response.json();
+                if (user.nome) {
+                    userProfileIcon.textContent = user.nome.charAt(0).toUpperCase();
+                }
+            } else { // Trata token inválido/expirado
+                localStorage.removeItem('jwt_token');
+                window.location.href = 'index.html';
+            }
+        } catch (error) {
+            console.error('Erro ao buscar usuário atual:', error);
         }
     };
 
@@ -190,4 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 6. INICIALIZAÇÃO ---
     fetchFunilData(); // Busca os dados do funil (se for modo de edição) ou limpa (modo criação)
+    fetchCurrentUser(); // Busca o usuário atual para o ícone
+    
 });

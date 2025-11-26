@@ -8,10 +8,98 @@ body { font-family: 'Roboto', sans-serif; background-color: #f4f7fa; color: #333
 .app-container { display: flex; min-height: 100vh; }
 .sidebar { flex: 0 0 60px; background-color: #0d214d; padding: 20px 0; display: flex; align-items: center; flex-direction: column; }
 .sidebar-logo { font-family: 'Michroma', sans-serif; font-size: 46px; font-weight: 700; color: #fff; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border-radius: 8px; text-decoration: none; }
-.main-content { flex: 1; display: flex; flex-direction: column; }
-.app-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; background-color: #fff; border-bottom: 1px solid #e0e0e0; }
-.app-header h1 { font-size: 24px; font-weight: 500; }
-.user-profile { width: 40px; height: 40px; background-color: #e0e0e0; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 500; cursor: pointer; }
+.main-content {
+    flex: 1; /* Ocupa todo o resto do espaço */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Evita barras de rolagem indesejadas */
+}
+/* --- Cabeçalho Superior (Igual ao Dashboard) --- */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    background-color: #fff;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.app-header h1 {
+    font-size: 24px;
+    font-weight: 500;
+    margin: 0; /* Garante que não empurre o layout */
+}
+
+/* Ícone do Perfil */
+.user-profile {
+    width: 40px;
+    height: 40px;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.user-profile.active {
+    background-color: #cccccc;
+}
+
+/* Container para posicionamento relativo do dropdown */
+.profile-container {
+    position: relative;
+}
+
+/* Menu Dropdown */
+.profile-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    width: 220px;
+    z-index: 110;
+    border: 1px solid #eee;
+    overflow: hidden;
+}
+
+/* Utilitário para esconder elementos (usado pelo JS) */
+.hidden {
+    display: none;
+}
+
+.profile-dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.profile-dropdown ul li a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.profile-dropdown ul li a:hover {
+    background-color: #f5f5f5;
+}
+
+.profile-dropdown ul li a .fa-solid {
+    width: 16px;
+    text-align: center;
+    color: #555;
+}
+/* --- Cabeçalho Superior --- */
+
 
 /* --- Estilos Específicos da Página de Funil --- */
 .funnel-editor-container { padding: 20px 30px; flex-grow: 1; background-color: #fff; display: flex; flex-direction: column; }
