@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalForm = document.getElementById('modal-form');
     const userProfileIcon = document.getElementById('user-profile-icon');
     const closeModalBtns = document.querySelectorAll('.modal-close-btn, [data-close-modal]'); // Seleciona botões de fechar
+    const editFunnelBtn = document.getElementById('edit-funnel-btn');
 
     // --- 3. FUNÇÕES DE RENDERIZAÇÃO E API ---
 
