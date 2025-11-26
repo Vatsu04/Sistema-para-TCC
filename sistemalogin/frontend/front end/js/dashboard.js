@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
     let funis = []; // Armazena a lista de funis do usuário
     let currentEtapaIdForModal = null; // Armazena o ID da etapa ao abrir o modal
+    let currentNegocioIdForEdit = null; // null = criando, ID = editando
 
     // --- 2. SELETORES DO DOM ---
     const kanbanBoard = document.getElementById('kanban-board');
@@ -45,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     // Renderiza o quadro Kanban
-const renderKanban = async (funilId) => {
+    const renderKanban = async (funilId) => {
         if (!funilId) {
             kanbanBoard.innerHTML = '<h2>Selecione um funil para começar.</h2>';
             return;
@@ -117,8 +118,19 @@ const renderKanban = async (funilId) => {
                     card.dataset.negocioId = negocio.id; 
                     card.dataset.currentEtapaId = etapa.id;
 
+                    // HTML Atualizado com botões de Editar/Excluir Negócio
                     card.innerHTML = `
-                        <h4>${negocio.titulo}</h4>
+                        <div class="card-header">
+                            <h4>${negocio.titulo}</h4>
+                            <div class="card-actions">
+                                <button class="btn-card-action" onclick="window.editNegocio(${negocio.id})" title="Editar">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button class="btn-card-action delete" onclick="window.deleteNegocio(${negocio.id})" title="Excluir">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
                         <p><i class="fa-solid fa-building"></i> ${negocio.organizacao || 'Sem organização'}</p>
                         <p><i class="fa-solid fa-user"></i> ${negocio.pessoaNome}</p>
                         <span class="deal-value">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(negocio.valor)}</span>
@@ -195,31 +207,55 @@ const renderKanban = async (funilId) => {
     };
 
     // --- 4. FUNÇÕES DO MODAL ---
-    const openModal = () => {
-        const dataAberturaInput = document.getElementById('modal-data-abertura');
-        const dataFechamentoInput = document.getElementById('modal-data-fechamento');
-        const hoje = new Date().toISOString().split('T')[0];
-
-        dataAberturaInput.value = hoje;
-        dataFechamentoInput.min = hoje;
-        dataFechamentoInput.value = ''; // Limpa data de fechamento
-
-        modalForm.reset(); // Limpa outros campos
-        dataAberturaInput.value = hoje; // Redefine data de abertura após reset
-
+    
+    // Função unificada para abrir modal (Criação ou Edição)
+    const openModal = (negocio = null) => {
         modalOverlay.classList.remove('hidden');
         modal.classList.remove('hidden');
+        const modalTitle = document.querySelector('.modal-header h2');
+        const btnSubmit = modalForm.querySelector('button[type="submit"]');
+
+        if (negocio) {
+            // --- MODO EDIÇÃO ---
+            currentNegocioIdForEdit = negocio.id;
+            currentEtapaIdForModal = negocio.etapaId; 
+            
+            modalTitle.textContent = "Editar Negócio";
+            btnSubmit.textContent = "Salvar Alterações";
+
+
+            document.getElementById('modal-titulo').value = negocio.titulo;
+            document.getElementById('modal-pessoa-nome').value = negocio.pessoaNome;
+            document.getElementById('modal-pessoa-email').value = negocio.emailPessoaContato;
+            document.getElementById('modal-pessoa-telefone').value = negocio.telefonePessoaContato;
+            document.getElementById('modal-organizacao').value = negocio.organizacao;
+            document.getElementById('modal-valor').value = negocio.valor;
+            document.getElementById('modal-data-abertura').value = negocio.dataDeAbertura; // YYYY-MM-DD
+            document.getElementById('modal-data-fechamento').value = negocio.dataDeFechamento || '';
+
+        } else {
+            // --- MODO CRIAÇÃO ---
+            currentNegocioIdForEdit = null;
+
+
+            modalTitle.textContent = "Adicionar Negócio";
+            btnSubmit.textContent = "Adicionar";
+
+            modalForm.reset();
+            
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('modal-data-abertura').value = hoje;
+            document.getElementById('modal-data-fechamento').min = hoje;
+        }
     };
 
     const closeModal = () => {
         modalOverlay.classList.add('hidden');
         modal.classList.add('hidden');
-        currentEtapaIdForModal = null; // Limpa a etapa selecionada
+        currentEtapaIdForModal = null; 
+        currentNegocioIdForEdit = null; 
     };
 
-    // --- 5. EVENT LISTENERS (Modal e Formulário) ---
-
-    // Listener de delegação no Kanban para abrir o modal
     kanbanBoard.addEventListener('click', (event) => {
         const newDealButton = event.target.closest('.btn-new-deal-in-column');
         if (newDealButton) {
@@ -229,39 +265,28 @@ const renderKanban = async (funilId) => {
                 return;
             }
             currentEtapaIdForModal = newDealButton.dataset.etapaId;
-            openModal(); // Chama a função para abrir e preparar o modal
+            openModal();
         }
     });
 
-    // Listeners para fechar o modal
     closeModalBtns.forEach(btn => btn.addEventListener('click', closeModal));
     modalOverlay.addEventListener('click', (event) => {
         if (event.target === modalOverlay) closeModal();
     });
 
-    // Submissão do formulário do modal
     modalForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const selectedFunilId = funnelTriggerText.dataset.selectedFunilId;
-        if (!currentEtapaIdForModal) {
-            alert("Erro crítico: A etapa de destino não foi identificada.");
-            return;
-        }
 
         const dataAberturaStr = document.getElementById('modal-data-abertura').value;
         const dataFechamentoStr = document.getElementById('modal-data-fechamento').value;
 
-        // Validação de Data
         if (!dataAberturaStr) {
             alert("A Data de Abertura é obrigatória."); return;
         }
-        if (dataFechamentoStr) {
-            const dataAbertura = new Date(dataAberturaStr + 'T00:00:00');
-            const dataFechamento = new Date(dataFechamentoStr + 'T00:00:00');
-            if (dataFechamento < dataAbertura) {
-                alert("A Data de Fechamento deve ser igual ou posterior à Data de Abertura."); return;
-            }
+        if (dataFechamentoStr && dataFechamentoStr < dataAberturaStr) {
+            alert("Data de fechamento não pode ser anterior à abertura."); return;
         }
 
         const negocioData = {
@@ -271,34 +296,44 @@ const renderKanban = async (funilId) => {
             pessoaContato: document.getElementById('modal-pessoa-nome').value,
             emailPessoaContato: document.getElementById('modal-pessoa-email').value,
             telefonePessoaContato: document.getElementById('modal-pessoa-telefone').value,
-            dataDeAbertura: dataAberturaStr, // Envia YYYY-MM-DD
-            data_de_fechamento: dataFechamentoStr ? dataFechamentoStr : null, // Envia YYYY-MM-DD ou null
+            dataDeAbertura: dataAberturaStr,
+            data_de_fechamento: dataFechamentoStr || null,
             funilId: parseInt(selectedFunilId),
             etapaId: parseInt(currentEtapaIdForModal)
         };
 
         try {
-            const response = await fetch('http://localhost:8080/api/negocios', {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(negocioData)
-            });
+            let response;
+            
+            if (currentNegocioIdForEdit) {
+                response = await fetch(`http://localhost:8080/api/negocios/${currentNegocioIdForEdit}`, {
+                    method: 'PUT',
+                    headers: headers,
+                    body: JSON.stringify(negocioData)
+                });
+            } else {
+                if (!currentEtapaIdForModal) { alert("Erro de etapa."); return; }
+                
+                response = await fetch('http://localhost:8080/api/negocios', {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(negocioData)
+                });
+            }
 
             if (response.ok) {
-                alert('Negócio criado com sucesso!');
-                closeModal(); // Fecha o modal usando a função
-                renderKanban(selectedFunilId); // Atualiza o quadro
+                alert(currentNegocioIdForEdit ? 'Negócio atualizado!' : 'Negócio criado!');
+                closeModal();
+                renderKanban(selectedFunilId);
             } else {
                 const errorData = await response.json();
-                alert('Erro ao criar negócio: ' + (errorData.message || response.statusText));
+                alert('Erro: ' + (errorData.message || response.statusText));
             }
         } catch (error) {
-            console.error("Erro ao submeter negócio:", error);
-            alert("Erro de rede ao criar negócio.");
+            console.error("Erro ao salvar negócio:", error);
+            alert("Erro de conexão.");
         }
     });
-
-    // --- 6. NOVAS FUNÇÕES E HANDLERS DE DRAG & DROP ---
 
     const handleDragStart = (event) => {
         const card = event.target.closest('.kanban-card');
@@ -306,14 +341,12 @@ const renderKanban = async (funilId) => {
         
         event.dataTransfer.setData("text/plain", card.dataset.negocioId);
         event.dataTransfer.effectAllowed = "move";
-        // Adiciona a classe 'dragging' para feedback visual
         setTimeout(() => { 
             card.classList.add('dragging');
         }, 0);
     };
 
     const handleDragEnd = (event) => {
-        // Limpa a classe 'dragging' quando o arraste termina
         const card = event.target.closest('.kanban-card');
         if (card) {
             card.classList.remove('dragging');
@@ -321,12 +354,11 @@ const renderKanban = async (funilId) => {
     };
 
     const handleDragOver = (event) => {
-        event.preventDefault(); // Essencial para permitir o 'drop'
+        event.preventDefault(); 
         event.dataTransfer.dropEffect = "move";
     };
 
     const handleDragEnter = (event) => {
-        // Adiciona feedback visual à coluna que está recebendo o card
         const container = event.target.closest('.cards-container');
         if (container) {
             container.classList.add('drag-over');
@@ -334,45 +366,113 @@ const renderKanban = async (funilId) => {
     };
 
     const handleDragLeave = (event) => {
-        // Remove o feedback visual
+
         const container = event.target.closest('.cards-container');
         if (container) {
             container.classList.remove('drag-over');
         }
     };
 
-if (editFunnelBtn) {
+    const handleDrop = async (event) => {
+        event.preventDefault();
+        const cardsContainer = event.target.closest('.cards-container');
+        const column = event.target.closest('.kanban-column');
+
+        if (!column || !cardsContainer) return;
+
+        cardsContainer.classList.remove('drag-over');
+
+        const negocioId = event.dataTransfer.getData("text/plain");
+        const newEtapaId = column.dataset.etapaId;
+        const draggedCard = document.querySelector(`.kanban-card[data-negocio-id="${negocioId}"]`);
+        
+        if (!draggedCard) return;
+
+        const originalEtapaId = draggedCard.dataset.currentEtapaId;
+
+        if (newEtapaId === originalEtapaId) {
+            return;
+        }
+
+
+        cardsContainer.appendChild(draggedCard);
+        draggedCard.dataset.currentEtapaId = newEtapaId; 
+
+
+        try {
+            await updateNegocioEtapa(negocioId, newEtapaId);
+
+        } catch (error) {
+            console.error("Falha ao atualizar etapa:", error);
+            alert("Erro ao mover o card. A alteração será desfeita.");
+            renderKanban(funnelTriggerText.dataset.selectedFunilId); 
+        }
+    };
+
+    const updateNegocioEtapa = async (negocioId, newEtapaId) => {
+        try {
+            // 1. Buscar (GET) o estado atual do negócio
+            const getResponse = await fetch(`http://localhost:8080/api/negocios/${negocioId}`, {
+                method: 'GET',
+                headers: headers
+            });
+
+            if (!getResponse.ok) {
+                throw new Error(`Falha ao buscar negócio: ${getResponse.status}`);
+            }
+
+            const negocio = await getResponse.json();
+            
+            negocio.etapaId = parseInt(newEtapaId);
+
+            const putResponse = await fetch(`http://localhost:8080/api/negocios/${negocioId}`, {
+                method: 'PUT', 
+                headers: headers,
+                body: JSON.stringify(negocio) 
+            });
+
+            if (!putResponse.ok) {
+                const errorData = await putResponse.json();
+                console.error("Erro do PUT:", errorData);
+                throw new Error(errorData.message || `Status ${putResponse.status}`);
+            }
+            
+
+            console.log('Negócio movido com sucesso na API.');
+
+        } catch (error) {
+            console.error("Erro detalhado em updateNegocioEtapa:", error);
+
+            throw error; 
+        }
+    };
+
+    if (editFunnelBtn) {
         editFunnelBtn.addEventListener('click', async () => {
             const funilId = funnelTriggerText.dataset.selectedFunilId;
             const currentName = funnelTriggerText.textContent;
 
-            // Validações iniciais
             if (!funilId || funilId === 'undefined' || funilId === 'novo') {
                 alert("Selecione um funil válido para editar.");
                 return;
             }
 
-            // Pede o novo nome (igual à lógica de etapas)
             const newName = prompt("Novo nome do funil:", currentName);
 
             if (!newName || newName.trim() === "" || newName === currentName) {
-                return; // Cancela se vazio ou igual
+                return; 
             }
 
             try {
                 const response = await fetch(`http://localhost:8080/api/funis/${funilId}`, {
                     method: 'PUT',
                     headers: headers,
-                    body: JSON.stringify({ nome: newName }) // Envia apenas o nome
+                    body: JSON.stringify({ nome: newName }) 
                 });
 
                 if (response.ok) {
                     alert('Funil renomeado com sucesso!');
-                    
-                    // Atualiza o texto na tela imediatamente
                     funnelTriggerText.textContent = newName;
-                    
-                    // Atualiza a lista de opções para refletir o novo nome sem recarregar tudo
                     fetchAndPopulateFunnels(); 
                 } else {
                     const err = await response.json();
@@ -390,13 +490,11 @@ if (editFunnelBtn) {
             const funilId = funnelTriggerText.dataset.selectedFunilId;
             const funilNome = funnelTriggerText.textContent;
 
-            // Validações
             if (!funilId || funilId === 'undefined' || funilId === 'novo') {
                 alert("Selecione um funil válido para excluir.");
                 return;
             }
 
-            // Confirmação de segurança
             const confirmacao = confirm(
                 `PERIGO: Você está prestes a excluir o funil "${funilNome}".\n\n` +
                 `Isso irá apagar PERMANENTEMENTE:\n` +
@@ -415,7 +513,6 @@ if (editFunnelBtn) {
 
                 if (response.ok || response.status === 204) {
                     alert('Funil excluído com sucesso.');
-                    // Recarrega a página para limpar o estado e buscar a lista atualizada
                     window.location.reload(); 
                 } else {
                     const err = await response.json();
@@ -428,88 +525,7 @@ if (editFunnelBtn) {
         });
     }
 
-    const handleDrop = async (event) => {
-        event.preventDefault();
-        const cardsContainer = event.target.closest('.cards-container');
-        const column = event.target.closest('.kanban-column');
-
-        if (!column || !cardsContainer) return;
-
-        cardsContainer.classList.remove('drag-over'); // Limpa o feedback visual
-
-        const negocioId = event.dataTransfer.getData("text/plain");
-        const newEtapaId = column.dataset.etapaId;
-        const draggedCard = document.querySelector(`.kanban-card[data-negocio-id="${negocioId}"]`);
-        
-        if (!draggedCard) return;
-
-        const originalEtapaId = draggedCard.dataset.currentEtapaId;
-
-        // Não faz nada se soltar na mesma coluna
-        if (newEtapaId === originalEtapaId) {
-            return;
-        }
-
-        // 1. Atualização Otimista da UI
-        // Move o card no DOM imediatamente para uma resposta rápida
-        cardsContainer.appendChild(draggedCard);
-        draggedCard.dataset.currentEtapaId = newEtapaId; // Atualiza o estado do card
-
-        // 2. Chamada da API para persistir a mudança
-        try {
-            await updateNegocioEtapa(negocioId, newEtapaId);
-            // Sucesso! A UI já está atualizada.
-        } catch (error) {
-            console.error("Falha ao atualizar etapa:", error);
-            alert("Erro ao mover o card. A alteração será desfeita.");
-            // Reverte a mudança recarregando o kanban
-            renderKanban(funnelTriggerText.dataset.selectedFunilId); 
-        }
-    };
-
-    const updateNegocioEtapa = async (negocioId, newEtapaId) => {
-        try {
-            // 1. Buscar (GET) o estado atual do negócio
-            const getResponse = await fetch(`http://localhost:8080/api/negocios/${negocioId}`, {
-                method: 'GET',
-                headers: headers
-            });
-
-            if (!getResponse.ok) {
-                throw new Error(`Falha ao buscar negócio: ${getResponse.status}`);
-            }
-
-            const negocio = await getResponse.json();
-            console.log("Objeto recebido (GET):", negocio); // Para depuração
-
-
-            negocio.etapaId = parseInt(newEtapaId);
-
-
-           
-
-            const putResponse = await fetch(`http://localhost:8080/api/negocios/${negocioId}`, {
-                method: 'PUT', 
-                headers: headers,
-                body: JSON.stringify(negocio) 
-            });
-
-            if (!putResponse.ok) {
-                const errorData = await putResponse.json();
-                console.error("Erro do PUT:", errorData);
-                throw new Error(errorData.message || `Status ${putResponse.status}`);
-            }
-            
-            // Sucesso
-            console.log('Negócio movido com sucesso na API.');
-
-        } catch (error) {
-            console.error("Erro detalhado em updateNegocioEtapa:", error);
-            // Propaga o erro para o 'handleDrop' tratar (mostrar o alert e reverter)
-            throw error; 
-        }
-    };
-
+    // Ações de Etapa
     window.createNewStage = async () => {
         const funilId = document.getElementById('funnel-trigger-text').dataset.selectedFunilId;
         if (!funilId) { alert('Erro: Nenhum funil selecionado.'); return; }
@@ -524,12 +540,11 @@ if (editFunnelBtn) {
                 body: JSON.stringify({
                     nome: nome,
                     funilId: parseInt(funilId)
-                    // A posição é calculada no backend, conforme seu EtapaService
                 })
             });
 
             if (response.ok) {
-                renderKanban(funilId); // Recarrega o quadro
+                renderKanban(funilId); 
             } else {
                 alert('Erro ao criar etapa.');
             }
@@ -549,7 +564,7 @@ if (editFunnelBtn) {
             const response = await fetch(`http://localhost:8080/api/etapas/${etapaId}`, {
                 method: 'PUT',
                 headers: headers,
-                body: JSON.stringify({ nome: newName }) // Envia apenas o nome para atualizar
+                body: JSON.stringify({ nome: newName }) 
             });
 
             if (response.ok) {
@@ -578,7 +593,6 @@ if (editFunnelBtn) {
                 renderKanban(funilId);
             } else {
                 const err = await response.json();
-                // Aqui capturamos o erro caso o backend não tenha feito o Cascade
                 alert('Erro ao excluir: ' + (err.message || 'Verifique se existem negócios nesta etapa.'));
             }
         } catch (error) {
@@ -587,7 +601,46 @@ if (editFunnelBtn) {
         }
     };
 
-    // --- 7. INICIALIZAÇÃO DA PÁGINA ---
+    // Ações de Negócio
+    window.editNegocio = async (negocioId) => {
+        try {
+            // Busca os dados atuais do negócio para preencher o modal
+            const response = await fetch(`http://localhost:8080/api/negocios/${negocioId}`, { headers });
+            if (response.ok) {
+                const negocio = await response.json();
+                openModal(negocio); // Abre modo EDIÇÃO passando o objeto
+            } else {
+                alert("Erro ao buscar dados do negócio.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Erro de conexão.");
+        }
+    };
+
+    window.deleteNegocio = async (negocioId) => {
+        if (!confirm("Tem certeza que deseja excluir este negócio?")) return;
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/negocios/${negocioId}`, {
+                method: 'DELETE',
+                headers: headers
+            });
+
+            if (response.ok || response.status === 204) {
+                // Recarrega o Kanban atual
+                const funilId = funnelTriggerText.dataset.selectedFunilId;
+                renderKanban(funilId);
+            } else {
+                alert("Erro ao excluir negócio.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Erro de conexão.");
+        }
+    };
+
+    // --- 8. INICIALIZAÇÃO DA PÁGINA ---
     fetchCurrentUser(); // Busca o usuário atual para o ícone
     fetchAndPopulateFunnels(); // Busca os funis e renderiza o primeiro Kanban
 

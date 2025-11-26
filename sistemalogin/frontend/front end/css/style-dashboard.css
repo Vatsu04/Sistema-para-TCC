@@ -195,6 +195,57 @@ body {
     margin-bottom: 15px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     cursor: grab;
+    position: relative; /* Necessário para posicionamento */
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kanban-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 10px;
+}
+.kanban-card h3, 
+.kanban-card h4 { /* Ajuste para garantir que seu h4 fique correto */
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0;
+    word-break: break-word; /* Evita que títulos longos quebrem o layout */
+    flex-grow: 1;
+}
+
+.card-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0; /* Escondido por padrão */
+    transition: opacity 0.2s;
+}
+
+.kanban-card:hover .card-actions {
+    opacity: 1;
+}
+
+.btn-card-action {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #8898aa;
+    font-size: 12px;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.btn-card-action:hover {
+    background-color: #f0f0f0;
+    color: #0d214d;
+}
+
+.btn-card-action.delete:hover {
+    color: #dc3545;
 }
 
 .kanban-card:active {
