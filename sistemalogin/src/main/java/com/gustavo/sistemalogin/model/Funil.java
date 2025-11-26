@@ -13,43 +13,24 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Funil  {
+public class Funil {
 
+    @Id // <--- ESTAVA FALTANDO ISSO
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // <--- E ISSO PARA O AUTO INCREMENT
+    private Long id;
+
+    @Column(nullable = false)
+    private String nome;
 
     // --- Relacionamentos ---
 
-    // Muitos funis podem pertencer a um usuário.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnore // Evita que os dados do usuário venham junto com o funil, prevenindo loops
+    @JsonIgnore
     private User user;
 
 
-    private Long id;
+    @OneToMany(mappedBy = "funil", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Negocio> negocios;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    private String nome;
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 }

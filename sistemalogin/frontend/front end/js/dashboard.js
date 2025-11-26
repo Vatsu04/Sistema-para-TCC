@@ -340,6 +340,50 @@ const renderKanban = async (funilId) => {
         }
     };
 
+if (editFunnelBtn) {
+        editFunnelBtn.addEventListener('click', async () => {
+            const funilId = funnelTriggerText.dataset.selectedFunilId;
+            const currentName = funnelTriggerText.textContent;
+
+            // Validações iniciais
+            if (!funilId || funilId === 'undefined' || funilId === 'novo') {
+                alert("Selecione um funil válido para editar.");
+                return;
+            }
+
+            // Pede o novo nome (igual à lógica de etapas)
+            const newName = prompt("Novo nome do funil:", currentName);
+
+            if (!newName || newName.trim() === "" || newName === currentName) {
+                return; // Cancela se vazio ou igual
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/funis/${funilId}`, {
+                    method: 'PUT',
+                    headers: headers,
+                    body: JSON.stringify({ nome: newName }) // Envia apenas o nome
+                });
+
+                if (response.ok) {
+                    alert('Funil renomeado com sucesso!');
+                    
+                    // Atualiza o texto na tela imediatamente
+                    funnelTriggerText.textContent = newName;
+                    
+                    // Atualiza a lista de opções para refletir o novo nome sem recarregar tudo
+                    fetchAndPopulateFunnels(); 
+                } else {
+                    const err = await response.json();
+                    alert('Erro ao atualizar: ' + (err.message || response.statusText));
+                }
+            } catch (error) {
+                console.error("Erro ao renomear funil:", error);
+                alert("Erro de conexão ao tentar renomear o funil.");
+            }
+        });
+    }
+
     const handleDrop = async (event) => {
         event.preventDefault();
         const cardsContainer = event.target.closest('.cards-container');
