@@ -112,6 +112,7 @@ public class SecurityConfig {
             } catch (DisabledException e) {
                 response.sendRedirect(frontendLoginUrl + "?error=oauth_user_inactive");
             }
+
         };
     }
 
