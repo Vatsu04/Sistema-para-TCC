@@ -52,22 +52,22 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Deixa login/registro passarem livre
-                        .requestMatchers("/oauth2/**").permitAll() // Deixa o fluxo do Google passar
-                        .requestMatchers("/login/oauth2/code/*").permitAll() // Deixa o callback do Google passar
-                        .anyRequest().authenticated() // TUDO o resto exige estar logado
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/oauth2/**").permitAll()
+                        .requestMatchers("/login/oauth2/code/*").permitAll()
+
+
+                        .anyRequest().authenticated()
                 )
 
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(endpoint -> endpoint
-                                // Este é o link que o frontend chamará
                                 .baseUri("/oauth2/authorization")
                         )
                         .redirectionEndpoint(endpoint -> endpoint
-                                // Este é o link que o Google chamará de volta
                                 .baseUri("/login/oauth2/code/*")
                         )
-
+                        // Usa o seu handler customizado para gerar o JWT
                         .successHandler(oAuth2AuthenticationSuccessHandler())
                 )
 
