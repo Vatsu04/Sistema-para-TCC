@@ -1,5 +1,6 @@
 package com.gustavo.sistemalogin.dto;
 
+import com.gustavo.sistemalogin.validation.Password; // <-- IMPORTE A NOVA ANOTAÇÃO
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -15,5 +16,6 @@ public class UserCreateDTO {
     private String email;
 
     @NotBlank(message = "A senha não pode ser vazia.")
+    @Password // <-- ADICIONE A ANOTAÇÃO AQUI
     private String senha;
 }

@@ -1,67 +1,40 @@
 package com.gustavo.sistemalogin.dto;
 
-import com.gustavo.sistemalogin.model.Funil;
-import com.gustavo.sistemalogin.model.Pessoa;
+import jakarta.validation.constraints.Email;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class NegocioUpdateDTO {
+
     private String titulo;
-    private int pipeline_stage;
-    private int id_organizacao;
-    private String etapa;
-    private Funil funil;
-    private Pessoa pessoa;
     private BigDecimal valor;
+    private LocalDate data_de_fechamento;
+    private Long etapaId;
+    private String organizacao;
 
-    public BigDecimal getValor() {return valor;}
+    // Campos de contato opcionais para atualização
+    private String pessoaContato;
+    @Email(message = "O formato do e-mail do contato é inválido.")
+    private String emailPessoaContato;
+    private String telefonePessoaContato;
 
-    public void setValor(BigDecimal valor) {this.valor = valor;}
+    // Getters e Setters...
+    // (O campo pessoaId foi removido)
 
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public int getPipeline_stage() {
-        return pipeline_stage;
-    }
-
-    public void setPipeline_stage(int pipeline_stage) {
-        this.pipeline_stage = pipeline_stage;
-    }
-
-    public int getId_organizacao() {
-        return id_organizacao;
-    }
-
-    public void setId_organizacao(int id_organizacao) {
-        this.id_organizacao = id_organizacao;
-    }
-
-    public String getEtapa() {
-        return etapa;
-    }
-
-    public void setEtapa(String etapa) {
-        this.etapa = etapa;
-    }
-
-    public Funil getFunil() {
-        return funil;
-    }
-
-    public void setFunil(Funil funil) {
-        this.funil = funil;
-    }
-
-    public Pessoa getPessoa() {
-        return pessoa;
-    }
-
-    public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
-    }
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
+    public BigDecimal getValor() { return valor; }
+    public void setValor(BigDecimal valor) { this.valor = valor; }
+    public LocalDate getData_de_fechamento() { return data_de_fechamento; }
+    public void setData_de_fechamento(LocalDate data_de_fechamento) { this.data_de_fechamento = data_de_fechamento; }
+    public Long getEtapaId() { return etapaId; }
+    public void setEtapaId(Long etapaId) { this.etapaId = etapaId; }
+    public String getOrganizacao() { return organizacao; }
+    public void setOrganizacao(String organizacao) { this.organizacao = organizacao; }
+    public String getPessoaContato() { return pessoaContato; }
+    public void setPessoaContato(String pessoaContato) { this.pessoaContato = pessoaContato; }
+    public String getEmailPessoaContato() { return emailPessoaContato; }
+    public void setEmailPessoaContato(String emailPessoaContato) { this.emailPessoaContato = emailPessoaContato; }
+    public String getTelefonePessoaContato() { return telefonePessoaContato; }
+    public void setTelefonePessoaContato(String telefonePessoaContato) { this.telefonePessoaContato = telefonePessoaContato; }
 }

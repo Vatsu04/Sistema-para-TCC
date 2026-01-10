@@ -2,105 +2,58 @@ package com.gustavo.sistemalogin.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
-
-import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "negocios")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class Negocio extends BaseEntity {
+public class Negocio {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false)
     private String titulo;
 
-    @Column
-    private int pipeline_stage;
-
-    @Column
+    // A tabela permite nulo, mas a regra de negócio pode exigir.
+    // Manter nullable = false força a validação no DTO.
+    @Column(nullable = false)
     private BigDecimal valor;
 
+    @Column(name = "data_de_abertura", nullable = false, updatable = false)
+    private LocalDate dataDeAbertura;
 
-    public BigDecimal getValor() {
-        return valor;
-    }
+    @Column(name = "data_de_fechamento")
+    private LocalDate dataDeFechamento;
 
-    public void setValor(BigDecimal valor) {
-        this.valor = valor;
-    }
+    @Column(name = "organizacao")
+    private String organizacao;
 
-    public int getId_ornizacao() {
-        return id_ornizacao;
-    }
+    // --- NOVOS CAMPOS DESNORMALIZADOS ---
+    @Column(name = "Pessoa_Contato", nullable = false)
+    private String pessoaContato;
 
-    public void setId_ornizacao(int id_ornizacao) {
-        this.id_ornizacao = id_ornizacao;
-    }
+    @Column(name = "Email_Pessoa_Contato", nullable = false)
+    private String emailPessoaContato;
 
-    public int getPipeline_stage() {
-        return pipeline_stage;
-    }
-
-    public void setPipeline_stage(int pipeline_stage) {
-        this.pipeline_stage = pipeline_stage;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
+    @Column(name = "Telefone_Pessoa_Contato", nullable = false)
+    private String telefonePessoaContato;
 
 
-    public String getEtapa() {
-        return etapa;
-    }
+    // --- RELACIONAMENTOS ---
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "etapa_id", nullable = false)
+    @JsonIgnore
+    private Etapa etapa;
 
-    public void setEtapa(String etapa) {
-        this.etapa = etapa;
-    }
-
-    public Funil getFunil() {
-        return funil;
-    }
-
-    public void setFunil(Funil funil) {
-        this.funil = funil;
-    }
-
-    public Pessoa getPessoa() {
-        return pessoa;
-    }
-
-    public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
-    }
-
-    @Column
-    private int id_ornizacao;
-
-    // Ex: "Contato Inicial", "Proposta Enviada", "Negociação", "Ganha", "Perdida"
-    @Column(nullable = false)
-    private String etapa;
-
-
-    // Muitos negócios pertencem a um funil.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "funil_id", nullable = false)
     @JsonIgnore
     private Funil funil;
 
-    // Muitos negócios podem estar associados a uma pessoa (contato).
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pessoa_id", nullable = false)
-    @JsonIgnore
-    private Pessoa pessoa;
 }

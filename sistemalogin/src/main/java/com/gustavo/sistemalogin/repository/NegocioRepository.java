@@ -10,8 +10,7 @@ public interface NegocioRepository extends JpaRepository<Negocio, Long> {
     // Busca todos os negócios dentro de um funil específico
     List<Negocio> findByFunilId(Long funilId);
 
-    // Busca todos os negócios associados a uma pessoa específica
-    List<Negocio> findByPessoaId(Long pessoaId);
 
     List<Negocio> findByFunilUserEmail(String username);
+    List<Negocio> findByFunil_User_Email(String email);
 }

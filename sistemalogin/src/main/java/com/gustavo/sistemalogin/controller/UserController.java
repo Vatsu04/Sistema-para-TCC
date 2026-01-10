@@ -1,54 +1,42 @@
 package com.gustavo.sistemalogin.controller;
 
-import com.gustavo.sistemalogin.dto.LoginDTO;
-import com.gustavo.sistemalogin.dto.UserCreateDTO;
+import com.gustavo.sistemalogin.dto.UserResponseDTO;
 import com.gustavo.sistemalogin.model.User;
 import com.gustavo.sistemalogin.repository.UserRepository;
-import com.gustavo.sistemalogin.security.TokenService;
-import com.gustavo.sistemalogin.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder; // <-- IMPORT CORRETO
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/users") // <-- AJUSTE 1: Rota corrigida
+@RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private UserService userService;
-
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
-        Optional<User> userOpt = userRepository.findByEmail(loginDTO.getEmail());
-
-        if (userOpt.isEmpty() || !passwordEncoder.matches(loginDTO.getSenha(), userOpt.get().getSenha())) {
-            return ResponseEntity.status(401).body("Email ou senha inválidos");
-        }
-
-        User user = userOpt.get();
-        String token = tokenService.generateToken(user.getEmail());
-
-        return ResponseEntity.ok().body("{\"token\":\"" + token + "\"}");
+    public UserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody UserCreateDTO userDTO) {
-        User createdUser = userService.createUser(userDTO);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    /**
+     * Endpoint para retornar os dados do usuário atualmente autenticado.
+     * @param userDetails Detalhes do usuário injetados pelo Spring Security a partir do token.
+     * @return Os dados públicos do usuário em um DTO.
+     */
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        // userDetails.getUsername() retorna o e-mail que foi definido no UserDetailsServiceImpl
+        String userEmail = userDetails.getUsername();
+
+        // Busca o usuário completo no banco de dados usando o e-mail
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado no banco de dados, mas autenticado."));
+
+        // Converte a entidade User para o DTO seguro e retorna
+        return ResponseEntity.ok(new UserResponseDTO(user));
     }
 
+    // Você pode adicionar outros endpoints aqui, como o de listar todos os usuários para um admin.
 }

@@ -7,7 +7,6 @@ import com.gustavo.sistemalogin.model.Etapa;
 import com.gustavo.sistemalogin.model.Funil;
 import com.gustavo.sistemalogin.repository.EtapaRepository;
 import com.gustavo.sistemalogin.repository.FunilRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -16,13 +15,9 @@ import java.util.stream.Collectors;
 @Service
 public class EtapaService {
 
-    @Autowired
-    private EtapaRepository etapaRepository;
+    private final EtapaRepository etapaRepository;
+    private final FunilRepository funilRepository;
 
-    @Autowired
-    private FunilRepository funilRepository;
-
-    // Injeção de dependências via construtor (melhor prática)
     public EtapaService(EtapaRepository etapaRepository, FunilRepository funilRepository) {
         this.etapaRepository = etapaRepository;
         this.funilRepository = funilRepository;
@@ -30,19 +25,18 @@ public class EtapaService {
 
     @Transactional
     public EtapaResponseDTO criarEtapa(EtapaCreateDTO dto, String userEmail) {
-        Funil funil = funilRepository.findById(dto.getFunilId(dto.getFunil()))
-                .orElseThrow(() -> new RuntimeException("Funil não encontrado"));
 
-        if (!funil.getUser().getEmail().equals(userEmail)) {
-            throw new SecurityException("Acesso negado: funil não pertence ao usuário.");
-        }
+        Funil funil = funilRepository.findById(dto.getFunilId())
+                .filter(f -> f.getUser().getEmail().equals(userEmail))
+                .orElseThrow(() -> new SecurityException("Funil não encontrado ou não pertence ao usuário."));
 
-        Etapa etapa = new Etapa();
-        etapa.setNome(dto.getNome());
-        etapa.setFunil(funil);
+        Etapa novaEtapa = new Etapa();
+        novaEtapa.setNome(dto.getNome());
+        novaEtapa.setPosicao(dto.getPosicao());
+        novaEtapa.setFunil(funil);
 
-        Etapa savedEtapa = etapaRepository.save(etapa);
-        return new EtapaResponseDTO(savedEtapa);
+        Etapa etapaSalva = etapaRepository.save(novaEtapa);
+        return new EtapaResponseDTO(etapaSalva);
     }
 
     @Transactional(readOnly = true)
@@ -97,5 +91,12 @@ public class EtapaService {
         }
         return etapa;
     }
+
+    @Transactional(readOnly = true)
+    public EtapaResponseDTO buscarEtapaPorId(Long etapaId, String userEmail) {
+        Etapa etapa = findEtapaByIdAndValidateOwner(etapaId, userEmail);
+        return new EtapaResponseDTO(etapa);
+    }
+
 
 }
